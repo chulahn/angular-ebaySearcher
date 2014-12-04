@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+	<script>
+		$(document).ready(function() {
+			
+			$('#formSearch input').on('keydown', function() {
+				console.log($(this)[0].value);
+			});
+			$('#formSearch select').on('change', function() {
+				var search= $(this)[0].value;
+				console.log($(this)[0].value);
+				console.log($('#formSearch').attr('action'));
+				// $('#formSearch').attr('action','/get/'+search)
+			});
+
+
+		});
+
+	</script>
+</head>
+<body>
+
+
+	<form id="formSearch" action="/get/" method="post">
+		Enter Keyword
+		<input type="text" name="keyword"></input><br/>
+		Sort By: 
+		<select name="sort">
+			<option value="BestMatch">Best Match</option>
+			<option value="PricePlusShippingLowest">Lowest price w shipping</option>
+			<option value="PricePlusShippingHighest">Highest price w shipping</option>
+			<option value="EndTimeSoonest">Soonest end time</option>
+		</select><br/>
+		<select name="requestType">
+			<option value="findCompletedItems">completed auctions</option>
+			<option value="findItemsByKeywords">current auctions</option>
+		</select>
+
+
+		<button type="submit">Submit</button>
+
+	
+	</form>
+	
+</body>
+</html>
