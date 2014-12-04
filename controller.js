@@ -16,23 +16,24 @@ angular.module('app',[])
     })
 
     .filter('auctionSum', function() {
-        //data == filtered results
-        //searchFilter for now is 
+
 
         return function(data, searchKey) {
-        // return function(data, completedFilter, newFilter, searchKey) {
-            if (typeof (data) === 'undefined' && typeof (searchKey) === 'undefined') {
-                return 0;
-            }
 
-            var sum = 0;
-            for (var i=0; i<data.length; i++) {
-                sum += data[i][searchKey];
+            if (typeof (data) === 'undefined' || typeof (searchKey) === 'undefined') {
+                return 0;
             }
 
             if ((data && data.length) == 0) {
                 return 0;
             }
+
+            var sum = 0;
+
+            data.forEach(function(auction) {
+                sum += auction[searchKey];
+            });
+
             return (sum / data.length).toFixed(2);
         }
 
