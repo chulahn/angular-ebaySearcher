@@ -198,6 +198,9 @@ app.get('/scripts/script.js', function (req,res) {
 app.get('/styles/style.css', function (req,res) {
 	res.sendfile('styles/style.css');
 });
+app.get('/styles/style.less', function (req,res) {
+	res.sendfile('styles/style.less');
+});
 
 
 app.get('/controller.js', function (req,res) {

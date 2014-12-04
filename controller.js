@@ -2,6 +2,19 @@
 
 angular.module('app',[])
 
+    .filter('priceFilter', function() {
+        return function(data, min, max) {
+            var returnData = [];
+
+            data.forEach(function(auction) {
+                if (auction.price >= min && auction.price <= max) {
+                    returnData.push(auction);
+                }
+            });
+            return returnData;
+        }
+    })
+
     .filter('auctionSum', function() {
         //data == filtered results
         //searchFilter for now is 
@@ -12,62 +25,9 @@ angular.module('app',[])
                 return 0;
             }
 
-            // var sum = data.reduce(function(total, current) {
-            //     console.log("data length", data.length, "total ", total, "current ", current)
-            //     if (completed) {
-            //         if (current.status !== "EndedWithoutSales") {
-            //             return (total[searchFilter] || total || 0) + current[searchFilter];
-            //         }
-            //     }
-            //     else {
-            //         return (total[searchFilter] || total || 0) + current[searchFilter];
-            //     }
-            // });
-
             var sum = 0;
             for (var i=0; i<data.length; i++) {
-/*
-                //if searching for completed items, only add with status is endedwithoutsales
-                if (completedFilter) {
-
-                    if (data[i].status !== "EndedWithoutSales") {
-
-                        //if searching for brand new Items, add only the items that have a condition id 1XXX
-                        if (newFilter) {
-                            var shortCondID = parseInt(data[i].shortCondID);
-                            if (shortCondID === 1) {
-                                sum += data[i][searchKey];
-                            }
-                            // if (conditionID >= 1000 && conditionID < 2000) {
-                            //     sum += data[i][searchKey];
-                            // }
-                        }
-                        else {
-                            sum += data[i][searchKey];
-                        }
-                    
-                    }
-                }
-                
-                else {
-
-                    if (newFilter) {
-                        var shortCondID = parseInt(data[i].shortCondID);
-                            if (shortCondID === 1) {
-                                sum += data[i][searchKey];
-                        }
-                        // var conditionID = parseInt(data[i].conditionID);
-                        // if (conditionID >= 1000 && conditionID < 2000) {
-                        //     sum += data[i][searchKey];
-                        // }
-                    }
-                    
-                    else {
-                        */
-                        sum += data[i][searchKey];
-                //     }
-                
-                // }
+                sum += data[i][searchKey];
             }
 
             if ((data && data.length) == 0) {

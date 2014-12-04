@@ -1,0 +1,83 @@
+table {
+	padding: 5px;
+	border: 2px solid black;
+}
+
+td,th {
+	padding: 5px;
+	border: 1px dotted black;
+}
+
+.button() {
+	padding: 2px;
+	border-radius: 5px;
+	border:1px solid blue;	
+}
+
+
+#moreResults {
+	.button;
+	&:hover {
+		background-color:#0022aa;
+	}
+	&:active {
+		background-color:darken(#0022aa,10%);
+	}
+}
+
+#allLoaded {
+	.button;
+	border-color:green;
+}
+
+.shipped { 
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+.selected {
+	font-size: 1.2em;
+}
+.newItem {
+	background-color: orange;
+}
+
+.sold {
+	background-color: green;
+}
+
+.nosale {
+	background-color: red;
+	color: white;
+}
+
+.added {
+	background-color: gray;
+}
+
+.highlighted {
+	background-color: yellow;
+}
+
+#container {
+	background:gray;
+}
+
+#container:before, #container:after {
+	content: "";
+	display: table;
+}
+
+#container:after {
+	clear:both;
+}
+#filteredData {
+	float: left;
+	background: green;
+	color: white;
+}
+#selectedData {
+	float: right;
+	background: blue;
+	color: white;
+}
