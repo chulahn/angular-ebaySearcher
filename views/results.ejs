@@ -18,6 +18,7 @@
 		%>
 		var entriesPerPage = <%- entriesPerPage %>
 		var items = <%- JSON.stringify(ejs_items) %>
+		//newItems are items mapped for app usage
 		var newItems = <%- JSON.stringify(ejs_newItems) %>
 		var totalResults = <%- entriesPerPage %>
 		var requestURL = <%- JSON.stringify(ejs_reqURL) %>
@@ -144,14 +145,24 @@
 	<div id="container">
 		<div id="filteredData">
 			Filtered {{filteredItems.length}} item(s) <br/>		
-			Average Price: {{filteredItems | auctionSum:'price'}}<br/>
-			Shipped Price: {{filteredItems | auctionSum:'finalPrice'}}
+			Average Price: {{getAvg(filteredItems, 'price')}}<br/>
+			Shipped Price: {{getAvg(filteredItems, 'finalPrice')}}<br/>
+			
+			{{$parse(lowestItem = getMin(filteredItems, 'finalPrice'))}}
+			{{$parse(highestItem = getMax(filteredItems, 'finalPrice'))}}
+
+			Lowest Shipped: <a href="#{{items.indexOf(lowestItem)}}">{{lowestItem.finalPrice || "N/A" }}</a><br/>
+			Highest: <a href="#{{items.indexOf(highestItem)}}">{{highestItem.finalPrice || "N/A" }}</a>
+			
+			
 		</div>
 		
 		<div id="selectedData">
 			Selected <span id="selectedItemNum"></span><br/>
 			Average Price: <span id="selectedAvg"></span><br/>
-			Shipped: <span id="selectedShipped"></span>
+			Shipped: <span id="selectedShipped"></span><br/>
+			Lowest: <span id="selectedMin"></span><br/>
+			Highest: <span id="selectedMax"></span>
 		</div>
 	</div>
 
@@ -175,7 +186,7 @@
 		  shortCondID: newFilter ? '1' : '' } |  priceFilter:(minPrice || 0):(maxPrice || 10000) )">
 
 			<td><span class="selected"></span><img ng-src = {{item.img}} ></td>
-			<td><input type="checkbox" name="{{items.indexOf(item)}}"><a href = {{item.url}} >{{item.title}}</a></td>
+			<td><input type="checkbox" id="{{items.indexOf(item)}}"><a href = {{item.url}} >{{item.title}}</a></td>
 			<td>{{item.id}}</td>
 			<td>
 				Price: {{item.price}}<br/>

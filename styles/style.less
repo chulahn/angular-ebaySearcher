@@ -3,6 +3,10 @@ table {
 	border: 2px solid black;
 }
 
+a {
+	text-decoration: none;
+}
+
 td,th {
 	padding: 5px;
 	border: 1px dotted black;
@@ -14,8 +18,9 @@ td,th {
 	border:1px solid blue;	
 }
 
-
 #moreResults {
+	display: inline-block;
+	margin-top:4px;
 	.button;
 	&:hover {
 		background-color:#0022aa;
@@ -60,24 +65,42 @@ td,th {
 }
 
 #container {
-	background:gray;
+	background:white;
+	&:before, &:after {
+		content: "";
+		display: table;
+	}
+	&:after {
+		clear:both;
+	}
 }
 
-#container:before, #container:after {
-	content: "";
-	display: table;
-}
-
-#container:after {
-	clear:both;
-}
 #filteredData {
 	float: left;
-	background: green;
+	border: 1px green solid;
+	border-radius: 4px;
+/*	background: green;
 	color: white;
+*/	a {
+		color: blue;
+
+		&:hover {
+			font-weight: bold;
+		}
+	}
 }
+
 #selectedData {
 	float: right;
-	background: blue;
-	color: white;
+	border: 1px blue solid;
+	border-radius: 4px;
+/*	background: blue;
+	color: white;*/
+	a {
+		color: red;
+
+		&:hover {
+			font-weight:bold;
+		}
+	}
 }

@@ -144,7 +144,7 @@ app.post('/get/', function(req,res) {
 
 					var itemDetails = {
 						id: item.itemId[0],
-						img : item.galleryURL[0],
+						img : (item.galleryURL && item.galleryURL[0]) || "no image",
 						url : item.viewItemURL[0],
 						title : item.title[0],
 						conditionID : (item.condition && item.condition[0] && item.condition[0].conditionId[0]) || "No Condition Listed",

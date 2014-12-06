@@ -15,34 +15,70 @@ angular.module('app',[])
         }
     })
 
-    .filter('auctionSum', function() {
+
+    .controller("dataController", function ($scope) {
+        $scope.items = newItems;
 
 
-        return function(data, searchKey) {
+        $scope.getAvg = function(items, searchKey) {
 
-            if (typeof (data) === 'undefined' || typeof (searchKey) === 'undefined') {
+            if (typeof (items) === 'undefined' || typeof (searchKey) === 'undefined') {
                 return 0;
             }
 
-            if ((data && data.length) == 0) {
+            if ((items && items.length) == 0) {
                 return 0;
             }
 
             var sum = 0;
-
-            data.forEach(function(auction) {
-                sum += auction[searchKey];
+            items.forEach(function(auction) {
+                    sum += auction[searchKey];
             });
 
-            return (sum / data.length).toFixed(2);
+            return (sum / items.length).toFixed(2);
+        }
+        $scope.getMin = function(items, searchKey) {
+
+            if (typeof (items) === 'undefined' || typeof (searchKey) === 'undefined' || items.length === 0) {
+                return 0;
+            }
+            var min = items[0][searchKey];
+            var minIndex = 0;
+
+            items.forEach(function(auction) {
+
+                if (auction[searchKey] < min) {
+                    min = auction[searchKey];
+                    minIndex = items.indexOf(auction);
+                }
+
+            });
+
+            return items[minIndex];
+
+        }
+        $scope.getMax = function(items, searchKey) {
+
+            if (typeof (items) === 'undefined' || typeof (searchKey) === 'undefined' || items.length === 0) {
+                return 0;
+            }
+            var max = items[0][searchKey];
+            var maxIndex = 0;
+
+            items.forEach(function(auction) {
+
+                if (auction[searchKey] > max) {
+                    max = auction[searchKey];
+                    maxIndex = items.indexOf(auction);
+                }
+
+            });
+
+            return items[maxIndex];
+
         }
 
-    })
-    
 
-
-    .controller("dataController", function ($scope) {
-        $scope.items = newItems;
     });
 
 })(window.angular);
