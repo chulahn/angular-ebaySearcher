@@ -43,43 +43,6 @@ $(document).ready(function() {
 
 	});
 
-/*
-	console.log(items[0]);
-
-	getResultsForPage(0);
-
-	var navHTML = "<h2>";
-	for (var i=0; i<items.length/10; i++){
-		if (i === 0) {
-			navHTML += "<span class=\"selected\">";
-		}
-		else {
-			navHTML += "<span>"
-		}
-		navHTML += (i+1);
-		navHTML += "</span>  ";
-	}
-	navHTML += "</h2>";
-
-	navHTML += "<span id=\"moreResults\">Click For More Results</span>";
-
-	$('nav').html(navHTML);
-	$('nav').prepend("<h1>"+items.length+"</h1>");
-
-	$('nav span').click(function(){
-
-		var arrayIndex = $(this).html();
-		$('.selected').removeClass('selected');
-		$(this).toggleClass('selected');
-
-		console.log($(this).html());
-
-		getResultsForPage(arrayIndex-1);
-
-	});
-
-
-*/
 
 	$('#addItems').click(function() {
 		console.log(123);
@@ -98,13 +61,13 @@ $(document).ready(function() {
 function updateSelectedData() {
 
 
-	function getSumFor(param) {
+	function getSumFor(searchKey) {
 		if (selectedItems.length !== 0) {
 			if (selectedItems.length === 1) {
-				return selectedItems[0][param];
+				return selectedItems[0][searchKey];
 			}
 			var total = selectedItems.reduce(function (total, current) {
-						return (parseFloat(total[param] || total || 0) + parseFloat(current[param]));
+						return (parseFloat(total[searchKey] || total || 0) + parseFloat(current[searchKey]));
 						});
 			return total;
 		}
@@ -245,23 +208,4 @@ function getResultsForPage(pageNum) {
 
 	tableDataHTML += "</form></table>";
 	$('#searchResults').html(tableTopHTML + tableDataHTML);
-}
-
-function getAveragePrice(items) {
-	
-	var totalPrice = 0;
-	var priceRange = [];
-
-	items.forEach(function (item) {
-		var sellingStatus = item.sellingStatus[0];
-		var convertedPrice = sellingStatus.convertedCurrentPrice[0].__value__;
-		var shippingPrice = (shipping.shippingServiceCost && parseFloat(shipping.shippingServiceCost[0].__value__).toFixed(2)) || "Free";
-		var finalConvertedPrice = parseFloat(convertedPrice) + (parseFloat(shippingPrice) || 0);
-		totalPrice += finalConvertedPrice;
-		
-		priceRange = (finalConvertedPrice / 0).toFixed(0);
-
-	});
-
-	return (totalPrice / items.length).toFixed(2);
 }

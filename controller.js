@@ -4,14 +4,24 @@ angular.module('app',[])
 
     .filter('priceFilter', function() {
         return function(data, min, max) {
-            var returnData = [];
+            var filteredData = [];
 
             data.forEach(function(auction) {
                 if (auction.price >= min && auction.price <= max) {
-                    returnData.push(auction);
+
+                    filteredData.push(auction);
                 }
             });
-            return returnData;
+
+            selectedItems.forEach(function(selected) {
+
+                if (filteredData.indexOf(selected) === -1) {
+                    filteredData.unshift(selected);
+                }
+
+            });
+
+            return filteredData;
         }
     })
 
@@ -75,7 +85,6 @@ angular.module('app',[])
             });
 
             return items[maxIndex];
-
         }
 
 
