@@ -43,7 +43,7 @@ $(document).ready(function() {
 //Recalculates average price(before/after shipping), min/max and updates div
 function updateSelectedDataDiv() {
 
-	function getSumFor(searchKey) {
+	function calcAvg(searchKey) {
 		if (selectedItems.length !== 0) {
 			if (selectedItems.length === 1) {
 				return selectedItems[0][searchKey];
@@ -51,7 +51,7 @@ function updateSelectedDataDiv() {
 			var total = selectedItems.reduce(function (total, current) {
 						return (parseFloat(total[searchKey] || total || 0) + parseFloat(current[searchKey]));
 						});
-			return total;
+			return (total / selectedItems.length).toFixed(2);
 		}
 		else {
 			return 0;
@@ -128,8 +128,8 @@ function updateSelectedDataDiv() {
 	$('#selectedMin').html(minHTML);
 
 	$('#selectedItemNum').html(selectedItems.length + " item(s)");
-	$('#selectedAvg').html("$"+getSumFor("price"));
-	$('#selectedShipped').html("$"+getSumFor("finalPrice"));
+	$('#selectedAvg').html("$"+calcAvg("price"));
+	$('#selectedShipped').html("$"+calcAvg("finalPrice"));
 }
 
 

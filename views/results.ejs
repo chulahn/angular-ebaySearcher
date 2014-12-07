@@ -66,18 +66,23 @@
 
 						(function(i) {
 
-							var newRequestURL = requestURL + "&paginationInput.pageNumber=" + i;
-							var request = $.ajax({url : newRequestURL , dataType: "jsonp"});
+							setTimeout(function makeRequest() {
+								
+								var newRequestURL = requestURL + "&paginationInput.pageNumber=" + i;
+								var request = $.ajax({url : newRequestURL , dataType: "jsonp"});
 
-							request.done(function() {
+								request.done(function() {
 
-								parseData(request.responseJSON);
-								pageNum++;
+									parseData(request.responseJSON);
+									pageNum++;
 
-								if (pageNum === maxPage) {
-									showLoadedAllButton();					
-								}
-							});
+									if (pageNum === maxPage) {
+										showLoadedAllButton();					
+									}
+									console.log("end request " , i)
+								});
+
+							}, 50);
 
 						})(i);
 					}
@@ -217,13 +222,13 @@
 			
 		</div>
 		
-		<div id="selectedData">
+		<aside id="selectedData">
 			Selected <span id="selectedItemNum"></span><br/>
 			Average Price: <span id="selectedAvg"></span><br/>
 			Shipped: <span id="selectedShipped"></span><br/>
 			Lowest: <span id="selectedMin"></span><br/>
 			Highest: <span id="selectedMax"></span>
-		</div>
+		</aside>
 	</div>
 
 	<input ng-model="searchFilter" id="searchFilter" placeholder="Search auction titles"><br/>
