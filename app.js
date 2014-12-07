@@ -22,7 +22,6 @@ Date.prototype.getTime = function() {
 	return this.getHours() + ":" + this.getMinutes() + ":" + this.getSeconds()
 }
 
-
 /* Sandbox Keys
 	DEVID:
 	8ee23631-1214-4c86-960e-cf8caa6d4233
@@ -40,21 +39,22 @@ Date.prototype.getTime = function() {
 	CertID:
 	3dd9e415-0328-4847-96b7-a40494af2e4b
 */
-var url = "http://svcs.ebay.com/services/search/FindingService/v1";
-    url += "?OPERATION-NAME=findItemsByKeywords";
-    url += "&SERVICE-VERSION=1.0.0";
-    url += "&SECURITY-APPNAME="+appID;
-    url += "&GLOBAL-ID=EBAY-US";
-    url += "&RESPONSE-DATA-FORMAT=JSON";
-    url += "&callback=_cb_findItemsByKeywords";
-    url += "&REST-PAYLOAD";
-    url += "&keywords=harry%20potter";
-    url += "&paginationInput.entriesPerPage=10";  //1-100
-    // url += "&paginationInput.pageNumber=10";  //1-100
 
+
+
+app.get('/' , function (req,res) {
+
+	res.sendfile('index.html')
+	
+});
+
+
+function buildRequestURL(params) {
 
 
     /*
+	    url += "&sortOrder=EndTimeSoonest";
+		
 		sortorder takes
 		BestMatch - default
 
@@ -68,17 +68,6 @@ var url = "http://svcs.ebay.com/services/search/FindingService/v1";
 		PricePlusShippingHighest
 
     */
-
-
-    url += "&sortOrder=EndTimeSoonest";
-
-app.get('/' , function (req,res) {
-
-	res.sendfile('index.html')
-	
-});
-
-function buildRequestURL(params) {
 
 	var appID = "chulahnc0-347f-40b2-8df7-372d69c4c7e";
 
@@ -96,9 +85,9 @@ function buildRequestURL(params) {
     // url += "&paginationInput.pageNumber=10";  //1-100
     url += "&sortOrder=" + params.sort;
 
+
     return url;
 }
-
 
 
 app.post('/get/', function(req,res) {
@@ -115,9 +104,12 @@ app.post('/get/', function(req,res) {
 			result = JSON.parse(result);
 
 			var responseName = "";
+
 			for (response in result) {
+				console.log(response);
 				responseName = response;
 			}
+
 			result = result[responseName][0];
 
 			var success = result.ack[0];
@@ -174,34 +166,27 @@ app.post('/get/', function(req,res) {
 					return itemDetails;
 
 				});
-
+				console.log(responseName)
 				res.render("results.ejs" , {ejs_items: items, ejs_newItems: newItems, ejs_reqURL: requestURL, ejs_pagination: paginationOutput});
 
 
 			}
 
 		}
-		// console.log(response)
-
-
-		
 
 	});
-
 });
+
 
 app.get('/scripts/script.js', function (req,res) {
 	res.sendfile('scripts/script.js');
 });
-
 app.get('/styles/style.css', function (req,res) {
 	res.sendfile('styles/style.css');
 });
 app.get('/styles/style.less', function (req,res) {
 	res.sendfile('styles/style.less');
 });
-
-
 app.get('/controller.js', function (req,res) {
 	res.sendfile('controller.js');
 });

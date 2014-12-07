@@ -2,30 +2,19 @@
 <html lang="en">
 <head>
 
+	<!-- JS Libraries -->
 	<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 	<script src="https://code.jquery.com/ui/1.11.2/jquery-ui.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.3/angular.js"></script>
 
+	<!-- Stylesheets -->
 	<!-- <link href="../styles/style.css" rel="stylesheet"></link> -->
 	<link rel="stylesheet/less" type="text/css" href="../styles/style.less"></link>
 	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/less.js/2.1.1/less.min.js"></script>
 
+
 	<script src="../controller.js"></script>
 	<script>				
-		<% 
-			var numPages =  JSON.parse(JSON.stringify(ejs_pagination)) 
-			var totalEntries = numPages.totalEntries[0]; 
-			var entriesPerPage = numPages.entriesPerPage[0] 
-		%>
-		var entriesPerPage = <%- entriesPerPage %>
-		var items = <%- JSON.stringify(ejs_items) %>
-		//newItems are items mapped for app usage
-		var newItems = <%- JSON.stringify(ejs_newItems) %>
-		var totalResults = <%- entriesPerPage %>
-		var requestURL = <%- JSON.stringify(ejs_reqURL) %>
-		var pageNum = 1;
-		var maxPage = Math.ceil(<%- totalEntries %> / <%- entriesPerPage %>);
-
 		Date.prototype.getDateString = function() {
 			return this.getMonth()+1 + "/" + this.getDate() + "/" + (this.getYear()-100)
 		}
@@ -34,10 +23,29 @@
 			return this.getHours() + ":" + this.getMinutes() + ":" + this.getSeconds()
 		}
 
-		$(document).ready(function() {
-			$('#moreResults').click(function() {
-				if (pageNum <= maxPage-1) {
+		<% 
+			var numPages =  JSON.parse(JSON.stringify(ejs_pagination)) 
+			var totalEntries = numPages.totalEntries[0]; 
+			var entriesPerPage = numPages.entriesPerPage[0] 
+		%>
 
+		//items: values before mapped, newItems: after
+		var items = <%- JSON.stringify(ejs_items) %>
+		var newItems = <%- JSON.stringify(ejs_newItems) %>
+
+		var requestURL = <%- JSON.stringify(ejs_reqURL) %>
+		
+		var totalResults = <%- entriesPerPage %>
+		var pageNum = 1;
+		var maxPage = Math.ceil(<%- totalEntries %> / <%- entriesPerPage %>);
+		
+
+
+		$(document).ready(function() {
+
+			//Makes AJAX call to get next 100 items.
+			$('#moreResultsButton').click(function() {
+				if (pageNum <= maxPage-1) {
 					pageNum++;
 
 					var newRequestURL = requestURL + "&paginationInput.pageNumber=" + pageNum;
@@ -51,7 +59,7 @@
 				}
 			});
 
-			$('#loadAll').click(function() {
+			$('#loadAllButton').click(function() {
 				if (pageNum <= maxPage-1) {
 
 					for (var i=pageNum+1; i<maxPage+1; i++) {
@@ -76,16 +84,19 @@
 				}
 			});
 
+			//Since angular dynamically creates table from filtered items, checkboxes and highlights are lost.
+			//Makes sure items that were selected stay selected.
 			$('#searchFilter').on('keyup', function() {
 				selectedItems.forEach(function(selectedItem) {
 					var index = selectedItem.index;
-					var checkbox =$('input[name='+index+']'); 
+					var checkbox = $('input[name='+index+']'); 
 					checkbox.prop('checked', true);
 					var row = checkbox.parent().parent();
 					row.addClass('highlighted');
 				});
 			});
 
+			//Jumps to the item in the table and briefly highlights it.
 			$('#container').on('click', 'a', function() {
 				var current = $(this);
 				var selectedID = current.attr('href').slice(1);
@@ -99,21 +110,26 @@
 			});
 		})
 
-		function parseData(result) {
+		//After making AJAX call, maps data to be used with the app.
+		//Then calls addToScope to add mapped data to scope.
+		function parseData(JSONresponse) {
 			console.log("parsedata");
 			var responseName = "";
-			for (response in result) {
+
+			//get the responseName property, so items can be accessed.
+			//findCompletedItemsResponse, findItemsByKeywordsResponse, etc.
+			for (response in JSONresponse) {
 				responseName = response;
 			}
-			result = result[responseName][0];
 
-			var success = result.ack[0];
+			JSONresponse = JSONresponse[responseName][0];
 
+			var success = JSONresponse.ack[0];
 			if (success === "Success" || success === "Warning") {
 
-				var paginationOutput = result.paginationOutput[0];
+				var paginationOutput = JSONresponse.paginationOutput[0];
 			
-				var items = result.searchResult[0].item;
+				var items = JSONresponse.searchResult[0].item;
 
 				var newItems = items.map(function(item) {
 
@@ -155,22 +171,20 @@
 
 			addToScope(newItems);
 		}
-
-		function addToScope(items) {
-			console.log("addToScope");
+		function addToScope(newRequestedItems) {
 			var scope = angular.element($('[ng-controller=dataController')).scope();
-			scope.items = scope.items.concat(items);
+			scope.items = scope.items.concat(newRequestedItems);
 
 			$('#numEntries').html(scope.items.length);
 			
 			scope.$apply();
-			console.log(scope.items);
+			console.log("addToScope: added items ", scope.items);
 		}
 
 		function showLoadedAllButton() {
-			$('#loadAll').hide();
-			$('#moreResults').html("Loaded all results");
-			$('#moreResults').attr('id','allLoaded');			
+			$('#loadAllButton').hide();
+			$('#moreResultsButton').html("Loaded all results");
+			$('#moreResultsButton').attr('id','allLoadedButton');			
 		}
 
 	</script>
@@ -185,11 +199,11 @@
 	Total Results: <%= totalEntries %><br/>
 	Entries per page: <%= entriesPerPage %><br/> 
 	Showing {{filteredItems.length}} out of <span id="numEntries"><%- entriesPerPage %></span> results<br/>
-	<span id="moreResults">Click Here for More Results</span><br/>
-	<span id="loadAll">Load All Results</span><br/><br/>
+	<span id="moreResultsButton">Click Here for More Results</span><br/>
+	<span id="loadAllButton">Load All Results</span><br/><br/>
 	
 	<div id="container">
-		<div id="filteredData">
+		<div id="filteredDataDiv">
 			Filtered {{filteredItems.length}} item(s) <br/>		
 			Average Price: {{getAvg(filteredItems, 'price')}}<br/>
 			Shipped Price: {{getAvg(filteredItems, 'finalPrice')}}<br/>
@@ -219,7 +233,7 @@
 	<input type="number" ng-model="maxPrice" id="maxPriceFilter" placeholder="Enter Maximum Price"><br/>
 
 
-	<table id="searchResult">
+	<table id="searchResultsTable">
 		<tr>
 			<th>Image</th>
 			<th>Title</th>
@@ -239,25 +253,19 @@
 
 		<tr ng-repeat = "item in filteredItems">
 
-			<td><span class="selected"></span><img ng-src = {{item.img}} ></td>
+			<td><img ng-src = {{item.img}} ></td>
 			<td><input type="checkbox" id="{{items.indexOf(item)}}"><a href = {{item.url}} >{{item.title}}</a></td>
 			<td>{{item.id}}</td>
 			<td>
 				Price: {{item.price}}<br/>
 				Shipping: {{item.shipping}}<br/>
-				<span class="shipped">Total: {{item.finalPrice}}</span><br/>
-				{{if (item.status === "EndedWithoutSales") ? "Ended without sales" : ""}}
+				<span class="shippedPrice">Total: {{item.finalPrice}}</span><br/>
 				<span class="nosale" ng-if="item.status === 'EndedWithoutSales'">ENDED WITHOUT SALE</span>
 			</td>
 			<td>{{item.endTime.str}}</td>
 		</tr>
 	</table>
 
-
-	<span id="addItems">Add selected items</span>
-
-	<nav></nav>
-	<div id="searchResults"></div>
 	
 </body>
 </html>

@@ -1,65 +1,47 @@
-var tableTopHTML = "<table><tr><th>Image</th><th>Title</th><th>ID</th><th>Price</th><th>End Date</th></tr>";
 var selectedItems = [];
 var selectedMin = selectedItems[0];
 var selectedMax = selectedItems[0];
 
-Date.prototype.getDateString = function() {
-	return this.getMonth()+1 + "/" + this.getDate() + "/" + (this.getYear()-100)
-}
-
-Date.prototype.getTime = function() {
-	return this.getHours() + ":" + this.getMinutes() + ":" + this.getSeconds()
-}
-
 $(document).ready(function() {
 
-	/*item has
-		itemId
-		title
-		globalId = ebayus
-		sellingStatus = array[0] w. currentPrice, convertedCurrentPrice, sellingState
-	*/
-	$('#searchResult').on('click', 'input[type="checkbox"]', function() {
-		var arrayIndex = parseInt($(this).attr('id'));
 
+
+	/*
+		Click Handler for checkboxes in table
+		Highlights the row, adds item to selectedItems, and updates selectedItemsDiv
+	*/
+	$('#searchResultsTable').on('click', 'input[type="checkbox"]', function() {
+		
 		var items = angular.element($('[ng-controller=dataController')).scope().items;
-		var currentItem = items[arrayIndex];
+		
+		var selectedItemIndex = parseInt($(this).attr('id'));
+		var currentItem = items[selectedItemIndex];
 		currentItem.index = items.indexOf(currentItem);
 
 		var currentRow = $(this).parent().parent();
 		currentRow.toggleClass('highlighted');
+
 		console.log(currentItem.id);
+
 		if (currentRow.hasClass('highlighted')) {
 			selectedItems.push(currentItem);
 		}
+
 		else {
-			console.log("removed")
+			console.log("removed from index ", removeIndex)
 			var removeIndex = selectedItems.indexOf(currentItem);
-			console.log(removeIndex);
 			selectedItems.splice(removeIndex,1);
 		}
-		updateSelectedData();
+
+		updateSelectedDataDiv();
 		console.log(selectedItems);
-
 	});
 
 
-	$('#addItems').click(function() {
-		console.log(123);
-		$('input[type="checkbox"]').each(function() {
-			console.log($(this).prop('checked'));
-			if ($(this).prop('checked') === true) {
-				$(this).parent().removeClass();
-				$(this).parent().addClass('added');
-				console.log("added classes")
-			}
-			// $(this).
-		})
-	});
 });
 
-function updateSelectedData() {
-
+//Recalculates average price(before/after shipping), min/max and updates div
+function updateSelectedDataDiv() {
 
 	function getSumFor(searchKey) {
 		if (selectedItems.length !== 0) {
@@ -122,7 +104,6 @@ function updateSelectedData() {
     function getMinMaxHTML(minMax) {
 
     	if (minMax === 0) {
-
     		return minMax;
     	}
 
@@ -151,6 +132,10 @@ function updateSelectedData() {
 	$('#selectedShipped').html("$"+getSumFor("finalPrice"));
 }
 
+
+
+
+//Old JQuery Way of creating table
 function getResultsForPage(pageNum) {
 	var tableDataHTML = "<form>";
 
