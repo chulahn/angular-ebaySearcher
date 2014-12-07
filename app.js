@@ -140,7 +140,6 @@ app.post('/get/', function(req,res) {
 				console.log(items);
 
 				var newItems = items.map(function(item) {
-					console.log(colors.blue(item.galleryURL[0]))
 
 					var itemDetails = {
 						id: item.itemId[0],

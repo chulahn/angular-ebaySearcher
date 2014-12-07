@@ -37,16 +37,42 @@
 		$(document).ready(function() {
 			$('#moreResults').click(function() {
 				if (pageNum <= maxPage-1) {
-					pageNum += 1;
+
+					pageNum++;
+
 					var newRequestURL = requestURL + "&paginationInput.pageNumber=" + pageNum;
-					console.log(pageNum);
-						var request = $.ajax({url : newRequestURL , dataType: "jsonp"});
-						console.log(request);
-						request.done(parseData);
+					var request = $.ajax({url : newRequestURL , dataType: "jsonp"});
+
+					request.done(parseData);
 				}
-				if (pageNum == maxPage) {
-					$(this).html("Loaded all results");
-					$(this).attr('id','allLoaded');
+
+				if (pageNum === maxPage) {
+					showLoadedAllButton();
+				}
+			});
+
+			$('#loadAll').click(function() {
+				if (pageNum <= maxPage-1) {
+
+					for (var i=pageNum+1; i<maxPage+1; i++) {
+
+						(function(i) {
+
+							var newRequestURL = requestURL + "&paginationInput.pageNumber=" + i;
+							var request = $.ajax({url : newRequestURL , dataType: "jsonp"});
+
+							request.done(function() {
+
+								parseData(request.responseJSON);
+								pageNum++;
+
+								if (pageNum === maxPage) {
+									showLoadedAllButton();					
+								}
+							});
+
+						})(i);
+					}
 				}
 			});
 
@@ -141,6 +167,12 @@
 			console.log(scope.items);
 		}
 
+		function showLoadedAllButton() {
+			$('#loadAll').hide();
+			$('#moreResults').html("Loaded all results");
+			$('#moreResults').attr('id','allLoaded');			
+		}
+
 	</script>
 	<script src="../scripts/script.js"></script>
 	<meta charset="UTF-8">
@@ -153,7 +185,8 @@
 	Total Results: <%= totalEntries %><br/>
 	Entries per page: <%= entriesPerPage %><br/> 
 	Showing {{filteredItems.length}} out of <span id="numEntries"><%- entriesPerPage %></span> results<br/>
-	<span id="moreResults">Click Here for More Results</span><br/><br/>
+	<span id="moreResults">Click Here for More Results</span><br/>
+	<span id="loadAll">Load All Results</span><br/><br/>
 	
 	<div id="container">
 		<div id="filteredData">
@@ -195,8 +228,16 @@
 			<th>End Date</th>
 		</tr>
 
-		<tr ng-repeat = "item in filteredItems=(items | filter : {title:searchFilter, status: completedFilter ? 'EndedWithSales' : '',
-		  shortCondID: newFilter ? '1' : '' } |  priceFilter:(minPrice || 0):(maxPrice || 10000) )">
+		{{$parse(
+			filteredItems = (items | 
+				filter: {title: searchFilter, 
+						status: completedFilter ? 'EndedWithSales' : '', 
+						shortCondID: newFilter ? '1' : ''} |
+				priceFilter: (minPrice || 0) : (maxPrice || 10000) 
+			) 
+		)}}
+
+		<tr ng-repeat = "item in filteredItems">
 
 			<td><span class="selected"></span><img ng-src = {{item.img}} ></td>
 			<td><input type="checkbox" id="{{items.indexOf(item)}}"><a href = {{item.url}} >{{item.title}}</a></td>

@@ -7,7 +7,7 @@ angular.module('app',[])
             var filteredData = [];
 
             data.forEach(function(auction) {
-                if (auction.price >= min && auction.price <= max) {
+                if (auction.finalPrice >= min && auction.finalPrice <= max) {
 
                     filteredData.push(auction);
                 }
