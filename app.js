@@ -94,12 +94,14 @@ app.post('/get/', function(req,res) {
 
 	var requestURL = buildRequestURL(req.body);
 
-	// console.log(colors.red(requestURL));
-
+	for (i in req.body) {
+		console.log(colors.red(i));
+		//keyword, sort, requestedType
+	}
 
 	request(requestURL, function(err, response, body) {
 		if (!err) {
-			console.log(colors.green(body));
+			//console.log(colors.green(body));
 			var result = body;
 			result = JSON.parse(result);
 
@@ -129,7 +131,7 @@ app.post('/get/', function(req,res) {
 
 				var items = result.searchResult[0].item;
 
-				console.log(items);
+				//console.log(items);
 
 				var newItems = items.map(function(item) {
 
@@ -166,7 +168,8 @@ app.post('/get/', function(req,res) {
 					return itemDetails;
 
 				});
-				console.log(responseName)
+
+				//console.log(responseName)
 				res.render("results.ejs" , {ejs_items: items, ejs_newItems: newItems, ejs_reqURL: requestURL, ejs_pagination: paginationOutput});
 
 
@@ -186,6 +189,12 @@ app.get('/styles/style.css', function (req,res) {
 });
 app.get('/styles/style.less', function (req,res) {
 	res.sendfile('styles/style.less');
+});
+app.get('/styles/index.css', function (req,res) {
+	res.sendfile('styles/index.css');
+});
+app.get('/styles/index.less', function (req,res) {
+	res.sendfile('styles/index.less');
 });
 app.get('/controller.js', function (req,res) {
 	res.sendfile('controller.js');

@@ -43,6 +43,10 @@
 
 		$(document).ready(function() {
 
+			if (pageNum === maxPage) {
+				showLoadedAllButton();
+			}
+
 			//Makes AJAX call to get next 100 items.
 			$('#moreResultsButton').click(function() {
 				if (pageNum <= maxPage-1) {
@@ -177,7 +181,7 @@
 			addToScope(newItems);
 		}
 		function addToScope(newRequestedItems) {
-			var scope = angular.element($('[ng-controller=dataController')).scope();
+			var scope = angular.element($('[ng-controller=dataController]')).scope();
 			scope.items = scope.items.concat(newRequestedItems);
 
 			$('#numEntries').html(scope.items.length);
@@ -195,24 +199,53 @@
 	</script>
 	<script src="../scripts/script.js"></script>
 	<meta charset="UTF-8">
-	<title>Search results</title>
+	<title>Search Results</title>
 </head>
 
 <body ng-app="app" ng-controller="dataController">
 
+	<span id="newSearch">Search another item</span></br>
+
+	<div id="newSearchDiv">
+		<form action="../get" method="post">
+			<p><label for="keyword">Item: </label> <input id="keyword" name="keyword"><br/></p>
+
+			<p><label for="sortBy">Sort By: </label>
+				<select id="sortBy" name="sortBy">
+					<option value="BestMatch">Best Match</option>
+					<option value="PricePlusShippingLowest">Lowest Shipped Price</option>
+					<option value="PricePlusShippingHighest">Highest Shipped Price</option>
+					<option value="EndTimeSoonest">Ending soonest</option>
+				</select>
+			</p>
+
+			<p><label for="requestType">Live/Completed:</label>
+				<select id="requestType" name="requestType">
+					<option value="findItemsByKeywords">Live Auctions</option>
+					<option value="findCompletedItems">Completed Auctions</option>
+				</select><br/></p>
+
+			<button type="submit">Submit</button>
+		</form>
+
+	</div>
+
+
 	<%= ejs_reqURL %><br/><br/>
+	{{$parse(oldestItem = getOldest(filteredItems))}}
+	{{$parse(endOldestDateStr = (oldestItem.endTime.str.indexOf(" ") || "N/A") )}}
+	Showing results from {{(oldestItem.endTime.str.slice(0, endOldestDateStr) || "N/A") }}<br/>
 	Total Results: <%= totalEntries %><br/>
-	Entries per page: <%= entriesPerPage %><br/> 
-	Showing {{filteredItems.length}} out of <span id="numEntries"><%- entriesPerPage %></span> results<br/>
+	Entries per page: <%= entriesPerPage %><br/>
+	Showing {{filteredItems.length}} out of <span id="numEntries"><%- (parseInt(totalEntries) < parseInt(entriesPerPage)) ? totalEntries : entriesPerPage %></span> results<br/>
 	<span id="moreResultsButton">Click Here for More Results</span><br/>
 	<span id="loadAllButton">Load All Results</span><br/><br/>
 	
 	<div id="container">
 		<div id="filteredDataDiv">
-			Filtered {{filteredItems.length}} item(s) <br/>		
+			Showing filtered {{filteredItems.length}} item(s) <br/>
 			Average Price: {{getAvg(filteredItems, 'price')}}<br/>
 			Shipped Price: {{getAvg(filteredItems, 'finalPrice')}}<br/>
-			
 			{{$parse(lowestItem = getMin(filteredItems, 'finalPrice'))}}
 			{{$parse(highestItem = getMax(filteredItems, 'finalPrice'))}}
 
@@ -231,12 +264,14 @@
 		</aside>
 	</div>
 
-	<input ng-model="searchFilter" id="searchFilter" placeholder="Search auction titles"><br/>
-	<input ng-model="completedFilter" type="checkbox">Completed auctions only<br/>
-	<input ng-model="newFilter" type="checkbox">New auctions only</body><br/>
-	<input type="number" ng-model="minPrice" id="minPriceFilter" placeholder="Enter Minimum Price"><br/>
-	<input type="number" ng-model="maxPrice" id="maxPriceFilter" placeholder="Enter Maximum Price"><br/>
-
+	<div id="filterDiv">
+		<h2>Filter Results</h2>
+		<input ng-model="searchFilter" id="searchFilter" placeholder="Search auction titles"><br/>
+		<input ng-model="completedFilter" type="checkbox">Completed auctions only<br/>
+		<input ng-model="newFilter" type="checkbox">New auctions only</body><br/>
+		<input type="number" ng-model="minPrice" id="minPriceFilter" placeholder="Enter Minimum Price"><br/>
+		<input type="number" ng-model="maxPrice" id="maxPriceFilter" placeholder="Enter Maximum Price"><br/>
+	</div>
 
 	<table id="searchResultsTable">
 		<tr>

@@ -84,9 +84,32 @@ angular.module('app',[])
 
             });
 
+
             return items[maxIndex];
         }
 
+        $scope.getOldest = function(items) {
+
+
+            if (items.length === 0) {
+                return "N/A";
+            }
+
+            var oldestTime = items[0].endTime.date;
+            var oldest = items[0];
+
+            items.forEach(function(auction) {
+
+                if (auction.endTime.date < oldestTime) {
+
+                    oldestTime = auction.endTime.date;
+                    oldest = auction;
+
+                }
+
+            });
+            return oldest;
+        }
 
     });
 

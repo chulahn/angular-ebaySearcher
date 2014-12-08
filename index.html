@@ -5,6 +5,8 @@
 	<title>Document</title>
 	<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 
+	<link rel="stylesheet" type="text/css" href="styles/index.css"></link>
+	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/less.js/2.1.1/less.min.js"></script>
 	<script>
 		$(document).ready(function() {
 			
@@ -25,27 +27,31 @@
 </head>
 <body>
 
-
+<div id="formContainer">
+	<h1>Get Prices For</h1>
 	<form id="formSearch" action="/get/" method="post">
-		Enter Keyword
-		<input type="text" name="keyword"></input><br/>
-		Sort By: 
-		<select name="sort">
+
+		<p><label for="keyword">Item:</label> <input type="text" id="keyword" name="keyword" placeholder="Enter Keyword"></input><br/></p>
+
+		<p><label for="sortBy">Sort By:</label>
+		<select id="sortBy" name="sort">
 			<option value="BestMatch">Best Match</option>
-			<option value="PricePlusShippingLowest">Lowest price w shipping</option>
-			<option value="PricePlusShippingHighest">Highest price w shipping</option>
-			<option value="EndTimeSoonest">Soonest end time</option>
-		</select><br/>
-		<select name="requestType">
-			<option value="findCompletedItems">completed auctions</option>
-			<option value="findItemsByKeywords">current auctions</option>
-		</select>
+			<option value="PricePlusShippingLowest">Lowest Shipped Price</option>
+			<option value="PricePlusShippingHighest">Highest Shipped Price</option>
+			<option value="EndTimeSoonest">Ending soonest</option>
+		</select><br/></p>
+
+		<p><label for="requestType">Live/Completed:</label>
+		<select id="requestType" name="requestType">
+			<option value="findItemsByKeywords">Live Auctions</option>
+			<option value="findCompletedItems">Completed Auctions</option>
+		</select><br/></p>
 
 
 		<button type="submit">Submit</button>
-
 	
 	</form>
+</div>
 	
 </body>
 </html>

@@ -4,7 +4,11 @@ var selectedMax = selectedItems[0];
 
 $(document).ready(function() {
 
+	$('#newSearchDiv').hide();
 
+	$('#newSearch').click(function() {
+		$('#newSearchDiv').show();
+	});
 
 	/*
 		Click Handler for checkboxes in table
