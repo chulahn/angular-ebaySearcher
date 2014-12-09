@@ -1,0 +1,27 @@
+#formContainer {
+  border: 1px solid blue;
+  border-radius: 5px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  display: table;
+  padding: 30px;
+  text-align: center;
+  width: 300px;
+}
+#formContainer label {
+  float: left;
+}
+#formContainer input {
+  float: right;
+  width: 170px;
+}
+#formContainer select {
+  float: right;
+  width: 170px;
+}
+#formSearch {
+  left: 0;
+  right: 0
+  margin:0 auto;
+}

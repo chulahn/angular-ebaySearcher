@@ -184,6 +184,9 @@ app.post('/get/', function(req,res) {
 app.get('/scripts/script.js', function (req,res) {
 	res.sendfile('scripts/script.js');
 });
+app.get('/scripts/d3viz.js', function (req,res) {
+	res.sendfile('scripts/d3viz.js');
+});
 app.get('/styles/style.css', function (req,res) {
 	res.sendfile('styles/style.css');
 });

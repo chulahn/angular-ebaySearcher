@@ -91,7 +91,7 @@ angular.module('app',[])
         $scope.getOldest = function(items) {
 
 
-            if (items.length === 0) {
+            if (items === undefined || items.length === 0) {
                 return "N/A";
             }
 
