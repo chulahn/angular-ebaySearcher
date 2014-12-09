@@ -103,7 +103,9 @@ app.post('/get/', function(req,res) {
 		if (!err) {
 			//console.log(colors.green(body));
 			var result = body;
+			console.log(result);
 			result = JSON.parse(result);
+
 
 			var responseName = "";
 

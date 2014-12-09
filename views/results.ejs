@@ -50,46 +50,40 @@
 				showLoadedAllButton();
 			}
 
+
+			function makeRequest(i) {
+				var newRequestURL = requestURL + "&paginationInput.pageNumber=" + (i+1);
+				console.log('making request to ', newRequestURL)
+				var request = $.ajax({url : newRequestURL , dataType: "jsonp"});
+
+				request.done(function() {
+					console.log('finished request');
+					parseData(request.responseJSON);
+					pageNum++;
+					updateViz();
+				
+					if (pageNum === maxPage) {
+						showLoadedAllButton();
+					}
+				});
+			}
 			//Makes AJAX call to get next 100 items.
 			$('#moreResultsButton').click(function() {
+				console.log('licked')
 				if (pageNum <= maxPage-1) {
-					pageNum++;
-
-					var newRequestURL = requestURL + "&paginationInput.pageNumber=" + pageNum;
-					var request = $.ajax({url : newRequestURL , dataType: "jsonp"});
-
-					request.done(parseData);
+					makeRequest(pageNum);
 				}
 
-				if (pageNum === maxPage) {
-					showLoadedAllButton();
-				}
 			});
 
 			$('#loadAllButton').click(function() {
 				if (pageNum <= maxPage-1) {
 
-					for (var i=pageNum+1; i<maxPage+1; i++) {
+					for (var i=pageNum; i<maxPage; i++) {
 
 						(function(i) {
-
-							setTimeout(function makeRequest() {
-								
-								var newRequestURL = requestURL + "&paginationInput.pageNumber=" + i;
-								var request = $.ajax({url : newRequestURL , dataType: "jsonp"});
-
-								request.done(function() {
-
-									parseData(request.responseJSON);
-									pageNum++;
-
-									if (pageNum === maxPage) {
-										showLoadedAllButton();					
-									}
-									console.log("end request " , i)
-								});
-
-							}, 50);
+							console.log("i == ", i);
+							setTimeout(makeRequest(i), 50);
 
 						})(i);
 					}
@@ -110,7 +104,11 @@
 			});
 
 			//Jumps to the item in the table and briefly highlights it.
-			$('#container').on('click', 'a', function() {
+			$('#container').on('click', 'a', highlightJump);
+
+			$('#vizDiv').on('click', 'a', highlightJump)
+		
+			function highlightJump() {
 				var current = $(this);
 				var selectedID = current.attr('href').slice(1);
 
@@ -120,19 +118,9 @@
 				selectedRow.addClass('jump');
 				selectedRow.removeClass('jump', 1000);
 
-			});
+			}
 
-			$('#vizDiv').on('click', 'a', function() {
-				var current = $(this);
-				var selectedID = current.attr('href').slice(1);
-
-				var selectedCheckbox = $('#'+selectedID);
-				var selectedRow = selectedCheckbox.parent().parent();
-
-				selectedRow.addClass('jump');
-				selectedRow.removeClass('jump', 1000);
-			})
-		})
+		})//end document ready
 
 		//After making AJAX call, maps data to be used with the app.
 		//Then calls addToScope to add mapped data to scope.
