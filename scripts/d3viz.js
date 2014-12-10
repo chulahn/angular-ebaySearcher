@@ -1,5 +1,5 @@
 var d3Globals = {}
-d3Globals.dimens = {"w": 600, "h": 200};
+d3Globals.dimens = {"w": $('#vizDiv').width() * .95, "h": $('#vizDiv').height() * .95};
 d3Globals.padding = 40;
 d3Globals.tip = d3.tip().attr('class', 'd3-tip')
 					.html(function(d) {
@@ -19,10 +19,12 @@ d3Globals.tip = d3.tip().attr('class', 'd3-tip')
 
 $(document).ready(function() {
 
-	function drawViz() {
-		var dimens = {"w": 600, "h": 200};
-		var padding = 40;
+	d3Globals.dimens = {"w": $('#vizDiv').width() * .95, "h": $('#vizDiv').height() * .95};
 
+
+	function drawViz() {
+		var dimens = d3Globals.dimens;
+		var padding = 40;
 
 		var scope = angular.element($('[ng-controller=dataController]')).scope();
 		var data = scope.filteredItems;
@@ -53,18 +55,21 @@ $(document).ready(function() {
 						.domain(
 							[d3.min(newItems, function(d) { 
 								var currentDate = new Date(d.endTime.date);
+								currentDate = new Date(currentDate.toLocaleDateString());
 								return currentDate;
 								}),
 							 d3.max(newItems, function(d) {
 							 	var currentDate = new Date(d.endTime.date);
+							 	currentDate = new Date(currentDate.toLocaleDateString());
 							 	return currentDate;
 							})]
 						)
 						.range([0 + padding, dimens.w - padding]);
-						
+			
+
 
 		var xAxis = d3.svg.axis();
-		xAxis.scale(xScale).orient('bottom').ticks(7);
+		xAxis.scale(xScale).orient('bottom').ticks(5);
 
 		var yScale = d3.scale.linear()
 						.domain(
@@ -77,16 +82,15 @@ $(document).ready(function() {
 
 
 		svg.append('g')
-			.attr('class', 'axis')
+			.attr('class', 'x axis')
 			.attr('transform', 'translate(0,' + (dimens.h - padding) + ')')
 			.call(xAxis);
 
 
 		svg.append('g')
-			.attr('class', 'axis')
+			.attr('class', 'y axis')
 			.attr('transform', 'translate(' + padding + ',0 )')
 			.call(yAxis);
-
 
 
 		svg.selectAll('circle')
@@ -99,7 +103,8 @@ $(document).ready(function() {
 			.append('circle')
 			.attr('cx', function(d) {
 				var currentDate = new Date(d.endTime.date);
-				console.log(currentDate.getDateString(), xScale(currentDate));
+				currentDate = new Date(currentDate.toLocaleDateString());
+				// console.log(currentDate.getDateString(), xScale(currentDate));
 				return xScale(currentDate);
 				// return 1;
 			})
@@ -118,16 +123,21 @@ $(document).ready(function() {
 	
 });
 
+
+
 function updateViz() {
 	console.log('update called')
 	var svg = d3.select('#vizDiv').select('svg');
+
+	var dimens = d3Globals.dimens = {"w": $('#vizDiv').width() * .95, "h": $('#vizDiv').height() * .95};
+
 
 	var scope = angular.element($('[ng-controller=dataController]')).scope();
 	var data = scope.filteredItems;
 
 	console.log(data.length)
+	// console.log(d3.max(data, function(d){return d.finalPrice}))
 
-	console.log(svg.selectAll('circle'));
 
 	var circles = svg.selectAll('circle').data(data);
 
@@ -138,22 +148,73 @@ function updateViz() {
 					.domain(
 						[d3.min(data, function(d) { 
 							var currentDate = new Date(d.endTime.date);
+							currentDate = new Date(currentDate.toLocaleDateString());
+							console.log("update ", currentDate);
 							return currentDate;
 							}),
 						 d3.max(data, function(d) {
 						 	var currentDate = new Date(d.endTime.date);
+						 	currentDate = new Date(currentDate.toLocaleDateString());
+						 	console.log("update max ", currentDate)
 						 	return currentDate;
 						})]
 					)
-					.range([0 + padding, 600 - padding]);
+					.range([0 + padding, dimens.w - padding]);
+
+	console.log(d3.min(data, function(d) { 
+							var currentDate = new Date(d.endTime.date);
+							currentDate = new Date(currentDate.toLocaleDateString());
+							return currentDate;
+							}), d3.max(data, function(d) {
+						 	var currentDate = new Date(d.endTime.date);
+						 	currentDate = new Date(currentDate.toLocaleDateString());
+						 	return currentDate;
+						}))
+
+	var xAxis = d3.svg.axis();
+	xAxis.scale(xScale).orient('bottom').ticks(5);
 
 	var yScale = d3.scale.linear()
 					.domain(
-						[0, d3.max(newItems, function(d) {return d.finalPrice;})]
+						[0, d3.max(data, function(d) {return d.finalPrice;})]
 					)
-					.range([200 - padding, padding]);
+					.range([dimens.h - padding, padding]);
 
-	svg.call(d3Globals.tip)
+	var yAxis = d3.svg.axis();
+	yAxis.scale(yScale).orient('left').ticks(5);
+
+	svg.select('.x.axis')
+		.transition()
+		.duration(1000)
+		.call(xAxis);
+	svg.select('.y.axis')
+		.transition()
+		.duration(1000)
+		.call(yAxis);
+
+	svg.call(d3Globals.tip);
+
+	circles.transition()
+		.duration(1000)
+		.each("start", function(d) {
+			d3.select(this)
+				.attr('fill', 'red')
+				.attr('r', '7');
+		})
+		.attr('cx', function(d) {
+			var currentDate = new Date(d.endTime.date);
+			currentDate = new Date(currentDate.toLocaleDateString());
+
+			console.log(currentDate.getDateString(), xScale(currentDate));
+			return xScale(currentDate);
+		})
+		.attr('cy', function(d) {
+			return yScale(d.finalPrice);
+		})
+		.transition()
+		.duration(1000)
+		.attr('fill', 'black')
+		.attr('r', '2');
 
 	circles.enter()
 		.append('a').attr('xlink:href', function(d) {
@@ -162,6 +223,7 @@ function updateViz() {
 		.append('circle')
 		.attr('cx', function(d) {
 			var currentDate = new Date(d.endTime.date);
+			currentDate = new Date(currentDate.toLocaleDateString());
 			console.log(currentDate.getDateString(), xScale(currentDate));
 			return xScale(currentDate);
 			// return 1;

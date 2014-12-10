@@ -139,7 +139,7 @@ app.post('/get/', function(req,res) {
 
 					var itemDetails = {
 						id: item.itemId[0],
-						img : (item.galleryURL && item.galleryURL[0]) || "no image",
+						img : (item.galleryURL && item.galleryURL[0]) || "../no_image.jpg",
 						url : item.viewItemURL[0],
 						title : item.title[0],
 						conditionID : (item.condition && item.condition[0] && item.condition[0].conditionId[0]) || "No Condition Listed",
@@ -203,6 +203,10 @@ app.get('/styles/index.less', function (req,res) {
 });
 app.get('/controller.js', function (req,res) {
 	res.sendfile('controller.js');
+});
+
+app.get('/no_image.jpg', function (req,res) {
+	res.sendfile('no_image.jpg');
 });
 
 
