@@ -60,7 +60,7 @@
 					console.log('finished request');
 					parseData(request.responseJSON);
 					pageNum++;
-					updateViz();
+					updateViz("newData");
 				
 					if (pageNum === maxPage) {
 						showLoadedAllButton();
