@@ -91,18 +91,56 @@
 				}
 			});
 
-			//Since angular dynamically creates table from filtered items, checkboxes and highlights are lost.
-			//Makes sure items that were selected stay selected.
-			$('#searchFilter').on('keyup', function() {
-				selectedItems.forEach(function(selectedItem) {
-					var index = selectedItem.index;
-					var checkbox = $('input[name='+index+']'); 
-					checkbox.prop('checked', true);
-					var row = checkbox.parent().parent();
-					row.addClass('highlighted');
-				});
+
+			$('#filterDiv input').on('keyup', function() {
+				console.log(123)
 				updateViz();
-			});
+
+				setTimeout(clearLeftovers, 2000);
+
+
+				//not finished
+				function clearLeftovers() {
+
+					var shown = $('svg circle[r="2"]');
+
+					var expected = angular.element($('[ng-controller=dataController]')).scope().filteredItems
+
+
+					if (expected.length === shown.length) {
+						console.log("all good")
+					}
+
+					else {
+
+						shown.each(function(i,s) {
+
+							var current = $(this)
+
+							var currentId = $(this).id;
+
+							expected.forEach(function (e) {
+
+								if (e.id == current.id) {
+									// break;
+								}
+
+								if (expected.indexOf(e) == expected.length-1) {
+									current.hide();
+								}
+
+							});
+
+						});
+
+					}
+					
+				}
+
+
+			})
+
+
 
 			//Jumps to the item in the table and briefly highlights it.
 			$('#container').on('click', 'a', highlightJump);
@@ -249,33 +287,47 @@
 	<div id="vizDiv"></div>
 
 	<div id="resultsData">
-		<%= ejs_reqURL %><br/><br/>
+		<!-- <%= ejs_reqURL %><br/><br/> -->
 		{{$parse(oldestItem = getOldest(filteredItems))}}
 		{{$parse(endOldestDateStr = (oldestItem.endTime.str.indexOf(" ") || "N/A") )}}
 		Showing results from {{(oldestItem.endTime.str.slice(0, endOldestDateStr) || "N/A") }}<br/>
 		Total Results: <%= totalEntries %><br/>
-		Entries per page: <%= entriesPerPage %><br/>
+		<!-- Entries per page: <%= entriesPerPage %><br/> -->
 		Showing {{filteredItems.length}} out of <span id="numEntries"><%- (parseInt(totalEntries) < parseInt(entriesPerPage)) ? totalEntries : entriesPerPage %></span> results<br/>
-		<span id="moreResultsButton">Click Here for More Results</span><br/>
+	
+		<span id="moreResultsButton">Load Next 100 Results</span><br/>
 		<span id="loadAllButton">Load All Results</span>
 	</div><br/><br/>
 
 	<div id="container">
 		<div id="filteredDataDiv">
-			Showing filtered {{filteredItems.length}} item(s) <br/>
+			<h3>Filtered</h3>
+			Showing {{filteredItems.length}} item(s) <br/>
 			Average Price: {{getAvg(filteredItems, 'price')}}<br/>
-			Shipped Price: {{getAvg(filteredItems, 'finalPrice')}}<br/>
+			Shipped: {{getAvg(filteredItems, 'finalPrice')}}<br/>
 			{{$parse(lowestItem = getMin(filteredItems, 'finalPrice'))}}
 			{{$parse(highestItem = getMax(filteredItems, 'finalPrice'))}}
 
-			Lowest Shipped: <a href="#{{items.indexOf(lowestItem)}}">{{lowestItem.finalPrice || "N/A" }}</a><br/>
+			Lowest: <a href="#{{items.indexOf(lowestItem)}}">{{lowestItem.finalPrice || "N/A" }}</a><br/>
 			Highest: <a href="#{{items.indexOf(highestItem)}}">{{highestItem.finalPrice || "N/A" }}</a>
 			
 			
 		</div>
+
+		<div id="filterDiv">
+			<h2>Filter Results</h2>
+			<input ng-model="searchFilter" id="searchFilter" placeholder="Search auction titles"><br/>
+			<input ng-model="soldFilter" type="checkbox">Sold auctions only<br/>
+			<input ng-model="newFilter" type="checkbox">New auctions only</body><br/>
+			<input type="number" ng-model="minPrice" id="minPriceFilter" placeholder="Minimum"><input type="number" ng-model="maxPrice" id="maxPriceFilter" placeholder="Maximum"><br/>
+
+
+		</div>
+
 		
 		<aside id="selectedData">
-			Selected <span id="selectedItemNum"></span><br/>
+			<h3>Selected</h3>
+			<span id="selectedItemNum">0 item(s)</span><br/>
 			Average Price: <span id="selectedAvg"></span><br/>
 			Shipped: <span id="selectedShipped"></span><br/>
 			Lowest: <span id="selectedMin"></span><br/>
@@ -283,15 +335,7 @@
 		</aside>
 	</div>
 
-	<div id="filterDiv">
-		<h2>Filter Results</h2>
-		<input ng-model="searchFilter" id="searchFilter" placeholder="Search auction titles"><br/>
-		<input ng-model="soldFilter" type="checkbox">Sold auctions only<br/>
-		<input ng-model="newFilter" type="checkbox">New auctions only</body><br/>
-		<input type="number" ng-model="minPrice" id="minPriceFilter" placeholder="Enter Minimum Price"><br/>
-		<input type="number" ng-model="maxPrice" id="maxPriceFilter" placeholder="Enter Maximum Price"><br/>
-	</div>
-
+	
 	<table id="searchResultsTable">
 		<tr>
 			<th>Image</th>

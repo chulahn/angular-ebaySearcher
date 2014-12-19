@@ -32,15 +32,6 @@ td,th {
 }
 
 
-#filterDiv {
-  border: 1px solid black;
-  text-align: center;
-  display: table;
-  margin: 0 auto;
-  left: 0;
-  right: 0;
-}
-
 .clickedButton {
 	background: gray;
 }
@@ -126,39 +117,58 @@ td,th {
 		clear:both;
 	}
 }
+/////Divs inside container
+	#filteredDataDiv {
+		display: table;
+		width: 25%;
+		float: left;
+		border: 1px green solid;
+		border-radius: 4px;
+	/*	background: green;
+		color: white;
+	*/	a {
+			color: blue;
 
-#filteredDataDiv {
-	float: left;
-	border: 1px green solid;
-	border-radius: 4px;
-/*	background: green;
-	color: white;
-*/	a {
-		color: blue;
-
-		&:hover {
-			font-weight: bold;
+			&:hover {
+				font-weight: bold;
+			}
 		}
 	}
-}
 
-#selectedData {
-	position: fixed;
-	right:0;
-	background-color: white;
-	background-color: rgba(255,255,255,.7);
-	border: 1px blue solid;
-	border-radius: 4px;
-/*	background: blue;
-	color: white;*/
-	a {
-		color: red;
+	#filterDiv {
+		position: relative;
+		border: 1px solid black;
+		text-align: center;
+		display: table;
+		/*margin: 0 auto;*/
+		float: left;
+		left: 12.5%;
+		width: 25%;
+		/*right: 0;*/
+	}
+		#maxPriceFilter, #minPriceFilter {
+			width: 75px;
+		}
 
-		&:hover {
-			font-weight:bold;
+
+	#selectedData {
+		right: 0;
+		position: fixed;
+		width: 25%;
+		background-color: white;
+		background-color: rgba(255,255,255,.7);
+		border: 1px blue solid;
+		border-radius: 4px;
+	/*	background: blue;
+		color: white;*/
+		a {
+			color: red;
+
+			&:hover {
+				font-weight:bold;
+			}
 		}
 	}
-}
 
 #vizDiv {
 	position: relative;
@@ -183,4 +193,6 @@ td,th {
 	fill: rgba(255,0,0,.6);
 	stroke: black;
 	stroke-width: 1px;
+}
+selectedData {
 }

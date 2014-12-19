@@ -119,6 +119,9 @@ function addData() {
 		.attr('r', function(d) {
 			return 7;
 		})
+		.attr('id', function(d) {
+			return d.id;
+		})
 		.attr('fill-opacity', .6)
 		.attr('fill', 'green')
 
@@ -258,7 +261,9 @@ function updateViz(addingNewData) {
 	console.log("circles ", circles);	
 	var padding = 40;
 
-	circles.exit().transition().remove();
+	circles.exit()
+	.transition().attr('r', 4).attr('fill', 'red')
+	.transition().attr('r', 0).remove();
 	(addingNewData === undefined) ? moveOldPoints() : moveOldPoints(true);
 
 
