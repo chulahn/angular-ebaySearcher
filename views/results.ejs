@@ -217,6 +217,12 @@
 
 	<div id="searchedFor">
 
+		Total Results: <%= totalEntries %><br/>
+		Showing {{filteredItems.length}} out of <span id="numEntries"><%- (parseInt(totalEntries) < parseInt(entriesPerPage)) ? totalEntries : entriesPerPage %></span> results<br/>
+
+		
+		<span id="moreResultsButton">Load Next 100 Results</span><br/>
+		<span id="loadAllButton">Load All Results</span></br>
 		<span id="newSearch">Search another item?</span></br>
 
 		<div id="newSearchDiv">
@@ -248,18 +254,9 @@
 
 	<div id="vizDiv"></div>
 
-	<div id="resultsData">
-		<!-- <%= ejs_reqURL %><br/><br/> -->
 		{{$parse(oldestItem = getOldest(filteredItems))}}
 		{{$parse(endOldestDateStr = (oldestItem.endTime.str.indexOf(" ") || "N/A") )}}
-		Showing results from {{(oldestItem.endTime.str.slice(0, endOldestDateStr) || "N/A") }}<br/>
-		Total Results: <%= totalEntries %><br/>
-		<!-- Entries per page: <%= entriesPerPage %><br/> -->
-		Showing {{filteredItems.length}} out of <span id="numEntries"><%- (parseInt(totalEntries) < parseInt(entriesPerPage)) ? totalEntries : entriesPerPage %></span> results<br/>
-	
-		<span id="moreResultsButton">Load Next 100 Results</span><br/>
-		<span id="loadAllButton">Load All Results</span>
-	</div><br/><br/>
+		<!--Showing results from {{(oldestItem.endTime.str.slice(0, endOldestDateStr) || "N/A") }}<br/> -->
 
 	<div id="container">
 		<div id="filteredDataDiv">

@@ -4,7 +4,6 @@
 
 html, body {
 	height: 100%;
-	width: 100%;
 }
 
 div {
@@ -31,7 +30,6 @@ td,th {
 	border:1px solid blue;	
 }
 
-
 .clickedButton {
 	background: gray;
 }
@@ -47,21 +45,21 @@ td,th {
 
 }
 
-#newSearch{
-  .button;
-  border: 1px solid red;
+	#newSearch{
+	  .button;
+	  border: 1px solid red;
 
-  &:hover {
-	background: red;
-	color: white;
-  }
-}
+	  &:hover {
+		background: red;
+		color: white;
+	  }
+	}
 
-#newSearchDiv{
-	display: inline-block;
-	padding: 10px 10px;
- 	border:1px solid black;
-}
+	#newSearchDiv{
+		display: inline-block;
+		padding: 10px 10px;
+	 	border:1px solid black;
+	}
 
 #moreResultsButton {
 	display: inline-block;
@@ -120,7 +118,7 @@ td,th {
 /////Divs inside container
 	#filteredDataDiv {
 		display: table;
-		width: 25%;
+		width: 10%;
 		float: left;
 		border: 1px green solid;
 		border-radius: 4px;
@@ -142,7 +140,7 @@ td,th {
 		display: table;
 		/*margin: 0 auto;*/
 		float: left;
-		left: 12.5%;
+		left: 27.5%;
 		width: 25%;
 		/*right: 0;*/
 	}
@@ -152,9 +150,9 @@ td,th {
 
 
 	#selectedData {
-		right: 0;
+		right: 9px;
 		position: fixed;
-		width: 25%;
+		width: 10%;
 		background-color: white;
 		background-color: rgba(255,255,255,.7);
 		border: 1px blue solid;
@@ -178,21 +176,24 @@ td,th {
 	height: 40%;
 }
 
-.axis{
-	line, path {
-		fill: none;
+	.axis{
+		line, path {
+			fill: none;
+			stroke: black;
+		}
+		text {
+			font-size: 11px;
+		}
+	}
+
+	.hover{
+
+		fill: rgba(255,0,0,.6);
 		stroke: black;
+		stroke-width: 1px;
 	}
-	text {
-		font-size: 11px;
-	}
-}
 
-.hover{
-
-	fill: rgba(255,0,0,.6);
-	stroke: black;
-	stroke-width: 1px;
-}
-selectedData {
+#searchResultsTable {
+	margin: 0 auto;
+	width: 80%;
 }

@@ -155,32 +155,57 @@ function moveOldPoints(addingNewData) {
 	var xScale = d3Globals.xScale;
 	var yScale = d3Globals.yScale;
 
-	//moves existing data
-	circles.transition()
-		.duration(1000)
-		.each("start", function(d) {
-			if (addingNewData !== undefined) {
-				d3.select(this)
-					.attr('fill', 'red')
-					.attr('r', '7')
-			}
-		})
-		.attr('cx', function(d) {
-			var currentDate = new Date(d.endTime.date);
-			currentDate = new Date(currentDate.toLocaleDateString());
-
-			return xScale(currentDate);
-		})
-		.attr('cy', function(d) {
-			return yScale(d.finalPrice);
-		})
+	circles
 		.transition()
 		.duration(1000)
 		.each("start", function(d) {
-				d3.select(this)
-					.attr('fill', 'black')
-					.attr('r', '2')
 			
+				var currentPoint = d3.select(this);
+				var currentDate = new Date(d.endTime.date);
+				currentDate = new Date(currentDate.toLocaleDateString());
+
+			if (addingNewData !== undefined) {
+				var currentX = parseInt(currentPoint.attr('cx'));
+				var currentY = parseInt(currentPoint.attr('cy'));
+
+
+				var newX = parseInt(xScale(currentDate));
+				var newY = parseInt(yScale(d.finalPrice));
+
+				if ((currentX !== newX) || (currentY !== newY)) {
+					console.log("x " , currentX , newX, " y " , currentY , newY)
+
+					currentPoint
+						.transition()
+						.duration(500)
+							.attr('fill', 'yellow')
+							.attr('r', '10')
+							.attr('fill-opacity', .6)
+							.attr('cx', function(d) {
+								return xScale(currentDate);
+							})
+							.attr('cy', function(d) {
+								return yScale(d.finalPrice);
+							})
+						.transition()
+						.duration(1000)
+							.attr('fill', 'black')
+							.attr('r', '2')
+				}
+
+			}
+			else {
+				currentPoint
+					.transition()
+					.duration(500)
+						.attr('cx', function(d) {
+							return xScale(currentDate);
+						})
+						.attr('cy', function(d) {
+							return yScale(d.finalPrice);
+						})
+
+			}
 		})
 }
 
