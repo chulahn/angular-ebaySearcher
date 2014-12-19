@@ -1,3 +1,7 @@
+*, *:before *:after {
+	box-sizing: border-box;
+}
+
 html, body {
 	height: 100%;
 	width: 100%;
@@ -37,6 +41,21 @@ td,th {
   right: 0;
 }
 
+.clickedButton {
+	background: gray;
+}
+
+#searchedFor {
+/*
+	left: 0;
+	right: 0;*/
+	display: table;
+	text-align: center;
+	margin: 0px auto;
+	padding: 10px;
+
+}
+
 #newSearch{
   .button;
   border: 1px solid red;
@@ -48,7 +67,9 @@ td,th {
 }
 
 #newSearchDiv{
-  border:1px solid black;
+	display: inline-block;
+	padding: 10px 10px;
+ 	border:1px solid black;
 }
 
 #moreResultsButton {
@@ -57,6 +78,7 @@ td,th {
 	.button;
 	&:hover {
 		background-color:#0022aa;
+		color: white;
 	}
 	&:active {
 		background-color:darken(#0022aa,10%);
@@ -67,7 +89,8 @@ td,th {
 	display:inline-block;
 	.button;
 	&:hover {
-		background-color:gray;
+		background-color: blue;
+		color: white;
 	}
 }
 

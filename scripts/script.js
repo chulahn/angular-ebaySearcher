@@ -7,7 +7,17 @@ $(document).ready(function() {
 	$('#newSearchDiv').hide();
 
 	$('#newSearch').click(function() {
-		$('#newSearchDiv').show();
+
+		$(this).toggleClass('clickedButton');
+
+		if ($(this).hasClass('clickedButton')) {
+			$('#newSearchDiv').show();
+		}
+
+		else {
+			$('#newSearchDiv').hide();
+		}
+
 	});
 
 	/*

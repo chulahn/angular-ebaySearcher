@@ -83,7 +83,7 @@ function buildRequestURL(params) {
     url += "&keywords=" + params.keyword;
     url += "&paginationInput.entriesPerPage=100";  //1-100
     // url += "&paginationInput.pageNumber=10";  //1-100
-    url += "&sortOrder=" + params.sort;
+    url += "&sortOrder=" + params.sortBy;
 
 
     return url;
@@ -99,11 +99,13 @@ app.post('/get/', function(req,res) {
 		//keyword, sort, requestedType
 	}
 
+	console.log(req.body)
+
 	request(requestURL, function(err, response, body) {
 		if (!err) {
 			//console.log(colors.green(body));
 			var result = body;
-			console.log(result);
+			// console.log(result);
 			result = JSON.parse(result);
 
 
@@ -132,6 +134,10 @@ app.post('/get/', function(req,res) {
 				// console.log(paginationOutput);
 
 				var items = result.searchResult[0].item;
+
+				if (items === undefined) {
+					return res.send("0 results");
+				}
 
 				//console.log(items);
 
@@ -172,7 +178,7 @@ app.post('/get/', function(req,res) {
 				});
 
 				//console.log(responseName)
-				res.render("results.ejs" , {ejs_items: items, ejs_newItems: newItems, ejs_reqURL: requestURL, ejs_pagination: paginationOutput});
+				res.render("results.ejs" , {ejs_items: items, ejs_newItems: newItems, ejs_searchParams: (req.body), ejs_reqURL: requestURL, ejs_pagination: paginationOutput});
 
 
 			}

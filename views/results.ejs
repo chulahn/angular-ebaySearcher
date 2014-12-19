@@ -36,6 +36,8 @@
 		var items = <%- JSON.stringify(ejs_items) %>
 		var newItems = <%- JSON.stringify(ejs_newItems) %>
 
+		var searchParams = <%- JSON.stringify(ejs_searchParams) %>
+
 		var requestURL = <%- JSON.stringify(ejs_reqURL) %>
 		
 		var totalResults = <%- entriesPerPage %>
@@ -69,11 +71,10 @@
 			}
 			//Makes AJAX call to get next 100 items.
 			$('#moreResultsButton').click(function() {
-				console.log('licked')
+				console.log('clicked')
 				if (pageNum <= maxPage-1) {
 					makeRequest(pageNum);
 				}
-
 			});
 
 			$('#loadAllButton').click(function() {
@@ -117,8 +118,15 @@
 
 				selectedRow.addClass('jump');
 				selectedRow.removeClass('jump', 1000);
-
 			}
+
+
+			var searchedForHTML = "";
+
+			searchedForHTML += "Your searched keyword <b>" + searchParams.keyword +"</b><br/>";
+			searchedForHTML += "Results were sorted by <b>" + searchParams.sortBy + "</b><br/>"
+
+			$('#searchedFor').prepend(searchedForHTML);
 
 		})//end document ready
 
@@ -207,31 +215,36 @@
 
 <body ng-app="app" ng-controller="dataController">
 
-	<span id="newSearch">Search another item</span></br>
+	<div id="searchedFor">
 
-	<div id="newSearchDiv">
-		<form action="../get" method="post">
-			<p><label for="keyword">Item: </label> <input id="keyword" name="keyword"><br/></p>
+		<span id="newSearch">Search another item?</span></br>
 
-			<p><label for="sortBy">Sort By: </label>
-				<select id="sortBy" name="sortBy">
-					<option value="BestMatch">Best Match</option>
-					<option value="PricePlusShippingLowest">Lowest Shipped Price</option>
-					<option value="PricePlusShippingHighest">Highest Shipped Price</option>
-					<option value="EndTimeSoonest">Ending soonest</option>
-				</select>
-			</p>
+		<div id="newSearchDiv">
+			<form action="../get" method="post">
+				<label for="keyword">Item: </label> <input id="keyword" name="keyword"><br/></p>
 
-			<p><label for="requestType">Live/Completed:</label>
-				<select id="requestType" name="requestType">
-					<option value="findItemsByKeywords">Live Auctions</option>
-					<option value="findCompletedItems">Completed Auctions</option>
-				</select><br/></p>
+				<p><label for="sortBy">Sort By: </label>
+					<select id="sortBy" name="sortBy">
+						<option value="BestMatch">Best Match</option>
+						<option value="PricePlusShippingLowest">Lowest Shipped Price</option>
+						<option value="PricePlusShippingHighest">Highest Shipped Price</option>
+						<option value="EndTimeSoonest">Ending soonest</option>
+					</select>
+				</p>
 
-			<button type="submit">Submit</button>
-		</form>
+				<p><label for="requestType">Live/Completed:</label>
+					<select id="requestType" name="requestType">
+						<option value="findItemsByKeywords">Live Auctions</option>
+						<option value="findCompletedItems">Completed Auctions</option>
+					</select><br/></p>
+
+				<button type="submit">Submit</button>
+			</form>
+
+		</div>
 
 	</div>
+
 
 	<div id="vizDiv"></div>
 

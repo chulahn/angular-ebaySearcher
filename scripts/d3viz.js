@@ -1,6 +1,6 @@
 var d3Globals = {}
 d3Globals.dimens = {"w": $('#vizDiv').width() * .95, "h": $('#vizDiv').height() * .95};
-d3Globals.padding = 40;
+d3Globals.padding = {"x": 40 , "y": 20};
 
 d3Globals.tip = d3.tip().attr('class', 'd3-tip')
 					.html(function(d) {
@@ -27,7 +27,7 @@ $(document).ready(function() {
 
 	function drawViz() {
 		var dimens = d3Globals.dimens;
-		var padding = 40;
+		var padding = d3Globals.padding;
 
 		var scope = angular.element($('[ng-controller=dataController]')).scope();
 		var data = scope.filteredItems;
@@ -55,16 +55,16 @@ $(document).ready(function() {
 							 	return currentDate;
 							})]
 						)
-						.range([0 + padding, dimens.w - padding]);
+						.range([0 + padding.x, dimens.w - padding.x]);
 			
 		var xAxis = d3.svg.axis();
-		xAxis.scale(xScale).orient('bottom').ticks(5);
+		xAxis.scale(xScale).orient('bottom').ticks(3);
 
 		var yScale = d3Globals.yScale = d3.scale.linear()
 						.domain(
 							[0, d3.max(data, function(d) {return d.finalPrice;})]
 						)
-						.range([dimens.h - padding, padding]);
+						.range([dimens.h - padding.y, padding.y]);
 
 		var yAxis = d3.svg.axis();
 		yAxis.scale(yScale).orient('left').ticks(5);
@@ -72,19 +72,18 @@ $(document).ready(function() {
 
 		svg.append('g')
 			.attr('class', 'x axis')
-			.attr('transform', 'translate(0,' + (dimens.h - padding) + ')')
+			.attr('transform', 'translate(0,' + (dimens.h - padding.y) + ')')
 			.call(xAxis);
 
 
 		svg.append('g')
 			.attr('class', 'y axis')
-			.attr('transform', 'translate(' + padding + ',0 )')
+			.attr('transform', 'translate(' + padding.x + ',0 )')
 			.call(yAxis);
 
 
 
 		addData();
-
 	}
 
 	drawViz();
@@ -101,7 +100,6 @@ function addData() {
 	d3Globals.svg.call(tip);
 
 	circles = d3Globals.svg.selectAll('circle');
-
 
 	d3Globals.svg.selectAll('circle')
 		.data(data)
@@ -142,7 +140,10 @@ function addData() {
 		.attr('r', '2');	
 }
 
-
+/*
+	if addingNewData is not undefined, show old values by marking them red
+	else move without changing style
+*/
 function moveOldPoints(addingNewData) {
 
 	var scope = angular.element($('[ng-controller=dataController]')).scope();
@@ -181,15 +182,17 @@ function moveOldPoints(addingNewData) {
 }
 
 
+/*
+	adjust scale and svg width and height
+	called when window is resized or updateViz is called
+*/
 function resize() {
 
 	var svg = d3Globals.svg;
 
-	console.log(d3Globals.dimens.h);
 	var dimens = d3Globals.dimens = {"w": $('#vizDiv').width() * .95, "h": $('#vizDiv').height() * .95};
 	d3Globals.svg.attr('height', dimens.h).attr('width', dimens.w);
-	padding = 40;
-	console.log(d3Globals.dimens.h);
+	var padding = d3Globals.padding;
 	
 	var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
 
@@ -206,16 +209,16 @@ function resize() {
 						 	return currentDate;
 						})]
 					)
-					.range([0 + padding, dimens.w - padding]) || d3Globals.xScale;
+					.range([0 + padding.x, dimens.w - padding.x]) || d3Globals.xScale;
 
 	var xAxis = d3.svg.axis();
-	xAxis.scale(xScale).orient('bottom').ticks(5);
+	xAxis.scale(xScale).orient('bottom').ticks(3);
 
 	var yScale = d3Globals.yScale = d3.scale.linear()
 					.domain(
 						[0, d3.max(data, function(d) {return d.finalPrice;})]
 					)
-					.range([dimens.h - padding, padding]) || d3Globals.yScale;
+					.range([dimens.h - padding.y, padding.y]) || d3Globals.yScale;
 
 	var yAxis = d3.svg.axis();
 	yAxis.scale(yScale).orient('left').ticks(5);
@@ -225,39 +228,26 @@ function resize() {
 		svg.select('.x.axis')
 			.transition()
 			.duration(1000)
-			.attr('transform', 'translate(0,' + (dimens.h - padding) + ')')
+			.attr('transform', 'translate(0,' + (dimens.h - padding.y) + ')')
 			.call(xAxis);
 		svg.select('.y.axis')
 			.transition()
 			.duration(1000)
-			.attr('transform', 'translate(' + padding + ',0 )')
-			.call(yAxis);		
+			.attr('transform', 'translate(' + padding.x + ',0 )')
+			.call(yAxis);	
+
 	}
 
-
-	// svg.select('.x.axis')
-	// 	// .attr('class', 'x axis')
-	// 	.call(xAxis);
-
-
-	// svg.select('.y.axis')
-	// 	// .attr('class', 'y axis')
-	// 	.call(yAxis);
-
 	moveOldPoints();
-
 }
 
-function setScale(){
-}
-
-
-
+/*
+	whenever more results are added/filtered, update the svg 
+*/
 function updateViz(addingNewData) {
 
 	var svg = d3Globals.svg;
 	resize();
-
 
 	var scope = angular.element($('[ng-controller=dataController]')).scope();
 	var data = scope.filteredItems;
@@ -273,5 +263,88 @@ function updateViz(addingNewData) {
 
 
 	addData();
+}
 
+function drawViz2() {
+	var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
+
+	var max = d3.max(data, function(d) {return d.finalPrice;});
+
+	var interval = 50;
+	max = Math.ceil(max/interval) * interval;
+
+	var steps = max / interval;
+
+	var viz2Data = [];
+
+	var dates = [];
+
+	for (var i=0; i<steps; i++) {
+
+		//initialize array
+		viz2Data[i] = 0
+
+
+		data.forEach(function(d) {
+
+			if (d.finalPrice <= ( (i+1) * interval) && d.finalPrice > (i * interval)) {
+				viz2Data[i]++;
+			}
+
+		});
+	}
+
+	// data.forEach(function(d) {
+
+	// 	console.log(d.endTime.str);
+
+	// 	var currentDate = new Date(d.endTime.str);
+	// 	currentDate = currentDate.getDateString();
+
+	// 	if (dates.indexOf(currentDate) === -1) {
+	// 		dates.push(currentDate);
+	// 		dates[currentDate] = [];
+
+	// 		for (var k=0; k<steps; k++) {
+	// 			dates[currentDate]
+	// 		}
+	// 	}
+
+	// 	else {
+
+	// 		for (var j=0; j<steps; j++) {
+
+	// 			dates[currentDate]
+
+	// 		}
+			
+	// 	}
+
+	// });
+
+
+	console.log("max ", max)
+	console.log("interval ", interval , "steps ", steps)
+
+// console.log(	d3.select('#vizDiv').select('svg')
+// 		.data(viz2Data))
+
+	d3.selectAll('#vizDiv svg > *')
+		// .transition()
+		.remove();
+
+	d3.select('#vizDiv svg').selectAll('circle')
+		.data(viz2Data).enter()
+		.append('circle')
+		.attr('fill', "green")
+		.attr('cx', 5)
+		.attr('cy', function(d) {
+			console.log(viz2Data.length)
+			console.log(d)
+			return d;
+		})
+		.attr('r', function(d) {
+			return d;
+		});
+						
 }
