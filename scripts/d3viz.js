@@ -258,12 +258,11 @@ function updateViz(addingNewData) {
 	console.log("data size ", data.length)
 	var circles = svg.selectAll('circle').data(data);
 
-	var padding = 40;
-
 	circles.exit()
 	.transition().attr('r', 4).attr('fill', 'red')
 	.transition().attr('r', 0).remove();
 	(addingNewData === undefined) ? moveOldPoints() : moveOldPoints(true);
+
 
 
 	addData();

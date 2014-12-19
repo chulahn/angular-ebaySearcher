@@ -94,6 +94,11 @@
 
 			$('#filterDiv input').on('keyup', function() {
 				updateViz();
+			});
+
+			$('#filterDiv input').on('change', function() {
+
+				setTimeout(updateViz, 500);
 
 			});
 
