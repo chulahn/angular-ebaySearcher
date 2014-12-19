@@ -93,52 +93,9 @@
 
 
 			$('#filterDiv input').on('keyup', function() {
-				console.log(123)
 				updateViz();
 
-				setTimeout(clearLeftovers, 2000);
-
-
-				//not finished
-				function clearLeftovers() {
-
-					var shown = $('svg circle[r="2"]');
-
-					var expected = angular.element($('[ng-controller=dataController]')).scope().filteredItems
-
-
-					if (expected.length === shown.length) {
-						console.log("all good")
-					}
-
-					else {
-
-						shown.each(function(i,s) {
-
-							var current = $(this)
-
-							var currentId = $(this).id;
-
-							expected.forEach(function (e) {
-
-								if (e.id == current.id) {
-									// break;
-								}
-
-								if (expected.indexOf(e) == expected.length-1) {
-									current.hide();
-								}
-
-							});
-
-						});
-
-					}
-					
-				}
-
-
-			})
+			});
 
 
 

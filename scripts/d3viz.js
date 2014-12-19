@@ -258,7 +258,6 @@ function updateViz(addingNewData) {
 	console.log("data size ", data.length)
 	var circles = svg.selectAll('circle').data(data);
 
-	console.log("circles ", circles);	
 	var padding = 40;
 
 	circles.exit()
@@ -268,6 +267,48 @@ function updateViz(addingNewData) {
 
 
 	addData();
+
+	setTimeout(addMissing, 2000);
+
+
+	function addMissing() {
+
+		//circles that are shown
+		var visible = $('svg circle:not([style *= "display: none"])');
+		var notVisible = $('svg circle[style *= "display: none"]');
+		var expected = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
+
+
+		notVisible.each(function() {
+			var currentNonVis = $(this);
+
+			expected.some(function (e) {
+
+				if (e.id == currentNonVis.attr('id')) {
+					currentNonVis.css('display', 'inline');
+					console.log("inserted")
+					return true;
+				}
+
+				else {
+					return false;
+				}
+			});
+		});
+
+		visible = $('svg circle:not([style *= "display: none"])');
+
+		if (expected.length === visible.length) {
+			console.log("all good")
+		}
+
+		else {
+			console.log("not all good");
+		}
+		
+	}
+
+
 }
 
 function drawViz2() {
