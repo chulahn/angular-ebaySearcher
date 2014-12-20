@@ -84,7 +84,7 @@
 
 						(function(i) {
 							console.log("i == ", i);
-							setTimeout(makeRequest(i), 50);
+							setTimeout(makeRequest(i), 500);
 
 						})(i);
 					}
@@ -92,13 +92,51 @@
 			});
 
 
+			function cleanGraph() {
+
+
+				var shown = $('svg circle[r="2"]');
+
+				var expected = angular.element($('[ng-controller=dataController]')).scope().filteredItems
+
+				var circles = d3.selectAll('circle').data(expected)
+
+				circles.each(function() {
+
+					var thisCircle = d3.select(this);
+
+					if (thisCircle.attr('r') != 2) {
+
+						console.log("fixing " , thisCircle.attr('r'));
+
+						thisCircle
+							.transition()
+							.duration(1000)
+							.attr('r', 2)
+							.attr('fill', 'black')
+							.attr('fill-opacity',1)
+					}
+
+				});	
+			}
+
+
+			
+
+
+
 			$('#filterDiv input').on('keyup', function() {
 				updateViz();
+
+				setTimeout(cleanGraph, 1000);
+
+
+
 			});
 
 			$('#filterDiv input').on('change', function() {
 
-				setTimeout(updateViz, 500);
+				setTimeout(updateViz, 100);
 
 			});
 

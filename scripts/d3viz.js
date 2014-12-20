@@ -224,6 +224,35 @@ function resize() {
 	
 	var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
 
+	var total = 0;
+
+	data.forEach(function (d) {
+
+		total += d.finalPrice;
+
+	})
+
+	var avg = total / data.length;
+
+
+	var variance = 0;
+	data.forEach(function(d) {
+
+		var diff = (d.finalPrice - avg);
+		diff *= diff;
+		variance += diff;
+
+	});
+	variance /= data.length;
+	var stddev = Math.sqrt(variance);
+
+	var minRange = avg - (2*stddev);
+	var maxRange = avg + (2*stddev);
+
+	console.log("min range " , minRange , " avg " , avg , " max range " , maxRange);
+
+
+
 	var xScale = d3Globals.xScale = d3.time.scale()
 					.domain(
 						[d3.min(data, function(d) { 
@@ -292,7 +321,7 @@ function updateViz(addingNewData) {
 
 	addData();
 
-	setTimeout(addMissing, 2000);
+	setTimeout(addMissing, 1000);
 
 
 	function addMissing() {
@@ -323,11 +352,11 @@ function updateViz(addingNewData) {
 		visible = $('svg circle:not([style *= "display: none"])');
 
 		if (expected.length === visible.length) {
-			console.log("all good")
+			// console.log("all good")
 		}
 
 		else {
-			console.log("not all good");
+			// console.log("not all good");
 		}
 		
 	}
