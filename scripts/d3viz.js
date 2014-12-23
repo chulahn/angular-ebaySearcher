@@ -14,7 +14,6 @@ d3Globals.tip = d3.tip().attr('class', 'd3-tip')
 									"After Shipping: " + shipped;
 
 						return output;
-
 					});
 
 
@@ -105,7 +104,7 @@ function addData() {
 		.data(data)
 		.enter()
 		.append('a').attr('xlink:href', function(d) {
-			return "#"+data.indexOf(d);
+			return "#"+newItems.indexOf(d);
 		})
 		.append('circle')
 		.attr('cx', function(d) {
@@ -126,6 +125,8 @@ function addData() {
 		.attr('fill', 'green')
 
 		.on('mouseover', function(d) {
+			console.log("this ", this , " d " , d)
+			// console.log(d3.select(this.parentNode).attr('href'))
 			d3.select(this).transition().duration(500)
 				.attr('r', 10)
 				.attr('class', 'hover');
@@ -156,18 +157,17 @@ function moveOldPoints(addingNewData) {
 	var yScale = d3Globals.yScale;
 
 	circles
-		.transition()
-		.duration(1000)
-		.each("start", function(d) {
+		.each(function(d) {
 			
-				var currentPoint = d3.select(this);
-				var currentDate = new Date(d.endTime.date);
-				currentDate = new Date(currentDate.toLocaleDateString());
+			var currentPoint = d3.select(this);
+			var pNode = d3.select(this.parentNode);
+			var currentDate = new Date(d.endTime.date);
+			currentDate = new Date(currentDate.toLocaleDateString());
 
 			if (addingNewData !== undefined) {
+				
 				var currentX = parseInt(currentPoint.attr('cx'));
 				var currentY = parseInt(currentPoint.attr('cy'));
-
 
 				var newX = parseInt(xScale(currentDate));
 				var newY = parseInt(yScale(d.finalPrice));
@@ -187,12 +187,14 @@ function moveOldPoints(addingNewData) {
 							.attr('cy', function(d) {
 								return yScale(d.finalPrice);
 							})
+							.attr('id', function(d) {
+								return d.id;
+							})
 						.transition()
 						.duration(1000)
 							.attr('fill', 'black')
 							.attr('r', '2')
 				}
-
 			}
 			else {
 				currentPoint
@@ -204,8 +206,15 @@ function moveOldPoints(addingNewData) {
 						.attr('cy', function(d) {
 							return yScale(d.finalPrice);
 						})
-
+						.attr('id', function(d) {
+							return d.id;
+						})
 			}
+
+			pNode
+				.attr('href', function(d) {
+					return "#"+newItems.indexOf(d);
+				})
 		})
 }
 
@@ -225,33 +234,25 @@ function resize() {
 	var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
 
 	var total = 0;
-
 	data.forEach(function (d) {
-
 		total += d.finalPrice;
-
 	})
-
 	var avg = total / data.length;
-
 
 	var variance = 0;
 	data.forEach(function(d) {
-
 		var diff = (d.finalPrice - avg);
 		diff *= diff;
 		variance += diff;
-
 	});
 	variance /= data.length;
+	
 	var stddev = Math.sqrt(variance);
 
 	var minRange = avg - (2*stddev);
 	var maxRange = avg + (2*stddev);
 
 	console.log("min range " , minRange , " avg " , avg , " max range " , maxRange);
-
-
 
 	var xScale = d3Globals.xScale = d3.time.scale()
 					.domain(
@@ -311,6 +312,9 @@ function updateViz(addingNewData) {
 
 	console.log("data size ", data.length)
 	var circles = svg.selectAll('circle').data(data);
+
+	var links = svg.selectAll('svg a').data(data);
+	links.exit().remove();
 
 	circles.exit()
 	.transition().attr('r', 4).attr('fill', 'red')
