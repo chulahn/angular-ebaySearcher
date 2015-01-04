@@ -1,6 +1,7 @@
 var d3Globals = {}
 d3Globals.dimens = {"w": $('#vizDiv').width() * .95, "h": $('#vizDiv').height() * .95};
 d3Globals.padding = {"x": 40 , "y": 20};
+d3Globals.small = false;
 
 d3Globals.tip = d3.tip().attr('class', 'd3-tip')
 					.html(function(d) {
@@ -23,7 +24,6 @@ $(document).ready(function() {
 
 	d3Globals.dimens = {"w": $('#vizDiv').width() * .95, "h": $('#vizDiv').height() * .95};
 
-
 	function drawViz() {
 		var dimens = d3Globals.dimens;
 		var padding = d3Globals.padding;
@@ -33,29 +33,27 @@ $(document).ready(function() {
 
 		var tip = d3Globals.tip
 
-
-
 		var svg = d3Globals.svg = d3.select('#vizDiv').append('svg')
 			.attr('width', dimens.w)
 			.attr('height', dimens.h);
 
 		svg.call(tip);
 
-		var xScale = d3Globals.xScale = d3.time.scale()
-						.domain(
-							[d3.min(data, function(d) { 
+		d3Globals.earliestDate = d3.min(data, function(d) { 
 								var currentDate = new Date(d.endTime.date);
 								currentDate = new Date(currentDate.toLocaleDateString());
 								return currentDate;
-								}),
-							 d3.max(data, function(d) {
+							});
+		d3Globals.latestDate = d3.max(data, function(d) {
 							 	var currentDate = new Date(d.endTime.date);
 							 	currentDate = new Date(currentDate.toLocaleDateString());
 							 	return currentDate;
-							})]
-						)
+							});
+
+		var xScale = d3Globals.xScale = d3.time.scale()
+						.domain([d3Globals.earliestDate, d3Globals.latestDate])
 						.range([0 + padding.x, dimens.w - padding.x]);
-			
+		
 		var xAxis = d3.svg.axis();
 		xAxis.scale(xScale).orient('bottom').ticks(3);
 
@@ -73,6 +71,20 @@ $(document).ready(function() {
 			.attr('class', 'x axis')
 			.attr('transform', 'translate(0,' + (dimens.h - padding.y) + ')')
 			.call(xAxis);
+		
+		if (d3Globals.earliestDate.toString() === d3Globals.latestDate.toString()) {
+			d3Globals.small = true;
+		}
+		
+		if (d3.selectAll('.x g.tick')[0].length === 1) {
+			d3.select('.x g.tick')
+				.attr('fill', 'green')
+				.attr('transform', 'translate(' + (dimens.w - padding.x) / 2 + ',' +  (0) + ')');
+		}
+
+		if (d3.selectAll('.x g.tick')[0].length === 0) {
+
+		}
 
 
 		svg.append('g')
@@ -80,13 +92,9 @@ $(document).ready(function() {
 			.attr('transform', 'translate(' + padding.x + ',0 )')
 			.call(yAxis);
 
-
-
 		addData();
 	}
-
 	drawViz();
-	
 });
 
 function addData() {
@@ -108,9 +116,16 @@ function addData() {
 		})
 		.append('circle')
 		.attr('cx', function(d) {
-			var currentDate = new Date(d.endTime.date);
-			currentDate = new Date(currentDate.toLocaleDateString());
-			return xScale(currentDate);
+			if (d3Globals.small === true) {
+
+				var center = (d3Globals.dimens.w - d3Globals.padding.x) / 2;
+				return center;
+			}
+			else {
+				var currentDate = new Date(d.endTime.date);
+				currentDate = new Date(currentDate.toLocaleDateString());
+				return xScale(currentDate);
+			}
 		})
 		.attr('cy', function(d) {
 			return yScale(d.finalPrice);
@@ -201,7 +216,15 @@ function moveOldPoints(addingNewData) {
 					.transition()
 					.duration(500)
 						.attr('cx', function(d) {
-							return xScale(currentDate);
+							if (d3Globals.small === true) {
+								var center = (d3Globals.dimens.w - d3Globals.padding.x) / 2;
+								return center;
+							}
+							else {
+								var currentDate = new Date(d.endTime.date);
+								currentDate = new Date(currentDate.toLocaleDateString());
+								return xScale(currentDate);
+							}
 						})
 						.attr('cy', function(d) {
 							return yScale(d.finalPrice);

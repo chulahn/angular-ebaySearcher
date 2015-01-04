@@ -52,6 +52,9 @@
 				showLoadedAllButton();
 			}
 
+			if (maxPage > 12) {
+				$('#loadAllButton').hide();
+			}
 
 			function makeRequest(i) {
 				var newRequestURL = requestURL + "&paginationInput.pageNumber=" + (i+1);
@@ -71,9 +74,23 @@
 			}
 			//Makes AJAX call to get next 100 items.
 			$('#moreResultsButton').click(function() {
-				console.log('clicked')
 				if (pageNum <= maxPage-1) {
 					makeRequest(pageNum);
+				}
+			});
+
+			$('#next1000Button').click(function() {
+
+				if (pageNum <= maxPage -1) {
+
+					for (var i=pageNum; i<(pageNum+10); i++) {
+						(function(i) {
+							console.log("i == ", i);
+							setTimeout(makeRequest(i), 3000);
+
+						})(i);
+					}
+
 				}
 			});
 
@@ -84,14 +101,14 @@
 
 						(function(i) {
 							console.log("i == ", i);
-							setTimeout(makeRequest(i), 500);
+							setTimeout(makeRequest(i), 1500);
 
 						})(i);
 					}
 				}
 			});
 
-
+		//Move to d3viz.js
 			function cleanGraph() {
 
 
@@ -120,26 +137,14 @@
 				});	
 			}
 
-
-			
-
-
-
 			$('#filterDiv input').on('keyup', function() {
 				updateViz();
-
 				setTimeout(cleanGraph, 1000);
-
-
-
 			});
 
 			$('#filterDiv input').on('change', function() {
-
 				setTimeout(updateViz, 100);
-
 			});
-
 
 
 			//Jumps to the item in the table and briefly highlights it.
@@ -238,6 +243,7 @@
 		}
 
 		function showLoadedAllButton() {
+			$('#next1000Button').hide();
 			$('#loadAllButton').hide();
 			$('#moreResultsButton').html("Loaded all results");
 			$('#moreResultsButton').attr('id','allLoadedButton');			
@@ -258,8 +264,9 @@
 
 		
 		<span id="moreResultsButton">Load Next 100 Results</span><br/>
-		<span id="loadAllButton">Load All Results</span></br>
-		<span id="newSearch">Search another item?</span></br>
+		<span id="next1000Button">Load Next 1000 Results</span><br/>
+		<span id="loadAllButton">Load All Results</span><br/>
+		<span id="newSearch">Search another item?</span><br/>
 
 		<div id="newSearchDiv">
 			<form action="../get" method="post">

@@ -1,1 +1,191 @@
-*,*:before *:after{box-sizing:border-box}html,body{height:100%}div{border:1px solid black}table{padding:5px;border:2px solid black}a{text-decoration:none}td,th{padding:5px;border:1px dotted black}.clickedButton{background:gray}#searchedFor{display:table;text-align:center;margin:0 auto;padding:10px}#newSearch{padding:2px;border-radius:5px;border:1px solid blue;border:1px solid red}#newSearch:hover{background:red;color:white}#newSearchDiv{display:inline-block;padding:10px 10px;border:1px solid black}#moreResultsButton{display:inline-block;margin-top:4px;padding:2px;border-radius:5px;border:1px solid blue}#moreResultsButton:hover{background-color:#02a;color:white}#moreResultsButton:active{background-color:#001877}#loadAllButton{display:inline-block;padding:2px;border-radius:5px;border:1px solid blue}#loadAllButton:hover{background-color:blue;color:white}#allLoadedButton{padding:2px;border-radius:5px;border:1px solid blue;border-color:green}.shippedPrice{font-size:1.2em;font-weight:bold}.nosale{background-color:red;color:white}.highlighted{background-color:yellow}.jump{background-color:#61a8ed}#container{background:white}#container:before,#container:after{content:"";display:table}#container:after{clear:both}#filteredDataDiv{display:table;width:10%;float:left;border:1px green solid;border-radius:4px}#filteredDataDiv a{color:blue}#filteredDataDiv a:hover{font-weight:bold}#filterDiv{position:relative;border:1px solid black;text-align:center;display:table;float:left;left:27.5%;width:25%}#maxPriceFilter,#minPriceFilter{width:75px}#selectedData{right:9px;position:fixed;width:10%;background-color:white;background-color:rgba(255,255,255,0.7);border:1px blue solid;border-radius:4px}#selectedData a{color:red}#selectedData a:hover{font-weight:bold}#vizDiv{position:relative;width:80%;margin:0 auto;height:40%}.axis line,.axis path{fill:none;stroke:black}.axis text{font-size:11px}.hover{fill:rgba(255,0,0,0.6);stroke:black;stroke-width:1px}#searchResultsTable{margin:0 auto;width:80%}
+*,
+*:before *:after {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+}
+div {
+  border: 1px solid black;
+}
+table {
+  padding: 5px;
+  border: 2px solid black;
+}
+a {
+  text-decoration: none;
+}
+td,
+th {
+  padding: 5px;
+  border: 1px dotted black;
+}
+.clickedButton {
+  background: gray;
+}
+#searchedFor {
+  /*
+	left: 0;
+	right: 0;*/
+  display: table;
+  text-align: center;
+  margin: 0px auto;
+  padding: 10px;
+}
+#newSearch {
+  padding: 2px;
+  border-radius: 5px;
+  border: 1px solid blue;
+  border: 1px solid red;
+}
+#newSearch:hover {
+  background: red;
+  color: white;
+}
+#newSearchDiv {
+  display: inline-block;
+  padding: 10px 10px;
+  border: 1px solid black;
+}
+#moreResultsButton {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px;
+  border-radius: 5px;
+  border: 1px solid blue;
+}
+#moreResultsButton:hover {
+  background-color: #0022aa;
+  color: white;
+}
+#moreResultsButton:active {
+  background-color: #001877;
+}
+#next1000Button {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px;
+  border-radius: 5px;
+  border: 1px solid blue;
+}
+#next1000Button:hover {
+  background-color: #0022aa;
+  color: white;
+}
+#next1000Button:active {
+  background-color: #001877;
+}
+#loadAllButton {
+  display: inline-block;
+  padding: 2px;
+  border-radius: 5px;
+  border: 1px solid blue;
+}
+#loadAllButton:hover {
+  background-color: blue;
+  color: white;
+}
+#allLoadedButton {
+  padding: 2px;
+  border-radius: 5px;
+  border: 1px solid blue;
+  border-color: green;
+}
+.shippedPrice {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+.nosale {
+  background-color: red;
+  color: white;
+}
+.highlighted {
+  background-color: yellow;
+}
+.jump {
+  background-color: #61a8ed;
+}
+#container {
+  background: white;
+}
+#container:before,
+#container:after {
+  content: "";
+  display: table;
+}
+#container:after {
+  clear: both;
+}
+#filteredDataDiv {
+  display: table;
+  width: 10%;
+  float: left;
+  border: 1px green solid;
+  border-radius: 4px;
+  /*	background: green;
+		color: white;
+	*/
+}
+#filteredDataDiv a {
+  color: blue;
+}
+#filteredDataDiv a:hover {
+  font-weight: bold;
+}
+#filterDiv {
+  position: relative;
+  border: 1px solid black;
+  text-align: center;
+  display: table;
+  /*margin: 0 auto;*/
+  float: left;
+  left: 27.5%;
+  width: 25%;
+  /*right: 0;*/
+}
+#maxPriceFilter,
+#minPriceFilter {
+  width: 75px;
+}
+#selectedData {
+  right: 9px;
+  position: fixed;
+  width: 10%;
+  background-color: white;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px blue solid;
+  border-radius: 4px;
+  /*	background: blue;
+		color: white;*/
+}
+#selectedData a {
+  color: red;
+}
+#selectedData a:hover {
+  font-weight: bold;
+}
+#vizDiv {
+  position: relative;
+  width: 80%;
+  margin: 0 auto;
+  /*min-height: 200px;*/
+  height: 40%;
+}
+.axis line,
+.axis path {
+  fill: none;
+  stroke: black;
+}
+.axis text {
+  font-size: 11px;
+}
+.hover {
+  fill: rgba(255, 0, 0, 0.6);
+  stroke: black;
+  stroke-width: 1px;
+}
+#searchResultsTable {
+  margin: 0 auto;
+  width: 80%;
+}
