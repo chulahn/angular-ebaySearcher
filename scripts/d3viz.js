@@ -87,8 +87,7 @@ function addDataPoints() {
 				return center;
 			}
 			else {
-				var currentDate = new Date(d.endTime.date);
-				currentDate = new Date(currentDate.toLocaleDateString());
+				var currentDate = d.endTime.date.toDate();
 				return xScale(currentDate);
 			}
 		})
@@ -124,6 +123,20 @@ function addDataPoints() {
 		.attr('r', '2');	
 }
 
+function getAvgPrice() {
+	var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
+
+	data.forEach(function(auction) {
+
+		var endTime = auction.endTime.str;
+		// endTime
+
+
+	});
+
+}
+
+
 /*
 	If new points are being added, show old values by marking them red
 	Else move without changing style
@@ -142,8 +155,7 @@ function moveOldPoints(addingNewData) {
 			
 			var currentPoint = d3.select(this);
 			var pNode = d3.select(this.parentNode);
-			var currentDate = new Date(d.endTime.date);
-			currentDate = new Date(currentDate.toLocaleDateString());
+			var currentDate = d.endTime.date.toDate();
 
 			if (addingNewData !== undefined) {
 				
@@ -187,8 +199,7 @@ function moveOldPoints(addingNewData) {
 								return center;
 							}
 							else {
-								var currentDate = new Date(d.endTime.date);
-								currentDate = new Date(currentDate.toLocaleDateString());
+								var currentDate = d.endTime.date.toDate()
 								return xScale(currentDate);
 							}
 						})
@@ -234,18 +245,15 @@ function setGraphDimens(create) {
 	function getMaxMins() {
 		var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
 		d3Globals.earliestDate = d3.min(data, function(d) { 
-									var currentDate = new Date(d.endTime.date);
-									currentDate = new Date(currentDate.toLocaleDateString());
+									var currentDate = d.endTime.date.toDate()
 									return currentDate;
 								});
 		d3Globals.latestDate = d3.max(data, function(d) {
-									var currentDate = new Date(d.endTime.date);
-									currentDate = new Date(currentDate.toLocaleDateString());
+									var currentDate = d.endTime.date.toDate()
 									return currentDate;
 								});
 
 		d3Globals.minPrice = d3.min(data, function(d) {return d.finalPrice;});
-
 		d3Globals.maxPrice = d3.max(data, function(d) {return d.finalPrice;});
 	}
 	getMaxMins();

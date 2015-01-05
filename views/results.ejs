@@ -46,6 +46,13 @@
 			return this.getHours() + ":" + this.getMinutes() + ":" + this.getSeconds()
 		}
 
+		String.prototype.toDate = function() {
+			var date = new Date(this);
+			//remove time
+			date = date.toLocaleDateString();
+			return new Date(date);
+		}
+
 
 		<% 
 			var numPages =  JSON.parse(JSON.stringify(ejs_pagination)) 
