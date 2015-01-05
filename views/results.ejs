@@ -27,6 +27,14 @@
 	<script src="../scripts/d3viz.js"></script>
 	<script>				
 
+		Array.prototype.getAvg = function() {
+			var sum = 0;
+			this.forEach(function(a) {
+				sum += a;
+			})
+			return sum/this.length;
+		}
+
 		Number.prototype.getInputString = function() {
 			if (this < 10 && this >= 0) {
 				return "0"+this;
@@ -51,6 +59,11 @@
 			//remove time
 			date = date.toLocaleDateString();
 			return new Date(date);
+		}
+
+		String.prototype.removeTime = function() {
+			var space = this.indexOf(" ");
+			return this.slice(0,space);
 		}
 
 

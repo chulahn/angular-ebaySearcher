@@ -123,17 +123,33 @@ function addDataPoints() {
 		.attr('r', '2');	
 }
 
-function getAvgPrice() {
+function getAvgPrices() {
 	var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
+
+	var allPrices = d3Globals.allPrices = {};
+
 
 	data.forEach(function(auction) {
 
-		var endTime = auction.endTime.str;
-		// endTime
+		var endDate = auction.endTime.str.removeTime();
 
-
+		if (allPrices[endDate] === undefined) {
+			var firstPrice = [];
+			firstPrice.push(auction.finalPrice);
+			allPrices[endDate] = firstPrice;
+		}
+		else {
+			allPrices[endDate].push(auction.finalPrice);
+		}
 	});
 
+	for (date in allPrices) {
+
+		if (allPrices.hasOwnProperty(date)) {
+			var avgDatePrice = allPrices[date].getAvg();
+			allPrices[date] = {num : allPrices[date].length , avgPrice : avgDatePrice};
+		}
+	}
 }
 
 
@@ -326,13 +342,7 @@ function updateAxes() {
 	function calcStats() {
 		var stats = d3Globals.stats = {};
 
-		//calculate average price
-		var total = 0;
-		data.forEach(function (d) {
-			total += d.finalPrice;
-		})
-
-		var avg = stats.avg = total / data.length;
+		var avg = stats.avg = data.getAvg();
 
 		//calc std dev.
 		var variance = 0;
