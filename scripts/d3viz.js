@@ -77,7 +77,7 @@ function addDataPoints() {
 		.data(data)
 		.enter()
 		.append('a').attr('xlink:href', function(d) {
-			return "#"+newItems.indexOf(d);
+			return "#"+data.indexOf(d);
 		})
 		.append('circle')
 		.attr('cx', function(d) {
