@@ -3,22 +3,20 @@
 angular.module('app',[])
 
     .filter('priceFilter', function() {
-        return function(data, min, max) {
+        return function(data, pf) {
             var filteredData = [];
 
             data.forEach(function(auction) {
-                if (auction.finalPrice >= min && auction.finalPrice <= max) {
-
+                if (auction.finalPrice >= pf.min && auction.finalPrice <= pf.max) {
                     filteredData.push(auction);
                 }
             });
 
+            //add auctions that user clicked
             selectedItems.forEach(function(selected) {
-
                 if (filteredData.indexOf(selected) === -1) {
                     filteredData.unshift(selected);
                 }
-
             });
 
             return filteredData;

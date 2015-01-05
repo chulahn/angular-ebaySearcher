@@ -21,8 +21,40 @@ $(document).ready(function() {
 
 	d3.select(window).on('resize', updateAxes);
 
-
 	drawViz();
+	setDatePlaceHolder();
+	//price
+	$('#filterDiv input[type="number"]').on('keyup', function() {
+		updateViz();
+		setTimeout(cleanGraph, 1000);
+		setDatePlaceHolder();
+	});
+
+	$('#searchFilter').on('keyup', function() {
+		updateViz();
+		setTimeout(cleanGraph, 1000);
+		setDatePlaceHolder();
+	});
+
+	//buttons
+	$('#filterDiv input[type="checkbox"]').on('change', function() {
+		setTimeout(updateViz, 100);
+		setDatePlaceHolder();
+	});
+
+	function setDatePlaceHolder() {
+
+		var earlyPlaceHold = d3Globals.earliestDate.getInputString();
+		var latePlaceHold = d3Globals.latestDate.getInputString();
+		$('#earliestDateFilter').val(earlyPlaceHold);
+		$('#earliestDateFilter').prop('min', earlyPlaceHold);
+		$('#earliestDateFilter').prop('max', latePlaceHold);
+
+		$('#latestDateFilter').val(latePlaceHold);
+		$('#latestDateFilter').prop('min', earlyPlaceHold);
+		$('#latestDateFilter').prop('max', latePlaceHold);
+
+	}
 });
 
 /*
@@ -73,7 +105,7 @@ function addDataPoints() {
 		.attr('fill', 'green')
 
 		.on('mouseover', function(d) {
-			console.log("this ", this , " d " , d)
+			console.log(d)
 			// console.log(d3.select(this.parentNode).attr('href'))
 			d3.select(this).transition().duration(500)
 				.attr('r', 10)
@@ -376,7 +408,7 @@ function updateViz(addingNewData) {
 
 				if (e.id == currentNonVis.attr('id')) {
 					currentNonVis.css('display', 'inline');
-					console.log("inserted")
+					console.log("added Missing point")
 					return true;
 				}
 
@@ -398,6 +430,35 @@ function updateViz(addingNewData) {
 	}
 
 }
+
+/*
+	When filtering items, some items do not finish animation.
+	Makes sure all datapoints are the same.
+	Called when filtering data by auction titles.
+*/	
+function cleanGraph() {
+	
+	var shown = $('svg circle[r="2"]');
+	var expected = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
+	var circles = d3.selectAll('circle').data(expected);
+
+	circles.each(function() {
+
+		var thisCircle = d3.select(this);
+		if (thisCircle.attr('r') != 2) {
+			// console.log("fixing " , thisCircle.attr('r'));
+
+			thisCircle
+				.transition()
+				.duration(1000)
+				.attr('r', 2)
+				.attr('fill', 'black')
+				.attr('fill-opacity',1)
+		}
+	});	
+}
+
+
 
 function drawViz2() {
 	var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;

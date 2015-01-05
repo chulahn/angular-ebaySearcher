@@ -8,23 +8,44 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.3/angular.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.0/d3.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.6.3/d3-tip.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
 
 	<!-- Stylesheets -->
 	<!-- <link href="../styles/style.css" rel="stylesheet"></link> -->
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
 	<link rel="stylesheet/less" type="text/css" href="../styles/style.less"></link>
+	
 	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/less.js/2.1.1/less.min.js"></script>
 
 
 	<script src="../controller.js"></script>
 	<script src="../scripts/d3viz.js"></script>
 	<script>				
+
+		Number.prototype.getInputString = function() {
+			if (this < 10 && this >= 0) {
+				return "0"+this;
+			}
+			return this.valueOf();
+		}
+
 		Date.prototype.getDateString = function() {
 			return this.getMonth()+1 + "/" + this.getDate() + "/" + (this.getYear()-100)
+		}
+
+		Date.prototype.getInputString = function() {
+			return (this.getYear()+1900) + "-" + this.getMonth()+1 + "-" + this.getDate().getInputString() 
 		}
 
 		Date.prototype.getTime = function() {
 			return this.getHours() + ":" + this.getMinutes() + ":" + this.getSeconds()
 		}
+
 
 		<% 
 			var numPages =  JSON.parse(JSON.stringify(ejs_pagination)) 
@@ -108,43 +129,7 @@
 				}
 			});
 
-		//Move to d3viz.js
-			function cleanGraph() {
 
-
-				var shown = $('svg circle[r="2"]');
-
-				var expected = angular.element($('[ng-controller=dataController]')).scope().filteredItems
-
-				var circles = d3.selectAll('circle').data(expected)
-
-				circles.each(function() {
-
-					var thisCircle = d3.select(this);
-
-					if (thisCircle.attr('r') != 2) {
-
-						console.log("fixing " , thisCircle.attr('r'));
-
-						thisCircle
-							.transition()
-							.duration(1000)
-							.attr('r', 2)
-							.attr('fill', 'black')
-							.attr('fill-opacity',1)
-					}
-
-				});	
-			}
-
-			$('#filterDiv input').on('keyup', function() {
-				updateViz();
-				setTimeout(cleanGraph, 1000);
-			});
-
-			$('#filterDiv input').on('change', function() {
-				setTimeout(updateViz, 100);
-			});
 
 
 			//Jumps to the item in the table and briefly highlights it.
@@ -291,7 +276,6 @@
 			</form>
 
 		</div>
-
 	</div>
 
 
@@ -299,7 +283,7 @@
 
 		{{$parse(oldestItem = getOldest(filteredItems))}}
 		{{$parse(endOldestDateStr = (oldestItem.endTime.str.indexOf(" ") || "N/A") )}}
-		<!--Showing results from {{(oldestItem.endTime.str.slice(0, endOldestDateStr) || "N/A") }}<br/> -->
+		Showing results from {{(oldestItem.endTime.str.slice(0, endOldestDateStr) || "N/A") }}<br/> 
 
 	<div id="container">
 		<div id="filteredDataDiv">
@@ -322,6 +306,8 @@
 			<input ng-model="soldFilter" type="checkbox">Sold auctions only<br/>
 			<input ng-model="newFilter" type="checkbox">New auctions only</body><br/>
 			<input type="number" ng-model="minPrice" id="minPriceFilter" placeholder="Minimum"><input type="number" ng-model="maxPrice" id="maxPriceFilter" placeholder="Maximum"><br/>
+			<input type="date" ng-model="earliestDate" id="earliestDateFilter">
+			<input type="date" ng-model="latestDate" id="latestDateFilter">
 
 
 		</div>
@@ -347,13 +333,17 @@
 			<th>End Date</th>
 		</tr>
 
+		{{$parse(filterObject = {"min" : (minPrice || 0) , "max" : (maxPrice || 1000) })}}
+		{{filterObject}}
+
 		{{$parse(
 			filteredItems = (items | 
 				filter: {title: searchFilter, 
 						status: soldFilter ? 'EndedWithSales' : '', 
 						shortCondID: newFilter ? '1' : ''} |
-				priceFilter: (minPrice || 0) : (maxPrice || 10000) 
-			) 
+				<!-- priceFilter: (minPrice || 0) : (maxPrice || 10000)  -->
+				priceFilter: filterObject 
+			)
 		)}}
 
 		<tr ng-repeat = "item in filteredItems">
