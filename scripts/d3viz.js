@@ -16,64 +16,21 @@ d3Globals.tip = d3.tip().attr('class', 'd3-tip')
 
 						return output;
 					});
-//used for setting up the axes
-function getMaxMins() {
-	var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
-	d3Globals.earliestDate = d3.min(data, function(d) { 
-								var currentDate = new Date(d.endTime.date);
-								currentDate = new Date(currentDate.toLocaleDateString());
-								return currentDate;
-							});
-	d3Globals.latestDate = d3.max(data, function(d) {
-								var currentDate = new Date(d.endTime.date);
-								currentDate = new Date(currentDate.toLocaleDateString());
-								return currentDate;
-							});
 
-	d3Globals.minPrice = d3.min(data, function(d) {return d.finalPrice;});
-
-	d3Globals.maxPrice = d3.max(data, function(d) {return d.finalPrice;});
-}
 $(document).ready(function() {
 
-	d3.select(window).on('resize', resize);
+	d3.select(window).on('resize', updateAxes);
 
-	d3Globals.dimens = {"w": $('#vizDiv').width() * .95, "h": $('#vizDiv').height() * .95};
 
-	function drawViz() {
-
-		setGraphDimens("create");
-		var svg = d3Globals.svg
-		//----V diff
-
-		//adds axes
-		svg.append('g')
-			.attr('class', 'x axis')
-			.attr('transform', 'translate(0,' + (d3Globals.dimens.h - d3Globals.padding.y) + ')')
-			.call(d3Globals.xAxis);
-
-		svg.append('g')
-			.attr('class', 'y axis')
-			.attr('transform', 'translate(' + d3Globals.padding.x + ',0 )')
-			.call(d3Globals.yAxis);
-		
-		//inside add data, if true, center points
-		if (d3Globals.earliestDate.toString() === d3Globals.latestDate.toString()) {
-			d3Globals.small = true;
-		}
-		//if only one tick mark, center tick
-		if (d3.selectAll('.x g.tick')[0].length === 1) {
-			d3.select('.x g.tick')
-				.attr('fill', 'green')
-				.attr('transform', 'translate(' + (d3Globals.dimens.w - d3Globals.padding.x) / 2 + ',' +  (0) + ')');
-		}
-
-		addData();
-	}
 	drawViz();
 });
 
-function addData() {
+/*
+	Adds datapoints to svg.  Briefly shows a big green circle then animates to a small black one.
+	Each circle has a mouseover event, and a link to the anchor in the table.
+	Called in updateViz(), drawViz().
+*/
+function addDataPoints() {
 
 	var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
 	var xScale = d3Globals.xScale;
@@ -136,8 +93,9 @@ function addData() {
 }
 
 /*
-	if addingNewData is not undefined, show old values by marking them red
-	else move without changing style
+	If new points are being added, show old values by marking them red
+	Else move without changing style
+	Used in updateAxes() and updateViz()
 */
 function moveOldPoints(addingNewData) {
 
@@ -217,8 +175,18 @@ function moveOldPoints(addingNewData) {
 		})
 }
 
+/*
+	Sets the graph's dimens, and scale/axes.
+	Used in updateAxes(), and drawViz()
+*/
 function setGraphDimens(create) {
 	var dimens = d3Globals.dimens = {"w": $('#vizDiv').width() * .95, "h": $('#vizDiv').height() * .95};
+	var padding = d3Globals.padding;
+
+	var scope = angular.element($('[ng-controller=dataController]')).scope();	
+	var data = scope.filteredItems;
+	var minPrice = scope.minPrice;
+	var maxPrice = scope.maxPrice;
 	
 	if (create) {
 		var svg = d3Globals.svg = d3.select('#vizDiv').append('svg')
@@ -230,36 +198,85 @@ function setGraphDimens(create) {
 		d3Globals.svg.attr('height', dimens.h).attr('width', dimens.w);
 	}
 
-	var padding = d3Globals.padding;
+	//used for setting up the axes.  sets in d3Global object
+	function getMaxMins() {
+		var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
+		d3Globals.earliestDate = d3.min(data, function(d) { 
+									var currentDate = new Date(d.endTime.date);
+									currentDate = new Date(currentDate.toLocaleDateString());
+									return currentDate;
+								});
+		d3Globals.latestDate = d3.max(data, function(d) {
+									var currentDate = new Date(d.endTime.date);
+									currentDate = new Date(currentDate.toLocaleDateString());
+									return currentDate;
+								});
 
-	var scope = angular.element($('[ng-controller=dataController]')).scope();	
-	var data = scope.filteredItems;
-	var minPrice = scope.minPrice;
-	var maxPrice = scope.maxPrice;
-	
+		d3Globals.minPrice = d3.min(data, function(d) {return d.finalPrice;});
+
+		d3Globals.maxPrice = d3.max(data, function(d) {return d.finalPrice;});
+	}
 	getMaxMins();
 
-	var xScale = d3Globals.xScale = d3.time.scale()
-					.domain([d3Globals.earliestDate, d3Globals.latestDate])
-					.range([0 + padding.x, dimens.w - padding.x]) || d3Globals.xScale;
+	//create scales and axes based on getMaxMins()
+	function setScales() {
+		var xScale = d3Globals.xScale = d3.time.scale()
+						.domain([d3Globals.earliestDate, d3Globals.latestDate])
+						.range([0 + padding.x, dimens.w - padding.x]) || d3Globals.xScale;
 
-	var xAxis = d3Globals.xAxis = d3.svg.axis();
-	xAxis.scale(xScale).orient('bottom').ticks(3);
+		var xAxis = d3Globals.xAxis = d3.svg.axis();
+		xAxis.scale(xScale).orient('bottom').ticks(3);
 
-	var yScale = d3Globals.yScale = d3.scale.linear()
-					.domain([minPrice || 0, maxPrice || d3Globals.maxPrice])
-					.range([dimens.h - padding.y, padding.y]) || d3Globals.yScale;
+		//if user did not input min, use 0.  no max, use highest price from data.
+		var yScale = d3Globals.yScale = d3.scale.linear()
+						.domain([minPrice || 0, maxPrice || d3Globals.maxPrice])
+						.range([dimens.h - padding.y, padding.y]) || d3Globals.yScale;
 
-	var yAxis = d3Globals.yAxis = d3.svg.axis();
-	yAxis.scale(yScale).orient('left').ticks(5);
+		var yAxis = d3Globals.yAxis = d3.svg.axis();
+		yAxis.scale(yScale).orient('left').ticks(5);
+	}
+	setScales();
 }
 
+/*
+	Creates the inital visualization.
+	Called on page load.
+*/
+function drawViz() {
+
+	setGraphDimens("create");
+	var svg = d3Globals.svg
+
+	//adds axes
+	svg.append('g')
+		.attr('class', 'x axis')
+		.attr('transform', 'translate(0,' + (d3Globals.dimens.h - d3Globals.padding.y) + ')')
+		.call(d3Globals.xAxis);
+
+	svg.append('g')
+		.attr('class', 'y axis')
+		.attr('transform', 'translate(' + d3Globals.padding.x + ',0 )')
+		.call(d3Globals.yAxis);
+	
+	//inside add data, if true, center points
+	if (d3Globals.earliestDate.toString() === d3Globals.latestDate.toString()) {
+		d3Globals.small = true;
+	}
+	//if only one tick mark, center tick
+	if (d3.selectAll('.x g.tick')[0].length === 1) {
+		d3.select('.x g.tick')
+			.attr('fill', 'green')
+			.attr('transform', 'translate(' + (d3Globals.dimens.w - d3Globals.padding.x) / 2 + ',' +  (0) + ')');
+	}
+
+	addDataPoints();
+}
 
 /*
-	adjust scale and svg width and height
-	called when window is resized or updateViz is called
+	Adjusts axes, and moves data points.
+	Used in updateViz().
 */
-function resize() {
+function updateAxes() {
 	var scope = angular.element($('[ng-controller=dataController]')).scope();	
 	var data = scope.filteredItems;
 
@@ -268,11 +285,13 @@ function resize() {
 	//calculates avg price, std dev, range within 2 stddev
 	function calcStats() {
 		var stats = d3Globals.stats = {};
+
 		//calculate average price
 		var total = 0;
 		data.forEach(function (d) {
 			total += d.finalPrice;
 		})
+
 		var avg = stats.avg = total / data.length;
 
 		//calc std dev.
@@ -282,8 +301,8 @@ function resize() {
 			diff *= diff;
 			variance += diff;
 		});
+
 		stats.variance = variance /= data.length;
-		
 		var stddev = stats.stddev = Math.sqrt(variance);
 
 		//get min and maxRange
@@ -294,16 +313,11 @@ function resize() {
 	}
 	calcStats();
 
-
-	//-------Vdiff
-
 	var svg = d3Globals.svg;
-	var minPrice = scope.minPrice;
-	var maxPrice = scope.maxPrice;
 
-	//resizes axis
+	//resizes axes
 	if (data.length !== 0) {
-		
+
 		svg.select('.x.axis')
 			.transition()
 			.duration(1000)
@@ -314,40 +328,38 @@ function resize() {
 			.duration(1000)
 			.attr('transform', 'translate(' + d3Globals.padding.x + ',0 )')
 			.call(d3Globals.yAxis);	
-
 	}
 
 	moveOldPoints();
 }
 
 /*
-	whenever more results are added/filtered, update the svg 
+	First calls updateAxes() to set new axes.
+	Scale old points and remove any filtered points.
+	Then adds new points and any missing points.
+	Called when adding/filtering data or resizing. 
 */
 function updateViz(addingNewData) {
 
+	var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
+	updateAxes();
 	var svg = d3Globals.svg;
-	resize();
-
-	var scope = angular.element($('[ng-controller=dataController]')).scope();
-	var data = scope.filteredItems;
 
 	console.log("data size ", data.length)
-	var circles = svg.selectAll('circle').data(data);
 
+	var circles = svg.selectAll('circle').data(data);
 	var links = svg.selectAll('svg a').data(data);
-	links.exit().remove();
 
 	circles.exit()
-	.transition().attr('r', 4).attr('fill', 'red')
-	.transition().attr('r', 0).remove();
-	(addingNewData === undefined) ? moveOldPoints() : moveOldPoints(true);
+		.transition().attr('r', 4).attr('fill', 'red')
+		.transition().attr('r', 0).remove();
+	links.exit().remove();
+	
+	(addingNewData === undefined) ? moveOldPoints() : moveOldPoints("addingNewData");
 
-
-
-	addData();
-
+	//not only when adding data, but also when unfiltering
+	addDataPoints();
 	setTimeout(addMissing, 1000);
-
 
 	function addMissing() {
 
@@ -384,7 +396,6 @@ function updateViz(addingNewData) {
 			// console.log("not all good");
 		}	
 	}
-
 
 }
 
