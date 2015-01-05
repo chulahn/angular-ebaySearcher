@@ -17,7 +17,23 @@ d3Globals.tip = d3.tip().attr('class', 'd3-tip')
 						return output;
 					});
 
+function getMaxMins() {
+	var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
+	d3Globals.earliestDate = d3.min(data, function(d) { 
+								var currentDate = new Date(d.endTime.date);
+								currentDate = new Date(currentDate.toLocaleDateString());
+								return currentDate;
+							});
+	d3Globals.latestDate = d3.max(data, function(d) {
+								var currentDate = new Date(d.endTime.date);
+								currentDate = new Date(currentDate.toLocaleDateString());
+								return currentDate;
+							});
 
+	d3Globals.minPrice = d3.min(data, function(d) {return d.finalPrice;});
+
+	d3Globals.maxPrice = d3.max(data, function(d) {return d.finalPrice;});
+}
 $(document).ready(function() {
 
 	d3.select(window).on('resize', resize);
@@ -39,16 +55,9 @@ $(document).ready(function() {
 
 		svg.call(tip);
 
-		d3Globals.earliestDate = d3.min(data, function(d) { 
-								var currentDate = new Date(d.endTime.date);
-								currentDate = new Date(currentDate.toLocaleDateString());
-								return currentDate;
-							});
-		d3Globals.latestDate = d3.max(data, function(d) {
-							 	var currentDate = new Date(d.endTime.date);
-							 	currentDate = new Date(currentDate.toLocaleDateString());
-							 	return currentDate;
-							});
+		
+
+		getMaxMins();
 
 		var xScale = d3Globals.xScale = d3.time.scale()
 						.domain([d3Globals.earliestDate, d3Globals.latestDate])
@@ -58,9 +67,7 @@ $(document).ready(function() {
 		xAxis.scale(xScale).orient('bottom').ticks(3);
 
 		var yScale = d3Globals.yScale = d3.scale.linear()
-						.domain(
-							[0, d3.max(data, function(d) {return d.finalPrice;})]
-						)
+						.domain([0, d3Globals.maxPrice])
 						.range([dimens.h - padding.y, padding.y]);
 
 		var yAxis = d3.svg.axis();
@@ -253,8 +260,13 @@ function resize() {
 	var dimens = d3Globals.dimens = {"w": $('#vizDiv').width() * .95, "h": $('#vizDiv').height() * .95};
 	d3Globals.svg.attr('height', dimens.h).attr('width', dimens.w);
 	var padding = d3Globals.padding;
-	
-	var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
+
+	var scope = angular.element($('[ng-controller=dataController]')).scope()	
+	var data = scope.filteredItems;
+	var minPrice = scope.minPrice;
+	var maxPrice = scope.maxPrice;
+
+	getMaxMins();
 
 	var total = 0;
 	data.forEach(function (d) {
@@ -296,9 +308,7 @@ function resize() {
 	xAxis.scale(xScale).orient('bottom').ticks(3);
 
 	var yScale = d3Globals.yScale = d3.scale.linear()
-					.domain(
-						[0, d3.max(data, function(d) {return d.finalPrice;})]
-					)
+					.domain([minPrice || 0, maxPrice || d3Globals.maxPrice])
 					.range([dimens.h - padding.y, padding.y]) || d3Globals.yScale;
 
 	var yAxis = d3.svg.axis();
