@@ -16,7 +16,7 @@ d3Globals.tip = d3.tip().attr('class', 'd3-tip')
 
 						return output;
 					});
-
+//used for setting up the axes
 function getMaxMins() {
 	var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
 	d3Globals.earliestDate = d3.min(data, function(d) { 
@@ -41,63 +41,32 @@ $(document).ready(function() {
 	d3Globals.dimens = {"w": $('#vizDiv').width() * .95, "h": $('#vizDiv').height() * .95};
 
 	function drawViz() {
-		var dimens = d3Globals.dimens;
-		var padding = d3Globals.padding;
 
-		var scope = angular.element($('[ng-controller=dataController]')).scope();
-		var data = scope.filteredItems;
+		setGraphDimens("create");
+		var svg = d3Globals.svg
+		//----V diff
 
-		var tip = d3Globals.tip
-
-		var svg = d3Globals.svg = d3.select('#vizDiv').append('svg')
-			.attr('width', dimens.w)
-			.attr('height', dimens.h);
-
-		svg.call(tip);
-
-		
-
-		getMaxMins();
-
-		var xScale = d3Globals.xScale = d3.time.scale()
-						.domain([d3Globals.earliestDate, d3Globals.latestDate])
-						.range([0 + padding.x, dimens.w - padding.x]);
-		
-		var xAxis = d3.svg.axis();
-		xAxis.scale(xScale).orient('bottom').ticks(3);
-
-		var yScale = d3Globals.yScale = d3.scale.linear()
-						.domain([0, d3Globals.maxPrice])
-						.range([dimens.h - padding.y, padding.y]);
-
-		var yAxis = d3.svg.axis();
-		yAxis.scale(yScale).orient('left').ticks(5);
-
-
+		//adds axes
 		svg.append('g')
 			.attr('class', 'x axis')
-			.attr('transform', 'translate(0,' + (dimens.h - padding.y) + ')')
-			.call(xAxis);
-		
-		if (d3Globals.earliestDate.toString() === d3Globals.latestDate.toString()) {
-			d3Globals.small = true;
-		}
-		
-		if (d3.selectAll('.x g.tick')[0].length === 1) {
-			d3.select('.x g.tick')
-				.attr('fill', 'green')
-				.attr('transform', 'translate(' + (dimens.w - padding.x) / 2 + ',' +  (0) + ')');
-		}
-
-		if (d3.selectAll('.x g.tick')[0].length === 0) {
-
-		}
-
+			.attr('transform', 'translate(0,' + (d3Globals.dimens.h - d3Globals.padding.y) + ')')
+			.call(d3Globals.xAxis);
 
 		svg.append('g')
 			.attr('class', 'y axis')
-			.attr('transform', 'translate(' + padding.x + ',0 )')
-			.call(yAxis);
+			.attr('transform', 'translate(' + d3Globals.padding.x + ',0 )')
+			.call(d3Globals.yAxis);
+		
+		//inside add data, if true, center points
+		if (d3Globals.earliestDate.toString() === d3Globals.latestDate.toString()) {
+			d3Globals.small = true;
+		}
+		//if only one tick mark, center tick
+		if (d3.selectAll('.x g.tick')[0].length === 1) {
+			d3.select('.x g.tick')
+				.attr('fill', 'green')
+				.attr('transform', 'translate(' + (d3Globals.dimens.w - d3Globals.padding.x) / 2 + ',' +  (0) + ')');
+		}
 
 		addData();
 	}
@@ -248,84 +217,103 @@ function moveOldPoints(addingNewData) {
 		})
 }
 
-
-/*
-	adjust scale and svg width and height
-	called when window is resized or updateViz is called
-*/
-function resize() {
-
-	var svg = d3Globals.svg;
-
+function setGraphDimens(create) {
 	var dimens = d3Globals.dimens = {"w": $('#vizDiv').width() * .95, "h": $('#vizDiv').height() * .95};
-	d3Globals.svg.attr('height', dimens.h).attr('width', dimens.w);
+	
+	if (create) {
+		var svg = d3Globals.svg = d3.select('#vizDiv').append('svg')
+			.attr('width', dimens.w)
+			.attr('height', dimens.h);
+		svg.call(d3Globals.tip);
+	}
+	else {
+		d3Globals.svg.attr('height', dimens.h).attr('width', dimens.w);
+	}
+
 	var padding = d3Globals.padding;
 
-	var scope = angular.element($('[ng-controller=dataController]')).scope()	
+	var scope = angular.element($('[ng-controller=dataController]')).scope();	
 	var data = scope.filteredItems;
 	var minPrice = scope.minPrice;
 	var maxPrice = scope.maxPrice;
-
+	
 	getMaxMins();
 
-	var total = 0;
-	data.forEach(function (d) {
-		total += d.finalPrice;
-	})
-	var avg = total / data.length;
-
-	var variance = 0;
-	data.forEach(function(d) {
-		var diff = (d.finalPrice - avg);
-		diff *= diff;
-		variance += diff;
-	});
-	variance /= data.length;
-	
-	var stddev = Math.sqrt(variance);
-
-	var minRange = avg - (2*stddev);
-	var maxRange = avg + (2*stddev);
-
-	console.log("min range " , minRange , " avg " , avg , " max range " , maxRange);
-
 	var xScale = d3Globals.xScale = d3.time.scale()
-					.domain(
-						[d3.min(data, function(d) { 
-							var currentDate = new Date(d.endTime.date);
-							currentDate = new Date(currentDate.toLocaleDateString());
-							return currentDate;
-							}),
-						 d3.max(data, function(d) {
-						 	var currentDate = new Date(d.endTime.date);
-						 	currentDate = new Date(currentDate.toLocaleDateString());
-						 	return currentDate;
-						})]
-					)
+					.domain([d3Globals.earliestDate, d3Globals.latestDate])
 					.range([0 + padding.x, dimens.w - padding.x]) || d3Globals.xScale;
 
-	var xAxis = d3.svg.axis();
+	var xAxis = d3Globals.xAxis = d3.svg.axis();
 	xAxis.scale(xScale).orient('bottom').ticks(3);
 
 	var yScale = d3Globals.yScale = d3.scale.linear()
 					.domain([minPrice || 0, maxPrice || d3Globals.maxPrice])
 					.range([dimens.h - padding.y, padding.y]) || d3Globals.yScale;
 
-	var yAxis = d3.svg.axis();
+	var yAxis = d3Globals.yAxis = d3.svg.axis();
 	yAxis.scale(yScale).orient('left').ticks(5);
+}
 
+
+/*
+	adjust scale and svg width and height
+	called when window is resized or updateViz is called
+*/
+function resize() {
+	var scope = angular.element($('[ng-controller=dataController]')).scope();	
+	var data = scope.filteredItems;
+
+	setGraphDimens();
+	
+	//calculates avg price, std dev, range within 2 stddev
+	function calcStats() {
+		var stats = d3Globals.stats = {};
+		//calculate average price
+		var total = 0;
+		data.forEach(function (d) {
+			total += d.finalPrice;
+		})
+		var avg = stats.avg = total / data.length;
+
+		//calc std dev.
+		var variance = 0;
+		data.forEach(function(d) {
+			var diff = (d.finalPrice - avg);
+			diff *= diff;
+			variance += diff;
+		});
+		stats.variance = variance /= data.length;
+		
+		var stddev = stats.stddev = Math.sqrt(variance);
+
+		//get min and maxRange
+		var minRange = stats.minRange = avg - (2*stddev);
+		var maxRange = stats.maxRange = avg + (2*stddev);
+
+		console.log("min range " , minRange , " avg " , avg , " max range " , maxRange);
+	}
+	calcStats();
+
+
+	//-------Vdiff
+
+	var svg = d3Globals.svg;
+	var minPrice = scope.minPrice;
+	var maxPrice = scope.maxPrice;
+
+	//resizes axis
 	if (data.length !== 0) {
 		
 		svg.select('.x.axis')
 			.transition()
 			.duration(1000)
-			.attr('transform', 'translate(0,' + (dimens.h - padding.y) + ')')
-			.call(xAxis);
+			.attr('transform', 'translate(0,' + (d3Globals.dimens.h - d3Globals.padding.y) + ')')
+			.call(d3Globals.xAxis);
 		svg.select('.y.axis')
 			.transition()
 			.duration(1000)
-			.attr('transform', 'translate(' + padding.x + ',0 )')
-			.call(yAxis);	
+			.attr('transform', 'translate(' + d3Globals.padding.x + ',0 )')
+			.call(d3Globals.yAxis);	
 
 	}
 
@@ -394,8 +382,7 @@ function updateViz(addingNewData) {
 
 		else {
 			// console.log("not all good");
-		}
-		
+		}	
 	}
 
 

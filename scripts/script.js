@@ -13,11 +13,9 @@ $(document).ready(function() {
 		if ($(this).hasClass('clickedButton')) {
 			$('#newSearchDiv').show();
 		}
-
 		else {
 			$('#newSearchDiv').hide();
 		}
-
 	});
 
 	/*
