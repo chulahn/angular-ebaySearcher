@@ -89,7 +89,7 @@ function addDataPoints() {
 				return center;
 			}
 			else {
-				var currentDate = d.endTime.date.toDate();
+				var currentDate = d.endTime.toDate();
 				return xScale(currentDate);
 			}
 		})
@@ -132,7 +132,7 @@ function getAvgPrices() {
 
 	data.forEach(function(auction) {
 
-		var endDate = auction.endTime.str.removeTime();
+		var endDate = auction.endTime.removeTime();
 
 		if (allPrices[endDate] === undefined) {
 			var firstPrice = [];
@@ -172,7 +172,7 @@ function moveOldPoints(addingNewData) {
 			
 			var currentPoint = d3.select(this);
 			var pNode = d3.select(this.parentNode);
-			var currentDate = d.endTime.date.toDate();
+			var currentDate = d.endTime.toDate();
 
 			if (addingNewData !== undefined) {
 				
@@ -216,7 +216,7 @@ function moveOldPoints(addingNewData) {
 								return center;
 							}
 							else {
-								var currentDate = d.endTime.date.toDate()
+								var currentDate = d.endTime.toDate()
 								return xScale(currentDate);
 							}
 						})
@@ -267,11 +267,11 @@ function setGraphDimens(create) {
 		var scope = angular.element($('[ng-controller=dataController]')).scope();
 		var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
 		d3Globals.earliestDate = d3.min(data, function(d) { 
-									var currentDate = (d.endTime.date.toDate() || d3Globals.earliestDate);
+									var currentDate = d.endTime.toDate() || d3Globals.earliestDate;
 									return currentDate;
 								});
 		d3Globals.latestDate = d3.max(data, function(d) {
-									var currentDate = (d.endTime.date.toDate() || d3Globals.latestDate);
+									var currentDate = (d.endTime.toDate() || d3Globals.latestDate);
 									return currentDate;
 								});
 

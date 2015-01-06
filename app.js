@@ -154,8 +154,8 @@ app.post('/get/', function(req,res) {
 						country : (item.country && item.country[0]),
 						location: item.location[0],
 
-						startTime : {date : new Date(item.listingInfo[0].startTime[0])},
-						endTime : {date : new Date(item.listingInfo[0].endTime[0])},
+						startTime : item.listingInfo[0].startTime[0],
+						endTime : item.listingInfo[0].endTime[0],
 
 						status : item.sellingStatus[0].sellingState[0],
 
@@ -169,9 +169,6 @@ app.post('/get/', function(req,res) {
 					itemDetails.shortCondID = itemDetails.conditionID[0];
 
 					itemDetails.finalPrice = parseFloat((itemDetails.price + (parseFloat(itemDetails.shipping) || 0)).toFixed(2));
-
-					itemDetails.startTime.str = itemDetails.startTime.date.getDateString() + " " + itemDetails.startTime.date.getTime();
-					itemDetails.endTime.str = itemDetails.endTime.date.getDateString() + " " + itemDetails.endTime.date.getTime();
 
 					return itemDetails;
 

@@ -5,11 +5,11 @@ angular.module('app',[])
     .filter('priceFilter', function() {
         return function(data, pf) {
             var filteredData = [];
-
             data.forEach(function(auction) {
                 if (auction.finalPrice >= pf.min && auction.finalPrice <= pf.max) {
 
-                    var endDate = auction.endTime.date.toDate();
+                    var endDate = auction.endTime;
+                    endDate = endDate.toDate();
 
                     if (endDate >= pf.start && endDate <= pf.end) {
                         filteredData.push(auction);
@@ -31,7 +31,7 @@ angular.module('app',[])
 
     .controller("dataController", function ($scope) {
         $scope.items = newItems;
-        $scope.defaultEarly = new Date().toLocaleDateString().toDate();
+        $scope.defaultEarly = new Date("2013");
         $scope.defaultLate = new Date("2017");
 
         $scope.getAvg = function(items, searchKey) {
@@ -96,14 +96,14 @@ angular.module('app',[])
                 return "N/A";
             }
 
-            var oldestTime = items[0].endTime.date;
+            var oldestTime = items[0].endTime;
             var oldest = items[0];
 
             items.forEach(function(auction) {
 
-                if (auction.endTime.date < oldestTime) {
+                if (auction.endTime < oldestTime) {
 
-                    oldestTime = auction.endTime.date;
+                    oldestTime = auction.endTime;
                     oldest = auction;
 
                 }
