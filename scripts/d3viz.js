@@ -32,6 +32,11 @@ $(document).ready(function() {
 		setDatePlaceHolder();
 	});
 
+	$('#filterDiv input[type="date"]').on('change', function() {
+		updateViz();
+		setTimeout(cleanGraph, 1000);
+	})
+
 	$('#searchFilter').on('keyup', function() {
 		updateViz();
 		setTimeout(cleanGraph, 1000);
@@ -46,14 +51,18 @@ $(document).ready(function() {
 
 	function setDatePlaceHolder() {
 		if (d3Globals.earliestDate) {
+			$('#earliestSpan').html(d3Globals.earliestDate.getDateString());
+			$('#latestSpan').html(d3Globals.latestDate.getDateString());
+
 			var earlyPlaceHold = d3Globals.earliestDate.getInputString();
 			var latePlaceHold = d3Globals.latestDate.getInputString();
+
 			$('#earliestDateFilter').val(earlyPlaceHold);
 			$('#earliestDateFilter').prop('min', earlyPlaceHold);
-			$('#earliestDateFilter').prop('max', latePlaceHold);
+			$('#earliestDateFilter').prop('max', d3Globals.latestDate.getPrevDayInputString());
 
 			$('#latestDateFilter').val(latePlaceHold);
-			$('#latestDateFilter').prop('min', earlyPlaceHold);
+			$('#latestDateFilter').prop('min', d3Globals.earliestDate.getNextDayInputString());
 			$('#latestDateFilter').prop('max', latePlaceHold);
 		}
 	}

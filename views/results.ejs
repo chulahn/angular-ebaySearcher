@@ -47,7 +47,77 @@
 		}
 
 		Date.prototype.getInputString = function() {
-			return (this.getYear()+1900) + "-" + this.getMonth()+1 + "-" + this.getDate().getInputString() 
+			return (this.getYear()+1900) + "-" + (this.getMonth()+1).getInputString() + "-" + this.getDate().getInputString() 
+		}
+
+		Date.prototype.getNextDayInputString = function() {
+
+			var month = this.getMonth()+1;
+			var day = this.getDate();
+
+			var dayLimit = 31;
+			//1,3,5,7,8,10,12 = 31
+			//4,6,9,11
+
+			if (month === 2) {
+				if (this.getYear%4 !== 0) {
+					dayLimit = 28;
+				}
+				else {
+					dayLimit = 29;
+				}
+			}
+			else if (month === 4 || month === 6 || month === 9 || month === 11) {
+				dayLimit = 30;
+			}
+
+			output = (this.getYear()+1900) + "-" + month.getInputString() + "-" + (day+1).getInputString()
+			
+			if (day === dayLimit) {
+				if (month !== 12) {
+					output = (this.getYear()+1900) + "-" + (month+1).getInputString() + "-" + 1
+				}
+				else {
+					output = (this.getYear()+1901) + "-" + 1 + "-" + 1
+				}
+			}
+
+			return output;
+		}
+
+		Date.prototype.getPrevDayInputString = function() {
+			var lastMonth = this.getMonth();
+			var day = this.getDate();
+
+			var dayLimit = 31;
+			//1,3,5,7,8,10,12 = 31
+			//4,6,9,11 = 30
+
+
+			if (lastMonth === 2) {
+				if (this.getYear%4 !== 0) {
+					dayLimit = 28;
+				}
+				else {
+					dayLimit = 29;
+				}
+			}
+			else if (lastMonth === 4 || lastMonth === 6 || lastMonth === 9 || lastMonth === 11) {
+				dayLimit = 30;
+			}
+
+			output = (this.getYear()+1900) + "-" + (lastMonth+1).getInputString() + "-" + (day-1).getInputString()
+			
+			if (day === 1) {
+				if (lastMonth !== 0) {
+					output = (this.getYear()+1900) + "-" + lastMonth.getInputString() + "-" + dayLimit.getInputString()
+				}
+				else {
+					output = (this.getYear()+1899) + "-" + 12 + "-" + 31
+				}
+			}
+
+			return output;
 		}
 
 		Date.prototype.getTime = function() {
@@ -325,6 +395,7 @@
 			<input type="number" ng-model="minPrice" id="minPriceFilter" placeholder="Minimum"><input type="number" ng-model="maxPrice" id="maxPriceFilter" placeholder="Maximum"><br/>
 			<input type="date" ng-model="earliestDate" id="earliestDateFilter">
 			<input type="date" ng-model="latestDate" id="latestDateFilter">
+			<span id="earliestSpan"></span><span id="latestSpan"></span>
 		</div>
 
 		
