@@ -19,8 +19,10 @@ d3Globals.tip = d3.tip().attr('class', 'd3-tip')
 
 $(document).ready(function() {
 
+	var scope = angular.element($('[ng-controller=dataController]')).scope()
 	d3.select(window).on('resize', updateAxes);
 
+	getAvgPrices();
 	drawViz();
 	setDatePlaceHolder();
 	//price
@@ -43,17 +45,17 @@ $(document).ready(function() {
 	});
 
 	function setDatePlaceHolder() {
+		if (d3Globals.earliestDate) {
+			var earlyPlaceHold = d3Globals.earliestDate.getInputString();
+			var latePlaceHold = d3Globals.latestDate.getInputString();
+			$('#earliestDateFilter').val(earlyPlaceHold);
+			$('#earliestDateFilter').prop('min', earlyPlaceHold);
+			$('#earliestDateFilter').prop('max', latePlaceHold);
 
-		var earlyPlaceHold = d3Globals.earliestDate.getInputString();
-		var latePlaceHold = d3Globals.latestDate.getInputString();
-		$('#earliestDateFilter').val(earlyPlaceHold);
-		$('#earliestDateFilter').prop('min', earlyPlaceHold);
-		$('#earliestDateFilter').prop('max', latePlaceHold);
-
-		$('#latestDateFilter').val(latePlaceHold);
-		$('#latestDateFilter').prop('min', earlyPlaceHold);
-		$('#latestDateFilter').prop('max', latePlaceHold);
-
+			$('#latestDateFilter').val(latePlaceHold);
+			$('#latestDateFilter').prop('min', earlyPlaceHold);
+			$('#latestDateFilter').prop('max', latePlaceHold);
+		}
 	}
 });
 
@@ -125,7 +127,6 @@ function addDataPoints() {
 
 function getAvgPrices() {
 	var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
-
 	var allPrices = d3Globals.allPrices = {};
 
 
@@ -257,24 +258,29 @@ function setGraphDimens(create) {
 		d3Globals.svg.attr('height', dimens.h).attr('width', dimens.w);
 	}
 
-	//used for setting up the axes.  sets in d3Global object
+	getMaxMins();
+	setScales();
+
+
+	//used for setting up the axes.  stores data in d3Global object
 	function getMaxMins() {
+		var scope = angular.element($('[ng-controller=dataController]')).scope();
 		var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
 		d3Globals.earliestDate = d3.min(data, function(d) { 
-									var currentDate = d.endTime.date.toDate()
+									var currentDate = (d.endTime.date.toDate() || d3Globals.earliestDate);
 									return currentDate;
 								});
 		d3Globals.latestDate = d3.max(data, function(d) {
-									var currentDate = d.endTime.date.toDate()
+									var currentDate = (d.endTime.date.toDate() || d3Globals.latestDate);
 									return currentDate;
 								});
 
+		scope.earliestDate = d3Globals.earliestDate;
 		d3Globals.minPrice = d3.min(data, function(d) {return d.finalPrice;});
 		d3Globals.maxPrice = d3.max(data, function(d) {return d.finalPrice;});
 	}
-	getMaxMins();
 
-	//create scales and axes based on getMaxMins()
+	//create scales and axes based on getMaxMins() and stores in d3Global object.
 	function setScales() {
 		var xScale = d3Globals.xScale = d3.time.scale()
 						.domain([d3Globals.earliestDate, d3Globals.latestDate])
@@ -291,7 +297,6 @@ function setGraphDimens(create) {
 		var yAxis = d3Globals.yAxis = d3.svg.axis();
 		yAxis.scale(yScale).orient('left').ticks(5);
 	}
-	setScales();
 }
 
 /*
@@ -335,14 +340,39 @@ function drawViz() {
 function updateAxes() {
 	var scope = angular.element($('[ng-controller=dataController]')).scope();	
 	var data = scope.filteredItems;
+	var svg = d3Globals.svg;
 
 	setGraphDimens();
+
+	if (data.length !== 0) {	
+		calcStats();
+		moveOldPoints();
+	}
 	
+	//resizes axes
+	svg.select('.x.axis')
+		.transition()
+		.duration(1000)
+		.attr('transform', 'translate(0,' + (d3Globals.dimens.h - d3Globals.padding.y) + ')')
+		.call(d3Globals.xAxis);
+	svg.select('.y.axis')
+		.transition()
+		.duration(1000)
+		.attr('transform', 'translate(' + d3Globals.padding.x + ',0 )')
+		.call(d3Globals.yAxis);	
+
+
 	//calculates avg price, std dev, range within 2 stddev
 	function calcStats() {
 		var stats = d3Globals.stats = {};
 
-		var avg = stats.avg = data.getAvg();
+		console.log(data);
+	
+		var avg = 0;
+		data.forEach(function(c) {
+			avg += c.finalPrice;
+		});
+		stats.avg = avg /= data.length;
 
 		//calc std dev.
 		var variance = 0;
@@ -361,26 +391,6 @@ function updateAxes() {
 
 		console.log("min range " , minRange , " avg " , avg , " max range " , maxRange);
 	}
-	calcStats();
-
-	var svg = d3Globals.svg;
-
-	//resizes axes
-	if (data.length !== 0) {
-
-		svg.select('.x.axis')
-			.transition()
-			.duration(1000)
-			.attr('transform', 'translate(0,' + (d3Globals.dimens.h - d3Globals.padding.y) + ')')
-			.call(d3Globals.xAxis);
-		svg.select('.y.axis')
-			.transition()
-			.duration(1000)
-			.attr('transform', 'translate(' + d3Globals.padding.x + ',0 )')
-			.call(d3Globals.yAxis);	
-	}
-
-	moveOldPoints();
 }
 
 /*
@@ -391,14 +401,13 @@ function updateAxes() {
 */
 function updateViz(addingNewData) {
 
-	var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
 	updateAxes();
+	var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
 	var svg = d3Globals.svg;
-
-	console.log("data size ", data.length)
-
 	var circles = svg.selectAll('circle').data(data);
 	var links = svg.selectAll('svg a').data(data);
+
+	console.log("data size ", data.length)
 
 	circles.exit()
 		.transition().attr('r', 4).attr('fill', 'red')
@@ -465,7 +474,6 @@ function cleanGraph() {
 		var thisCircle = d3.select(this);
 		if (thisCircle.attr('r') != 2) {
 			// console.log("fixing " , thisCircle.attr('r'));
-
 			thisCircle
 				.transition()
 				.duration(1000)
@@ -480,7 +488,6 @@ function cleanGraph() {
 
 function drawViz2() {
 	var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
-
 	var max = d3.max(data, function(d) {return d.finalPrice;});
 
 	var interval = 50;

@@ -8,7 +8,12 @@ angular.module('app',[])
 
             data.forEach(function(auction) {
                 if (auction.finalPrice >= pf.min && auction.finalPrice <= pf.max) {
-                    filteredData.push(auction);
+
+                    var endDate = auction.endTime.date.toDate();
+
+                    if (endDate >= pf.start && endDate <= pf.end) {
+                        filteredData.push(auction);
+                    }
                 }
             });
 
@@ -26,7 +31,8 @@ angular.module('app',[])
 
     .controller("dataController", function ($scope) {
         $scope.items = newItems;
-
+        $scope.defaultEarly = new Date().toLocaleDateString().toDate();
+        $scope.defaultLate = new Date("2017");
 
         $scope.getAvg = function(items, searchKey) {
 
@@ -63,7 +69,6 @@ angular.module('app',[])
             });
 
             return items[minIndex];
-
         }
         $scope.getMax = function(items, searchKey) {
 
@@ -87,8 +92,6 @@ angular.module('app',[])
         }
 
         $scope.getOldest = function(items) {
-
-
             if (items === undefined || items.length === 0) {
                 return "N/A";
             }

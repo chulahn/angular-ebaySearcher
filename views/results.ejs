@@ -328,8 +328,6 @@
 			<input type="number" ng-model="minPrice" id="minPriceFilter" placeholder="Minimum"><input type="number" ng-model="maxPrice" id="maxPriceFilter" placeholder="Maximum"><br/>
 			<input type="date" ng-model="earliestDate" id="earliestDateFilter">
 			<input type="date" ng-model="latestDate" id="latestDateFilter">
-
-
 		</div>
 
 		
@@ -353,7 +351,12 @@
 			<th>End Date</th>
 		</tr>
 
-		{{$parse(filterObject = {"min" : (minPrice || 0) , "max" : (maxPrice || 1000) })}}
+
+		{{$parse(filterObject = {"min" : (minPrice || 0), 
+								 "max" : (maxPrice || 1000),
+								 "start" : (earliestDate || defaultEarly),
+								 "end" : (latestDate || defaultLate)
+								}) }}
 		{{filterObject}}
 
 		{{$parse(
