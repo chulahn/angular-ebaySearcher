@@ -392,10 +392,16 @@
 			<input ng-model="searchFilter" id="searchFilter" placeholder="Search auction titles"><br/>
 			<input ng-model="soldFilter" type="checkbox">Sold auctions only<br/>
 			<input ng-model="newFilter" type="checkbox">New auctions only</body><br/>
-			<input type="number" ng-model="minPrice" id="minPriceFilter" placeholder="Minimum"><input type="number" ng-model="maxPrice" id="maxPriceFilter" placeholder="Maximum"><br/>
-			<input type="date" ng-model="earliestDate" id="earliestDateFilter">
-			<input type="date" ng-model="latestDate" id="latestDateFilter">
-			<span id="earliestSpan"></span><span id="latestSpan"></span>
+			<div id="priceFilterDiv">
+				Price<br/>
+				<label>Min:</label><input type="number" ng-model="minPrice" id="minPriceFilter" placeholder="Minimum" value="0"><br/>
+				<label>Max:</label><input type="number" ng-model="maxPrice" title="10000" id="maxPriceFilter" placeholder="Maximum" value="1000">
+			</div>
+			<div id="dateFilterDiv">
+				Date<br/>
+				<label>From:</label><input type="date" ng-model="earliestDate" id="earliestDateFilter"><span id="earliestSpan"></span><br/>
+				<label>To:</label><input type="date" ng-model="latestDate" id="latestDateFilter"><span id="latestSpan"></span>
+			</div>
 		</div>
 
 		

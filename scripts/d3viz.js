@@ -5,12 +5,11 @@ d3Globals.small = false;
 
 d3Globals.tip = d3.tip().attr('class', 'd3-tip')
 					.html(function(d) {
-
-						var dateString = new Date(d.endTime.str);
+						var dateString = new Date(d.endTime).toLocaleString();
 						var price = d.price;
 						var shipped = d.finalPrice;
 
-						var output = dateString.toLocaleString() + "</br>" + 
+						var output = dateString + "</br>" + 
 									"Price: " + price + "<br/>" + 
 									"After Shipping: " + shipped;
 
@@ -34,6 +33,7 @@ $(document).ready(function() {
 
 	$('#filterDiv input[type="date"]').on('change', function() {
 		updateViz();
+		validDate();	
 		setTimeout(cleanGraph, 1000);
 	})
 
@@ -50,21 +50,49 @@ $(document).ready(function() {
 	});
 
 	function setDatePlaceHolder() {
-		if (d3Globals.earliestDate) {
-			$('#earliestSpan').html(d3Globals.earliestDate.getDateString());
-			$('#latestSpan').html(d3Globals.latestDate.getDateString());
+		var earliest = d3Globals.earliestDate;
+		var latest = d3Globals.latestDate;
+		if (earliest) {
+			$('#earliestSpan').html(earliest.getDateString());
+			$('#latestSpan').html(latest.getDateString());
 
-			var earlyPlaceHold = d3Globals.earliestDate.getInputString();
-			var latePlaceHold = d3Globals.latestDate.getInputString();
+			var earlyPlaceHold = earliest.getInputString();
+			var latePlaceHold = latest.getInputString();
 
 			$('#earliestDateFilter').val(earlyPlaceHold);
 			$('#earliestDateFilter').prop('min', earlyPlaceHold);
-			$('#earliestDateFilter').prop('max', d3Globals.latestDate.getPrevDayInputString());
+			$('#earliestDateFilter').prop('max', latest.getPrevDayInputString());
 
 			$('#latestDateFilter').val(latePlaceHold);
-			$('#latestDateFilter').prop('min', d3Globals.earliestDate.getNextDayInputString());
+			$('#latestDateFilter').prop('min', earliest.getNextDayInputString());
 			$('#latestDateFilter').prop('max', latePlaceHold);
 		}
+	}
+
+	function validDate() {
+		var earliest = d3Globals.earliestDate;
+		var latest = d3Globals.latestDate;
+
+		var currentEarly = $('#earliestDateFilter').val().toDate()
+		var currentLate = $('#latestDateFilter').val().toDate();
+
+		if (!(currentEarly <= currentLate)) {
+			$('#earliestDateFilter').attr('class','invalid');
+			console.log(currentEarly , earliest, currentLate)
+		}
+		else {
+			$('#earliestDateFilter').removeClass('invalid');
+			$('#earliestDateFilter').attr('class', 'valid');
+		}
+
+		if (!(currentLate >= currentEarly)) {
+			$('#latestDateFilter').attr('class','invalid');
+		}
+		else {
+			$('#latestDateFilter').removeClass('invalid');
+			$('#latestDateFilter').attr('class', 'valid');			
+		}
+
 	}
 });
 
@@ -213,6 +241,7 @@ function moveOldPoints(addingNewData) {
 						.duration(1000)
 							.attr('fill', 'black')
 							.attr('r', '2')
+							.attr('fill-opacity', 1)
 				}
 			}
 			else {

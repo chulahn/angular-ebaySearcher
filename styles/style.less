@@ -34,6 +34,13 @@ td,th {
 	background: gray;
 }
 
+.invalid {
+	border: 2px solid red;
+}
+.valid {
+	border: 2px solid green;
+}
+
 #searchedFor {
 /*
 	left: 0;
@@ -163,7 +170,7 @@ td,th {
 
 
 	#selectedData {
-		right: 9px;
+		right: 0px;
 		position: fixed;
 		width: 10%;
 		background-color: white;
@@ -209,4 +216,30 @@ td,th {
 #searchResultsTable {
 	margin: 0 auto;
 	width: 80%;
+}
+
+#minPriceFilter, #maxPriceFilter {
+	padding: 5px;
+}
+
+#dateFilterDiv {
+	position: relative;
+	& label{
+		display:inline-block;
+		width: 15%;
+		text-align: right;
+	}
+
+	& input {
+		width: 40%;
+	}
+}
+
+#priceFilterDiv {
+	& label {
+		display: inline-block;
+		text-align: right;
+		width: 10%;
+
+	}
 }

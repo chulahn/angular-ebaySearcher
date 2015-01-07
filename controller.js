@@ -31,6 +31,8 @@ angular.module('app',[])
 
     .controller("dataController", function ($scope) {
         $scope.items = newItems;
+        $scope.minPrice = 0;
+        $scope.maxPrice = 1000;
         $scope.defaultEarly = new Date("2013");
         $scope.defaultLate = new Date("2017");
 
