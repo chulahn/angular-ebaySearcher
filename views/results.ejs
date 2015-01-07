@@ -248,70 +248,77 @@
 
 		//After making AJAX call, maps data to be used with the app.
 		//Then calls addToScope to add mapped data to scope.
-		function parseData(JSONresponse) {
-			console.log("parsedata");
-			var responseName = "";
+		function parseAndAddToScope(JSONresponse) {
+			var parsedData = parseData(JSONresponse);
+			addToScope(parsedData)
+			function parseData(JSONresponse) {
+				var responseName = "";
 
-			//get the responseName property, so items can be accessed.
-			//findCompletedItemsResponse, findItemsByKeywordsResponse, etc.
-			for (response in JSONresponse) {
-				responseName = response;
-			}
+				//get the responseName property, so items can be accessed.
+				//findCompletedItemsResponse, findItemsByKeywordsResponse, etc.
+				for (response in JSONresponse) {
+					responseName = response;
+				}
 
-			JSONresponse = JSONresponse[responseName][0];
+				JSONresponse = JSONresponse[responseName][0];
 
-			var success = JSONresponse.ack[0];
-			if (success === "Success" || success === "Warning") {
+				var success = JSONresponse.ack[0];
+				if (success === "Success" || success === "Warning") {
 
-				var paginationOutput = JSONresponse.paginationOutput[0];
-			
-				var items = JSONresponse.searchResult[0].item;
+					var paginationOutput = JSONresponse.paginationOutput[0];
+				
+					var items = JSONresponse.searchResult[0].item;
 
-				var newItems = items.map(function(item) {
-
-					var itemDetails = {
-						id: item.itemId[0],
-						img : item.galleryURL[0],
-						url : item.viewItemURL[0],
-						title : item.title[0],
-						condition : (item.condition && item.condition[0] && item.condition[0].conditionDisplayName[0]) || "No Condition Listed",
-						conditionID : (item.condition && item.condition[0] && item.condition[0].conditionId[0]) || "No Condition Listed",
-
-						country : (item.country && item.country[0]),
-						location: item.location[0],
-
-						startTime : item.listingInfo[0].startTime[0],
-						endTime : item.listingInfo[0].endTime[0],
-
-						status : item.sellingStatus[0].sellingState[0],
-
-						price : parseFloat(item.sellingStatus[0].convertedCurrentPrice[0].__value__),
-						shipping : parseFloat(item.shippingInfo[0] && item.shippingInfo[0].shippingServiceCost &&  item.shippingInfo[0].shippingServiceCost[0].__value__) || "Free"
+					if (items.length !== 100) {
+						console.log(JSONresponse);
+						console.log('------');
+						asdfasf
 					}
 
-					if (item.shippingInfo[0].shippingType[0] === "Calculated") {
-						itemDetails.shipping = "Calculated";
-					}
+					var newItems = items.map(function(item) {
 
-					itemDetails.shortCondID = itemDetails.conditionID[0];
+						var itemDetails = {
+							id: item.itemId[0],
+							img : item.galleryURL[0],
+							url : item.viewItemURL[0],
+							title : item.title[0],
+							condition : (item.condition && item.condition[0] && item.condition[0].conditionDisplayName[0]) || "No Condition Listed",
+							conditionID : (item.condition && item.condition[0] && item.condition[0].conditionId[0]) || "No Condition Listed",
 
-					itemDetails.finalPrice = parseFloat((itemDetails.price + (parseFloat(itemDetails.shipping) || 0)).toFixed(2));
+							country : (item.country && item.country[0]),
+							location: item.location[0],
 
-					return itemDetails;
-				});
+							startTime : item.listingInfo[0].startTime[0],
+							endTime : item.listingInfo[0].endTime[0],
+
+							status : item.sellingStatus[0].sellingState[0],
+
+							price : parseFloat(item.sellingStatus[0].convertedCurrentPrice[0].__value__),
+							shipping : parseFloat(item.shippingInfo[0] && item.shippingInfo[0].shippingServiceCost &&  item.shippingInfo[0].shippingServiceCost[0].__value__) || "Free"
+						}
+
+						if (item.shippingInfo[0].shippingType[0] === "Calculated") {
+							itemDetails.shipping = "Calculated";
+						}
+
+						itemDetails.shortCondID = itemDetails.conditionID[0];
+
+						itemDetails.finalPrice = parseFloat((itemDetails.price + (parseFloat(itemDetails.shipping) || 0)).toFixed(2));
+
+						return itemDetails;
+					});
+				}
+				return newItems;
 			}
-			console.log(newItems);
+			function addToScope(newRequestedItems) {
+				var scope = angular.element($('[ng-controller=dataController]')).scope();
+				scope.items = scope.items.concat(newRequestedItems);
 
-			addToScope(newItems);
-		}
-		function addToScope(newRequestedItems) {
-			var scope = angular.element($('[ng-controller=dataController]')).scope();
-			scope.items = scope.items.concat(newRequestedItems);
-
-			$('#numEntries').html(scope.items.length);
-			
-			scope.$apply();
-			console.log("addToScope: added items ", scope.items);
+				$('#numEntries').html(scope.items.length);
+				
+				scope.$apply();
+				console.log("addToScope: added items ", scope.items);
+			}
 		}
 
 		function showLoadedAllButton() {
