@@ -132,10 +132,14 @@
 		}
 
 		String.prototype.removeTime = function() {
-			var space = this.indexOf(" ");
-			return this.slice(0,space);
+			var date = new Date(this);
+			return date.toLocaleDateString();
 		}
 
+		
+	</script>
+	
+	<script>
 
 		<% 
 			var numPages =  JSON.parse(JSON.stringify(ejs_pagination)) 
@@ -174,7 +178,7 @@
 
 				request.done(function() {
 					console.log('finished request');
-					parseData(request.responseJSON);
+					parseAndAddToScope(request.responseJSON);
 					pageNum++;
 					updateViz("newData");
 				
@@ -183,6 +187,7 @@
 					}
 				});
 			}
+
 			//Makes AJAX call to get next 100 items.
 			$('#moreResultsButton').click(function() {
 				if (pageNum <= maxPage-1) {
@@ -198,10 +203,8 @@
 						(function(i) {
 							console.log("i == ", i);
 							setTimeout(makeRequest(i), 3000);
-
 						})(i);
 					}
-
 				}
 			});
 
@@ -220,11 +223,9 @@
 			});
 
 
-
-
 			//Jumps to the item in the table and briefly highlights it.
 			$('#container').on('click', 'a', highlightJump);
-			$('#vizDiv').on('click', 'a', highlightJump)
+			$('#vizDiv').on('click', 'a', highlightJump);
 
 			function highlightJump() {
 				var current = $(this);
@@ -240,7 +241,7 @@
 
 			var searchedForHTML = "";
 			searchedForHTML += "Your searched keyword <b>" + searchParams.keyword +"</b><br/>";
-			searchedForHTML += "Results were sorted by <b>" + searchParams.sortBy + "</b><br/>"
+			searchedForHTML += "Results were sorted by <b>" + searchParams.sortBy + "</b><br/>";
 
 			$('#searchedFor').prepend(searchedForHTML);
 
@@ -269,7 +270,7 @@
 				
 					var items = JSONresponse.searchResult[0].item;
 
-					if (items.length !== 100) {
+					if (items.length === 99) {
 						console.log(JSONresponse);
 						console.log('------');
 						asdfasf

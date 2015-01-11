@@ -188,6 +188,8 @@ function getAvgPrices() {
 			allPrices[date] = {num : allPrices[date].length , avgPrice : avgDatePrice};
 		}
 	}
+
+	// allPrices = allPrices.JSONtoArray();
 }
 
 

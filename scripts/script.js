@@ -46,7 +46,6 @@ $(document).ready(function() {
 		}
 
 		updateSelectedDataDiv();
-		// console.log(selectedItems);
 	});
 
 
@@ -110,7 +109,6 @@ function updateSelectedDataDiv() {
 	    });
 
 	    return min;
-
     }
 
     function getMinMaxHTML(minMax) {
@@ -124,7 +122,6 @@ function updateSelectedDataDiv() {
     		returnHTML = "<a href=#"+newItems.indexOf(minMax)+">$" + minMax.finalPrice + "</span>"
     		return returnHTML;
     	}
-
     }
 
 
