@@ -136,7 +136,18 @@
 			return date.toLocaleDateString();
 		}
 
-		
+		function toArray(obj) {
+			var outputArray = [];
+			for (a in obj) {
+				if (obj.hasOwnProperty(a)) {
+					var data = obj[a];
+					data.date = new Date(a);
+
+					outputArray.push(data);
+				}
+			}
+			return outputArray;
+		}
 	</script>
 	
 	<script>

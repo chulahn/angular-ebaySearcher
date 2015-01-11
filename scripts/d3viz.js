@@ -15,6 +15,15 @@ d3Globals.tip = d3.tip().attr('class', 'd3-tip')
 
 						return output;
 					});
+d3Globals.avgTip = d3.tip().attr('class', 'd3-tip')
+						.html(function(d) {
+							var dateString = d.date.getDateString();
+							var priceString = d.priceString.toFixed(2);
+
+							var output = dateString + "<br/>" +
+										"Avg Price: " + priceString;
+							return output;
+						});
 
 $(document).ready(function() {
 
@@ -24,6 +33,7 @@ $(document).ready(function() {
 	getAvgPrices();
 	drawViz();
 	setDatePlaceHolder();
+	addAvgPrices();
 	//price
 	$('#filterDiv input[type="number"]').on('keyup', function() {
 		updateViz();
@@ -164,34 +174,119 @@ function addDataPoints() {
 
 function getAvgPrices() {
 	var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
-	var allPrices = d3Globals.allPrices = {};
-
+	var allAvgPrices = d3Globals.allAvgPrices = {};
 
 	data.forEach(function(auction) {
 
 		var endDate = auction.endTime.removeTime();
 
-		if (allPrices[endDate] === undefined) {
+		if (allAvgPrices[endDate] === undefined) {
 			var firstPrice = [];
 			firstPrice.push(auction.finalPrice);
-			allPrices[endDate] = firstPrice;
+			allAvgPrices[endDate] = firstPrice;
 		}
 		else {
-			allPrices[endDate].push(auction.finalPrice);
+			allAvgPrices[endDate].push(auction.finalPrice);
 		}
 	});
 
-	for (date in allPrices) {
+	for (date in allAvgPrices) {
 
-		if (allPrices.hasOwnProperty(date)) {
-			var avgDatePrice = allPrices[date].getAvg();
-			allPrices[date] = {num : allPrices[date].length , avgPrice : avgDatePrice};
+		if (allAvgPrices.hasOwnProperty(date)) {
+			var avgDatePrice = allAvgPrices[date].getAvg();
+			allAvgPrices[date] = {num : allAvgPrices[date].length , avgPrice : avgDatePrice};
 		}
 	}
 
-	// allPrices = allPrices.JSONtoArray();
+	var outputArray = toArray(allAvgPrices);
+
+	outputArray.sort(function(a,b){
+
+		return (a.date - b.date);
+
+	});
+	d3Globals.a = outputArray;
 }
 
+function addAvgPrices() {
+
+	var xScale = d3Globals.xScale;
+	var yScale = d3Globals.yScale;
+	
+	var data = d3Globals.a;
+	
+	d3Globals.svg.selectAll('avg')
+		.data(data)
+		// .call(d3Globals.avgTip)
+		.enter()
+		.append('circle')
+		.attr('cx', function(d) {
+			return xScale(d.date)
+		})
+		.attr('cy', function(d) {
+			return yScale(d.avgPrice)
+		})
+		.attr('r', 10)
+		.attr('fill', 'blue')
+		.attr('fill-opacity', .4)
+		;
+
+	d3Globals.svg.selectAll('avgLine')
+		.data(d3Globals.a)
+		.enter()
+		.append('line')
+
+		.attr('x1', function(d, i) {
+			console.log("index " , i , " " ,d.date)
+			return xScale(d.date);
+		})
+		.attr('y1', function(d, i) {
+			// console.log(yScale(d.avgPrice))
+			return yScale(d.avgPrice);
+		})
+		.attr('x2', function(d, i) {
+			var nextElem = data[i+1];
+
+			if (nextElem) {
+				console.log(nextElem.date);
+				return xScale(nextElem.date);
+			}
+		})
+		.attr('y2', function(d, i) {
+			var nextElem = data[i+1];
+
+			if (nextElem) {
+				return yScale(nextElem.avgPrice);
+			}
+		})
+		.style('stroke', function(d,i) {
+			
+			var nextElem = data[i+1];
+			var color = 'black';
+			if (nextElem) {
+
+				if(i%5 ==0) {
+					color = 'black'
+				}
+				if (i%5 == 1) {
+					color = 'red'
+				}
+				if (i%5 == 2) {
+					color = 'blue'
+				}
+				if (i%5 == 3) {
+					color = 'orange'
+				}
+				return color;
+			}
+			else {
+				console.log('----')
+			}
+		})
+
+		;
+
+}
 
 /*
 	If new points are being added, show old values by marking them red
