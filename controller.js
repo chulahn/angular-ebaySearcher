@@ -25,7 +25,7 @@ angular.module('app',[])
             });
 
             return filteredData;
-        }
+        };
     })
 
 
@@ -42,7 +42,7 @@ angular.module('app',[])
                 return 0;
             }
 
-            if ((items && items.length) == 0) {
+            if ((items && items.length) === 0) {
                 return 0;
             }
 
@@ -52,7 +52,7 @@ angular.module('app',[])
             });
 
             return (sum / items.length).toFixed(2);
-        }
+        };
         $scope.getMin = function(items, searchKey) {
 
             if (typeof (items) === 'undefined' || typeof (searchKey) === 'undefined' || items.length === 0) {
@@ -71,7 +71,7 @@ angular.module('app',[])
             });
 
             return items[minIndex];
-        }
+        };
         $scope.getMax = function(items, searchKey) {
 
             if (typeof (items) === 'undefined' || typeof (searchKey) === 'undefined' || items.length === 0) {
@@ -91,7 +91,7 @@ angular.module('app',[])
 
 
             return items[maxIndex];
-        }
+        };
 
         $scope.getOldest = function(items) {
             if (items === undefined || items.length === 0) {
@@ -112,7 +112,7 @@ angular.module('app',[])
 
             });
             return oldest;
-        }
+        };
 
     });
 

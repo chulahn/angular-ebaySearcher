@@ -1,26 +1,25 @@
 var express = require('express');
-var mongo = require('mongodb');
+//var mongo = require('mongodb');
 var request = require('request');
 var bodyParser = require('body-parser');
 var colors = require('colors');
 
-var MongoClient = mongo.MongoClient;
+//var MongoClient = mongo.MongoClient;
 
 
 var app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 
-
 var appID = "chulahnc0-347f-40b2-8df7-372d69c4c7e";
 
 
 Date.prototype.getDateString = function() {
-	return this.getMonth()+1 + "/" + this.getDate() + "/" + (this.getYear()-100)
-}
+	return this.getMonth()+1 + "/" + this.getDate() + "/" + (this.getYear()-100);
+};
 
 Date.prototype.getTime = function() {
-	return this.getHours() + ":" + this.getMinutes() + ":" + this.getSeconds()
-}
+	return this.getHours() + ":" + this.getMinutes() + ":" + this.getSeconds();
+};
 
 /* Sandbox Keys
 	DEVID:
@@ -44,7 +43,7 @@ Date.prototype.getTime = function() {
 
 app.get('/' , function (req,res) {
 
-	res.sendfile('index.html')
+	res.sendfile('index.html');
 	
 });
 
@@ -94,12 +93,12 @@ app.post('/get/', function(req,res) {
 
 	var requestURL = buildRequestURL(req.body);
 
-	for (i in req.body) {
+	for (var i in req.body) {
 		console.log(colors.red(i));
 		//keyword, sort, requestedType
 	}
 
-	console.log(req.body)
+	console.log(req.body);
 
 	request(requestURL, function(err, response, body) {
 		if (!err) {
@@ -161,7 +160,7 @@ app.post('/get/', function(req,res) {
 
 						price : parseFloat(item.sellingStatus[0].convertedCurrentPrice[0].__value__),
 						shipping : parseFloat(item.shippingInfo[0] && item.shippingInfo[0].shippingServiceCost &&  item.shippingInfo[0].shippingServiceCost[0].__value__) || "Free"
-					}
+					};
 
 					if (item.shippingInfo[0].shippingType[0] === "Calculated") {
 						itemDetails.shipping = "Calculated";
@@ -211,10 +210,6 @@ app.get('/controller.js', function (req,res) {
 app.get('/no_image.jpg', function (req,res) {
 	res.sendfile('no_image.jpg');
 });
-
-
-
-
 
 
 app.listen(3000);

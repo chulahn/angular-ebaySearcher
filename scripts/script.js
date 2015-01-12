@@ -119,7 +119,7 @@ function updateSelectedDataDiv() {
 
     	else {
     		var returnHTML = "";
-    		returnHTML = "<a href=#"+newItems.indexOf(minMax)+">$" + minMax.finalPrice + "</span>"
+    		returnHTML = "<a href=#"+newItems.indexOf(minMax)+">$" + minMax.finalPrice + "</span>";
     		return returnHTML;
     	}
     }

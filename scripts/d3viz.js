@@ -1,4 +1,4 @@
-var d3Globals = {}
+var d3Globals = {};
 d3Globals.dimens = {"w": $('#vizDiv').width() * .95, "h": $('#vizDiv').height() * .95};
 d3Globals.padding = {"x": 40 , "y": 20};
 d3Globals.small = false;
@@ -27,7 +27,7 @@ d3Globals.avgTip = d3.tip().attr('class', 'd3-tip')
 
 $(document).ready(function() {
 
-	var scope = angular.element($('[ng-controller=dataController]')).scope()
+	//var scope = angular.element($('[ng-controller=dataController]')).scope();
 	d3.select(window).on('resize', updateAxes);
 
 	getAvgPrices();
@@ -45,7 +45,7 @@ $(document).ready(function() {
 		updateViz();
 		validDate();	
 		setTimeout(cleanGraph, 1000);
-	})
+	});
 
 	$('#searchFilter').on('keyup', function() {
 		updateViz();
@@ -81,14 +81,14 @@ $(document).ready(function() {
 
 	function validDate() {
 		var earliest = d3Globals.earliestDate;
-		var latest = d3Globals.latestDate;
+		//var latest = d3Globals.latestDate;
 
-		var currentEarly = $('#earliestDateFilter').val().toDate()
+		var currentEarly = $('#earliestDateFilter').val().toDate();
 		var currentLate = $('#latestDateFilter').val().toDate();
 
 		if (!(currentEarly <= currentLate)) {
 			$('#earliestDateFilter').attr('class','invalid');
-			console.log(currentEarly , earliest, currentLate)
+			console.log(currentEarly , earliest, currentLate);
 		}
 		else {
 			$('#earliestDateFilter').removeClass('invalid');
@@ -120,7 +120,7 @@ function addDataPoints() {
 
 	d3Globals.svg.call(tip);
 
-	circles = d3Globals.svg.selectAll('circle');
+	//circles = d3Globals.svg.selectAll('circle');
 
 	d3Globals.svg.selectAll('circle')
 		.data(data)
@@ -153,17 +153,17 @@ function addDataPoints() {
 		.attr('fill', 'green')
 
 		.on('mouseover', function(d) {
-			console.log(d)
+			console.log(d);
 			// console.log(d3.select(this.parentNode).attr('href'))
 			d3.select(this).transition().duration(500)
 				.attr('r', 10)
 				.attr('class', 'hover');
-			tip.show(d)})
+			tip.show(d);})
 		.on('mouseout', function(d) {
 			d3.select(this).transition().duration(500)
 				.attr('r', 2)
 				.attr('class', '');
-			tip.hide(d)})
+			tip.hide(d);})
 
 		.transition()
 		.duration(1000)
@@ -190,7 +190,7 @@ function getAvgPrices() {
 		}
 	});
 
-	for (date in allAvgPrices) {
+	for (var date in allAvgPrices) {
 
 		if (allAvgPrices.hasOwnProperty(date)) {
 			var avgDatePrice = allAvgPrices[date].getAvg();
@@ -221,10 +221,10 @@ function addAvgPrices() {
 		.enter()
 		.append('circle')
 		.attr('cx', function(d) {
-			return xScale(d.date)
+			return xScale(d.date);
 		})
 		.attr('cy', function(d) {
-			return yScale(d.avgPrice)
+			return yScale(d.avgPrice);
 		})
 		.attr('r', 10)
 		.attr('fill', 'blue')
@@ -237,7 +237,7 @@ function addAvgPrices() {
 		.append('line')
 
 		.attr('x1', function(d, i) {
-			console.log("index " , i , " " ,d.date)
+			console.log("index " , i , " " ,d.date);
 			return xScale(d.date);
 		})
 		.attr('y1', function(d, i) {
@@ -265,7 +265,7 @@ function addAvgPrices() {
 			var color = 'black';
 			if (nextElem) {
 
-				if(i%5 ==0) {
+				if(i%5 ===0) {
 					color = 'black'
 				}
 				if (i%5 == 1) {
@@ -317,7 +317,7 @@ function moveOldPoints(addingNewData) {
 				var newY = parseInt(yScale(d.finalPrice));
 
 				if ((currentX !== newX) || (currentY !== newY)) {
-					console.log("x " , currentX , newX, " y " , currentY , newY)
+					console.log("x " , currentX , newX, " y " , currentY , newY);
 
 					currentPoint
 						.transition()
@@ -339,6 +339,7 @@ function moveOldPoints(addingNewData) {
 							.attr('fill', 'black')
 							.attr('r', '2')
 							.attr('fill-opacity', 1)
+          ;
 				}
 			}
 			else {
@@ -351,7 +352,7 @@ function moveOldPoints(addingNewData) {
 								return center;
 							}
 							else {
-								var currentDate = d.endTime.toDate()
+								var currentDate = d.endTime.toDate();
 								return xScale(currentDate);
 							}
 						})
@@ -360,14 +361,14 @@ function moveOldPoints(addingNewData) {
 						})
 						.attr('id', function(d) {
 							return d.id;
-						})
+						});
 			}
 
 			pNode
 				.attr('href', function(d) {
 					return "#"+newItems.indexOf(d);
-				})
-		})
+				});
+		});
 }
 
 /*
@@ -379,7 +380,7 @@ function setGraphDimens(create) {
 	var padding = d3Globals.padding;
 
 	var scope = angular.element($('[ng-controller=dataController]')).scope();	
-	var data = scope.filteredItems;
+	//var data = scope.filteredItems;
 	var minPrice = scope.minPrice;
 	var maxPrice = scope.maxPrice;
 	
@@ -441,7 +442,7 @@ function setGraphDimens(create) {
 function drawViz() {
 
 	setGraphDimens("create");
-	var svg = d3Globals.svg
+	var svg = d3Globals.svg;
 
 	//adds axes
 	svg.append('g')
@@ -542,7 +543,7 @@ function updateViz(addingNewData) {
 	var circles = svg.selectAll('circle').data(data);
 	var links = svg.selectAll('svg a').data(data);
 
-	console.log("data size ", data.length)
+	console.log("data size ", data.length);
 
 	circles.exit()
 		.transition().attr('r', 4).attr('fill', 'red')
@@ -570,7 +571,7 @@ function updateViz(addingNewData) {
 
 				if (e.id == currentNonVis.attr('id')) {
 					currentNonVis.css('display', 'inline');
-					console.log("added Missing point")
+					console.log("added Missing point");
 					return true;
 				}
 
@@ -614,92 +615,7 @@ function cleanGraph() {
 				.duration(1000)
 				.attr('r', 2)
 				.attr('fill', 'black')
-				.attr('fill-opacity',1)
+				.attr('fill-opacity',1);
 		}
 	});	
-}
-
-
-
-function drawViz2() {
-	var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
-	var max = d3.max(data, function(d) {return d.finalPrice;});
-
-	var interval = 50;
-	max = Math.ceil(max/interval) * interval;
-
-	var steps = max / interval;
-
-	var viz2Data = [];
-
-	var dates = [];
-
-	for (var i=0; i<steps; i++) {
-
-		//initialize array
-		viz2Data[i] = 0
-
-
-		data.forEach(function(d) {
-
-			if (d.finalPrice <= ( (i+1) * interval) && d.finalPrice > (i * interval)) {
-				viz2Data[i]++;
-			}
-
-		});
-	}
-
-	// data.forEach(function(d) {
-
-	// 	console.log(d.endTime.str);
-
-	// 	var currentDate = new Date(d.endTime.str);
-	// 	currentDate = currentDate.getDateString();
-
-	// 	if (dates.indexOf(currentDate) === -1) {
-	// 		dates.push(currentDate);
-	// 		dates[currentDate] = [];
-
-	// 		for (var k=0; k<steps; k++) {
-	// 			dates[currentDate]
-	// 		}
-	// 	}
-
-	// 	else {
-
-	// 		for (var j=0; j<steps; j++) {
-
-	// 			dates[currentDate]
-
-	// 		}
-			
-	// 	}
-
-	// });
-
-
-	console.log("max ", max)
-	console.log("interval ", interval , "steps ", steps)
-
-// console.log(	d3.select('#vizDiv').select('svg')
-// 		.data(viz2Data))
-
-	d3.selectAll('#vizDiv svg > *')
-		// .transition()
-		.remove();
-
-	d3.select('#vizDiv svg').selectAll('circle')
-		.data(viz2Data).enter()
-		.append('circle')
-		.attr('fill', "green")
-		.attr('cx', 5)
-		.attr('cy', function(d) {
-			console.log(viz2Data.length)
-			console.log(d)
-			return d;
-		})
-		.attr('r', function(d) {
-			return d;
-		});
-						
 }
