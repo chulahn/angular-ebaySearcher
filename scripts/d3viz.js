@@ -125,13 +125,14 @@ function addDataPoints() {
 
 	//circles = d3Globals.svg.selectAll('circle');
 
-	d3Globals.svg.selectAll('dataPoint')
+	d3Globals.svg.selectAll('.dataPoint')
 		.data(data)
 		.enter()
 		.append('a').attr('xlink:href', function(d) {
 			return "#"+data.indexOf(d);
 		})
 		.append('circle')
+		.attr('class', 'dataPoint')
 		.attr('cx', function(d) {
 			if (d3Globals.small === true) {
 
@@ -152,7 +153,6 @@ function addDataPoints() {
 		.attr('id', function(d) {
 			return d.id;
 		})
-		.attr('class' , '.dataPoint')
 		.attr('fill-opacity', .6)
 		.attr('fill', 'green')
 
@@ -160,12 +160,12 @@ function addDataPoints() {
 			// console.log(d);
 			d3.select(this).transition().duration(500)
 				.attr('r', 10)
-				.attr('class', 'hover');
+				.attr('class', 'hover dataPoint');
 			tip.show(d);})
 		.on('mouseout', function(d) {
 			d3.select(this).transition().duration(500)
 				.attr('r', 2)
-				.attr('class', '');
+				.attr('class', 'dataPoint');
 			tip.hide(d);})
 
 		.transition()
@@ -235,7 +235,7 @@ function addAvgPrices() {
 		.attr('fill-opacity', .4)
 		;
 
-	d3Globals.svg.selectAll('avgLine')
+	d3Globals.svg.selectAll('.avgLine')
 		.data(d3Globals.a)
 		.enter()
 		.append('line')
@@ -263,6 +263,7 @@ function addAvgPrices() {
 				return yScale(nextElem.avgPrice);
 			}
 		})
+		.attr('class', 'avgLine')
 		.style('stroke', function(d,i) {
 			
 			var nextElem = data[i+1];
@@ -438,7 +439,6 @@ function setGraphDimens(create) {
 	var padding = d3Globals.padding;
 
 	var scope = angular.element($('[ng-controller=dataController]')).scope();	
-	//var data = scope.filteredItems;
 
 	var minPrice = scope.minPrice;
 	var maxPrice = scope.maxPrice;
@@ -456,7 +456,7 @@ function setGraphDimens(create) {
 	}
 
 	getAxesDomain();
-	setScales();
+	setAxesScales();
 
 
 	//used for setting up the axes.  stores data in d3Global object
@@ -477,7 +477,7 @@ function setGraphDimens(create) {
 	}
 
 	//create scales and axes based on getAxesDomain() and stores in d3Global object/ or use previous
-	function setScales() {
+	function setAxesScales() {
 		var xScale = d3Globals.xScale = d3.time.scale()
 						.domain([d3Globals.earliestDate, d3Globals.latestDate])
 						.range([0 + padding.x, dimens.w - padding.x]) || d3Globals.xScale;
@@ -531,35 +531,25 @@ function drawViz() {
 
 /*
 	Adjusts axes, and moves data points.
-	Used in updateViz().
+	Used in updateViz() or when screen is resized.
 */
 function updateAxes() {
 	var scope = angular.element($('[ng-controller=dataController]')).scope();	
 	var data = scope.filteredItems;
 	var svg = d3Globals.svg;
 
+	//calculate new w+h and axes
 	setGraphDimens();
 
 	if (data.length !== 0) {	
-		calcStats();
+		calcStatistics();
 		moveOldPoints();
 	}
 	
-	//resizes axes
-	svg.select('.x.axis')
-		.transition()
-		.duration(1000)
-		.attr('transform', 'translate(0,' + (d3Globals.dimens.h - d3Globals.padding.y) + ')')
-		.call(d3Globals.xAxis);
-	svg.select('.y.axis')
-		.transition()
-		.duration(1000)
-		.attr('transform', 'translate(' + d3Globals.padding.x + ',0 )')
-		.call(d3Globals.yAxis);	
-
+	resizeAxes();
 
 	//calculates avg price, std dev, range within 2 stddev
-	function calcStats() {
+	function calcStatistics() {
 		var stats = d3Globals.stats = {};
 
 		// console.log(data);
@@ -587,6 +577,19 @@ function updateAxes() {
 
 		// console.log("min range " , minRange , " avg " , avg , " max range " , maxRange);
 	}
+
+	function resizeAxes() {
+		svg.select('.x.axis')
+			.transition()
+			.duration(1000)
+			.attr('transform', 'translate(0,' + (d3Globals.dimens.h - d3Globals.padding.y) + ')')
+			.call(d3Globals.xAxis);
+		svg.select('.y.axis')
+			.transition()
+			.duration(1000)
+			.attr('transform', 'translate(' + d3Globals.padding.x + ',0 )')
+			.call(d3Globals.yAxis);	
+	}	
 }
 
 /*
