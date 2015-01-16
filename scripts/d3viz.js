@@ -36,18 +36,21 @@ $(document).ready(function() {
 	addAvgPrices();
 	//price
 	$('#filterDiv input[type="number"]').on('keyup', function() {
+		getAvgPrices();
 		updateViz();
 		setTimeout(cleanGraph, 1000);
 		setDatePlaceHolder();
 	});
 
 	$('#filterDiv input[type="date"]').on('change', function() {
+		getAvgPrices();
 		updateViz();
 		validDate();	
 		setTimeout(cleanGraph, 1000);
 	});
 
 	$('#searchFilter').on('keyup', function() {
+		getAvgPrices();
 		updateViz();
 		setTimeout(cleanGraph, 1000);
 		setDatePlaceHolder();
@@ -55,6 +58,7 @@ $(document).ready(function() {
 
 	//buttons
 	$('#filterDiv input[type="checkbox"]').on('change', function() {
+		getAvgPrices();
 		setTimeout(updateViz, 100);
 		setDatePlaceHolder();
 	});
@@ -88,7 +92,7 @@ $(document).ready(function() {
 
 		if (!(currentEarly <= currentLate)) {
 			$('#earliestDateFilter').attr('class','invalid');
-			console.log(currentEarly , earliest, currentLate);
+			// console.log(currentEarly , earliest, currentLate);
 		}
 		else {
 			$('#earliestDateFilter').removeClass('invalid');
@@ -102,7 +106,6 @@ $(document).ready(function() {
 			$('#latestDateFilter').removeClass('invalid');
 			$('#latestDateFilter').attr('class', 'valid');			
 		}
-
 	}
 });
 
@@ -122,7 +125,7 @@ function addDataPoints() {
 
 	//circles = d3Globals.svg.selectAll('circle');
 
-	d3Globals.svg.selectAll('circle')
+	d3Globals.svg.selectAll('dataPoint')
 		.data(data)
 		.enter()
 		.append('a').attr('xlink:href', function(d) {
@@ -149,12 +152,12 @@ function addDataPoints() {
 		.attr('id', function(d) {
 			return d.id;
 		})
+		.attr('class' , '.dataPoint')
 		.attr('fill-opacity', .6)
 		.attr('fill', 'green')
 
 		.on('mouseover', function(d) {
-			console.log(d);
-			// console.log(d3.select(this.parentNode).attr('href'))
+			// console.log(d);
 			d3.select(this).transition().duration(500)
 				.attr('r', 10)
 				.attr('class', 'hover');
@@ -215,7 +218,7 @@ function addAvgPrices() {
 	
 	var data = d3Globals.a;
 	
-	d3Globals.svg.selectAll('avg')
+	d3Globals.svg.selectAll('.avgPoint')
 		.data(data)
 		// .call(d3Globals.avgTip)
 		.enter()
@@ -226,6 +229,7 @@ function addAvgPrices() {
 		.attr('cy', function(d) {
 			return yScale(d.avgPrice);
 		})
+		.attr('class', 'avg')
 		.attr('r', 10)
 		.attr('fill', 'blue')
 		.attr('fill-opacity', .4)
@@ -237,7 +241,7 @@ function addAvgPrices() {
 		.append('line')
 
 		.attr('x1', function(d, i) {
-			console.log("index " , i , " " ,d.date);
+			// console.log("index " , i , " " ,d.date);
 			return xScale(d.date);
 		})
 		.attr('y1', function(d, i) {
@@ -248,7 +252,7 @@ function addAvgPrices() {
 			var nextElem = data[i+1];
 
 			if (nextElem) {
-				console.log(nextElem.date);
+				// console.log(nextElem.date);
 				return xScale(nextElem.date);
 			}
 		})
@@ -280,7 +284,7 @@ function addAvgPrices() {
 				return color;
 			}
 			else {
-				console.log('----')
+				// console.log('----')
 			}
 		})
 
@@ -295,13 +299,68 @@ function addAvgPrices() {
 */
 function moveOldPoints(addingNewData) {
 
+	console.log("moveOldPoints: addingNewData= " , addingNewData)
 	var scope = angular.element($('[ng-controller=dataController]')).scope();
 	var data = scope.filteredItems;
-	var circles = d3Globals.svg.selectAll('circle').data(data);
+
+	var dataPoints = d3Globals.svg.selectAll('.dataPoint').data(data);
+	var avgData = d3Globals.svg.selectAll('.avgPoint').data(d3Globals.a);
+
 	var xScale = d3Globals.xScale;
 	var yScale = d3Globals.yScale;
 
-	circles
+	avgData
+		.each(function(d) {
+			//d3.select allows d3 animations to be used
+			var currentPoint = d3.select(this);
+
+			//when adding new data, highlight old points, 
+			if (addingNewData !== undefined) {
+				var currentX = parseInt(currentPoint.attr('cx'));
+				var currentY = parseInt(currentPoint.attr('cy'));
+
+				var newX = parseInt(xScale(d.date));
+				var newY = parseInt(yScale(d.avgPrice));
+
+				if ((currentX !== newX) || (currentY !== newY)) {
+					console.log("x " , currentX , newX, " y " , currentY , newY);
+
+					currentPoint
+						.transition()
+						.duration(500)
+							.attr('fill', 'yellow')
+							.attr('r', '10')
+							.attr('fill-opacity', .6)
+							.attr('cx', function(d) {
+								return xScale(d.date);
+							})
+							.attr('cy', function(d) {
+								return yScale(d.avgPrice);
+							})
+							.attr('id', function(d) {
+								return d.id;
+							})
+						.transition()
+						.duration(1000)
+							.attr('fill', 'black')
+							.attr('r', '6')
+							.attr('fill-opacity', 1);
+				}
+			}
+			else {
+				currentPoint
+					.transition()
+					.duration(500)
+					.attr('cx' , function(d) {
+						return xScale(d.date)
+					})
+					.attr('cy' , function(d) {
+						return yScale(d.avgPrice)
+					});
+			}
+	});
+
+	dataPoints
 		.each(function(d) {
 			
 			var currentPoint = d3.select(this);
@@ -338,8 +397,7 @@ function moveOldPoints(addingNewData) {
 						.duration(1000)
 							.attr('fill', 'black')
 							.attr('r', '2')
-							.attr('fill-opacity', 1)
-          ;
+							.attr('fill-opacity', 1);
 				}
 			}
 			else {
@@ -381,9 +439,12 @@ function setGraphDimens(create) {
 
 	var scope = angular.element($('[ng-controller=dataController]')).scope();	
 	//var data = scope.filteredItems;
+
 	var minPrice = scope.minPrice;
 	var maxPrice = scope.maxPrice;
-	
+	console.log('scopeMin:' , minPrice, ' scopeMax', maxPrice);
+	console.log('globalMin: ', d3Globals.minPrice , ' globalMax: ' , d3Globals.maxPrice);
+
 	if (create) {
 		var svg = d3Globals.svg = d3.select('#vizDiv').append('svg')
 			.attr('width', dimens.w)
@@ -394,14 +455,14 @@ function setGraphDimens(create) {
 		d3Globals.svg.attr('height', dimens.h).attr('width', dimens.w);
 	}
 
-	getMaxMins();
+	getAxesDomain();
 	setScales();
 
 
 	//used for setting up the axes.  stores data in d3Global object
-	function getMaxMins() {
-		var scope = angular.element($('[ng-controller=dataController]')).scope();
-		var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
+	function getAxesDomain() {
+		var data = scope.filteredItems;
+		
 		d3Globals.earliestDate = d3.min(data, function(d) { 
 									var currentDate = d.endTime.toDate() || d3Globals.earliestDate;
 									return currentDate;
@@ -411,12 +472,11 @@ function setGraphDimens(create) {
 									return currentDate;
 								});
 
-		scope.earliestDate = d3Globals.earliestDate;
 		d3Globals.minPrice = d3.min(data, function(d) {return d.finalPrice;});
 		d3Globals.maxPrice = d3.max(data, function(d) {return d.finalPrice;});
 	}
 
-	//create scales and axes based on getMaxMins() and stores in d3Global object.
+	//create scales and axes based on getAxesDomain() and stores in d3Global object/ or use previous
 	function setScales() {
 		var xScale = d3Globals.xScale = d3.time.scale()
 						.domain([d3Globals.earliestDate, d3Globals.latestDate])
@@ -429,9 +489,9 @@ function setGraphDimens(create) {
 		var yScale = d3Globals.yScale = d3.scale.linear()
 						.domain([minPrice || 0, maxPrice || d3Globals.maxPrice])
 						.range([dimens.h - padding.y, padding.y]) || d3Globals.yScale;
-
 		var yAxis = d3Globals.yAxis = d3.svg.axis();
 		yAxis.scale(yScale).orient('left').ticks(5);
+		console.log('scopeMax: ', maxPrice, " globalsMax: ", d3Globals.maxPrice)
 	}
 }
 
@@ -502,7 +562,7 @@ function updateAxes() {
 	function calcStats() {
 		var stats = d3Globals.stats = {};
 
-		console.log(data);
+		// console.log(data);
 	
 		var avg = 0;
 		data.forEach(function(c) {
@@ -525,7 +585,7 @@ function updateAxes() {
 		var minRange = stats.minRange = avg - (2*stddev);
 		var maxRange = stats.maxRange = avg + (2*stddev);
 
-		console.log("min range " , minRange , " avg " , avg , " max range " , maxRange);
+		// console.log("min range " , minRange , " avg " , avg , " max range " , maxRange);
 	}
 }
 
@@ -540,12 +600,12 @@ function updateViz(addingNewData) {
 	updateAxes();
 	var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
 	var svg = d3Globals.svg;
-	var circles = svg.selectAll('circle').data(data);
+	var dataPoints = svg.selectAll('.dataPoint').data(data);
 	var links = svg.selectAll('svg a').data(data);
 
-	console.log("data size ", data.length);
+	// console.log("data size ", data.length);
 
-	circles.exit()
+	dataPoints.exit()
 		.transition().attr('r', 4).attr('fill', 'red')
 		.transition().attr('r', 0).remove();
 	links.exit().remove();
@@ -603,9 +663,9 @@ function cleanGraph() {
 	
 	var shown = $('svg circle[r="2"]');
 	var expected = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
-	var circles = d3.selectAll('circle').data(expected);
+	var dataPoints = d3.selectAll('.dataPoint').data(expected);
 
-	circles.each(function() {
+	dataPoints.each(function() {
 
 		var thisCircle = d3.select(this);
 		if (thisCircle.attr('r') != 2) {
