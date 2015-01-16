@@ -329,9 +329,7 @@ function moveOldPoints(addingNewData) {
 					currentPoint
 						.transition()
 						.duration(500)
-							.attr('fill', 'yellow')
-							.attr('r', '10')
-							.attr('fill-opacity', .6)
+							.attr('fill', 'orange')
 							.attr('cx', function(d) {
 								return xScale(d.date);
 							})
@@ -343,9 +341,7 @@ function moveOldPoints(addingNewData) {
 							})
 						.transition()
 						.duration(1000)
-							.attr('fill', 'black')
-							.attr('r', '6')
-							.attr('fill-opacity', 1);
+							.attr('fill', 'blue')
 				}
 			}
 			else {
@@ -614,8 +610,6 @@ function updateAxes() {
 	//calculates avg price, std dev, range within 2 stddev
 	function calcStatistics() {
 		var stats = d3Globals.stats = {};
-
-		// console.log(data);
 	
 		var avg = 0;
 		data.forEach(function(c) {
@@ -675,11 +669,14 @@ function updateViz(addingNewData) {
 		.transition().attr('r', 4).attr('fill', 'red')
 		.transition().attr('r', 0).remove();
 	links.exit().remove();
+
+	getAvgPrices();
 	
 	(addingNewData === undefined) ? moveOldPoints() : moveOldPoints("addingNewData");
 
 	//not only when adding data, but also when unfiltering
 	addDataPoints();
+	addAvgPriceData();
 	setTimeout(addMissing, 1000);
 
 	function addMissing() {

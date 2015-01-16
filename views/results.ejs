@@ -263,6 +263,8 @@
 		function parseAndAddToScope(JSONresponse) {
 			var parsedData = parseData(JSONresponse);
 			addToScope(parsedData);
+
+			//takes JSONresponse, and returns a newly mapped JSON object to be used in rest of app
 			function parseData(JSONresponse) {
 				var responseName = "";
 
@@ -321,6 +323,9 @@
 					return newItems;
 				}
 			}
+
+			//takes new JSON object, and adds data to scope
+			//angular updates filteredDiv
 			function addToScope(newRequestedItems) {
 				var scope = angular.element($('[ng-controller=dataController]')).scope();
 				scope.items = scope.items.concat(newRequestedItems);
