@@ -33,7 +33,7 @@ $(document).ready(function() {
 	getAvgPrices();
 	drawViz();
 	setDatePlaceHolder();
-	addAvgPrices();
+	addAvgPriceData();
 	//price
 	$('#filterDiv input[type="number"]').on('keyup', function() {
 		getAvgPrices();
@@ -211,7 +211,7 @@ function getAvgPrices() {
 	d3Globals.a = outputArray;
 }
 
-function addAvgPrices() {
+function addAvgPriceData() {
 
 	var xScale = d3Globals.xScale;
 	var yScale = d3Globals.yScale;
@@ -229,7 +229,7 @@ function addAvgPrices() {
 		.attr('cy', function(d) {
 			return yScale(d.avgPrice);
 		})
-		.attr('class', 'avg')
+		.attr('class', 'avgPoint')
 		.attr('r', 10)
 		.attr('fill', 'blue')
 		.attr('fill-opacity', .4)
@@ -360,6 +360,69 @@ function moveOldPoints(addingNewData) {
 					});
 			}
 	});
+
+	d3Globals.svg.selectAll('.avgLine')
+		.data(d3Globals.a)
+		.each(function(d) {
+
+			var currentLine = d3.select(this);
+			var data = d3Globals.a;
+
+			currentLine
+				.transition()
+				.duration(500)
+				.attr('x1', function(d) {
+					return xScale(d.date);
+				})
+				.attr('y1', function(d) {
+					return yScale(d.avgPrice);
+				})
+				.attr('x2', function(d) {
+					var i = d3Globals.a.indexOf(d);
+					var nextElem = data[i+1];
+
+					if (nextElem) {
+						return xScale(nextElem.date);
+					}
+				})
+				.attr('y2', function(d) {
+					var i = d3Globals.a.indexOf(d);
+					var nextElem = data[i+1];
+
+					if (nextElem) {
+						return yScale(nextElem.avgPrice);
+					}
+				})
+				.style('stroke', function(d) {
+					var i = d3Globals.a.indexOf(d);
+
+					var nextElem = data[i+1];
+					var color = 'black';
+					if (nextElem) {
+
+						if(i%5 ===0) {
+							color = 'black'
+						}
+						if (i%5 == 1) {
+							color = 'red'
+						}
+						if (i%5 == 2) {
+							color = 'blue'
+						}
+						if (i%5 == 3) {
+							color = 'orange'
+						}
+						return color;
+					}
+					else {
+						// console.log('----')
+					}
+				})
+
+		})
+		
+		
+
 
 	dataPoints
 		.each(function(d) {
