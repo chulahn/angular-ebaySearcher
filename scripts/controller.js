@@ -8,6 +8,7 @@ angular.module('app',[])
             data.forEach(function(auction) {
                 if (auction.finalPrice >= pf.min && auction.finalPrice <= pf.max) {
 
+
                     var endDate = auction.endTime;
                     endDate = endDate.toDate();
 

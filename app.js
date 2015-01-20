@@ -188,6 +188,9 @@ app.post('/get/', function(req,res) {
 app.get('/scripts/script.js', function (req,res) {
 	res.sendfile('scripts/script.js');
 });
+app.get('/scripts/controller.js', function (req,res) {
+	res.sendfile('scripts/controller.js');
+});
 app.get('/scripts/d3viz.js', function (req,res) {
 	res.sendfile('scripts/d3viz.js');
 });
@@ -202,9 +205,6 @@ app.get('/styles/index.css', function (req,res) {
 });
 app.get('/styles/index.less', function (req,res) {
 	res.sendfile('styles/index.less');
-});
-app.get('/controller.js', function (req,res) {
-	res.sendfile('controller.js');
 });
 
 app.get('/no_image.jpg', function (req,res) {

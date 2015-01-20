@@ -23,7 +23,7 @@
 	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/less.js/2.1.1/less.min.js"></script>
 
 
-	<script src="../controller.js"></script>
+	<script src="../scripts/controller.js"></script>
 	<script src="../scripts/d3viz.js"></script>
 	<script>				
 
@@ -131,7 +131,7 @@
 			return new Date(date);
 		}
 
-		String.prototype.removeTime = function() {
+		String.prototype.getDate = function() {
 			var date = new Date(this);
 			return date.toLocaleDateString();
 		}

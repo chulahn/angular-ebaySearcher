@@ -123,8 +123,6 @@ function addDataPoints() {
 
 	d3Globals.svg.call(tip);
 
-	//circles = d3Globals.svg.selectAll('circle');
-
 	d3Globals.svg.selectAll('.dataPoint')
 		.data(data)
 		.enter()
@@ -175,13 +173,18 @@ function addDataPoints() {
 		.attr('r', '2');	
 }
 
+
 function getAvgPrices() {
 	var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
+	console.log('getavgprices ', d3Globals.allAvgPrices)
 	var allAvgPrices = d3Globals.allAvgPrices = {};
+	console.log('getavgprices ', d3Globals.allAvgPrices)
 
+	//for each auction, check if object has data for a date.
+	//push auctions price to where date is.
 	data.forEach(function(auction) {
 
-		var endDate = auction.endTime.removeTime();
+		var endDate = auction.endTime.getDate();
 
 		if (allAvgPrices[endDate] === undefined) {
 			var firstPrice = [];
@@ -193,9 +196,11 @@ function getAvgPrices() {
 		}
 	});
 
+	//get avg price for each date
 	for (var date in allAvgPrices) {
 
 		if (allAvgPrices.hasOwnProperty(date)) {
+			//Array's getAvg
 			var avgDatePrice = allAvgPrices[date].getAvg();
 			allAvgPrices[date] = {num : allAvgPrices[date].length , avgPrice : avgDatePrice};
 		}
@@ -204,11 +209,10 @@ function getAvgPrices() {
 	var outputArray = toArray(allAvgPrices);
 
 	outputArray.sort(function(a,b){
-
 		return (a.date - b.date);
-
 	});
-	d3Globals.a = outputArray;
+
+	d3Globals.avgPriceData = outputArray;
 }
 
 function addAvgPriceData() {
@@ -216,7 +220,7 @@ function addAvgPriceData() {
 	var xScale = d3Globals.xScale;
 	var yScale = d3Globals.yScale;
 	
-	var data = d3Globals.a;
+	var data = d3Globals.avgPriceData;
 	
 	d3Globals.svg.selectAll('.avgPoint')
 		.data(data)
@@ -236,7 +240,7 @@ function addAvgPriceData() {
 		;
 
 	d3Globals.svg.selectAll('.avgLine')
-		.data(d3Globals.a)
+		.data(data)
 		.enter()
 		.append('line')
 
@@ -303,14 +307,16 @@ function moveOldPoints(addingNewData) {
 	console.log("moveOldPoints: addingNewData= " , addingNewData)
 	var scope = angular.element($('[ng-controller=dataController]')).scope();
 	var data = scope.filteredItems;
+	var avgData = d3Globals.avgPriceData;
 
 	var dataPoints = d3Globals.svg.selectAll('.dataPoint').data(data);
-	var avgData = d3Globals.svg.selectAll('.avgPoint').data(d3Globals.a);
+	var avgDataPoints = d3Globals.svg.selectAll('.avgPoint').data(avgData);
+	var avgDataLines = d3Globals.svg.selectAll('.avgLine').data(avgData);
 
 	var xScale = d3Globals.xScale;
 	var yScale = d3Globals.yScale;
 
-	avgData
+	avgDataPoints
 		.each(function(d) {
 			//d3.select allows d3 animations to be used
 			var currentPoint = d3.select(this);
@@ -357,13 +363,11 @@ function moveOldPoints(addingNewData) {
 			}
 	});
 
-	d3Globals.svg.selectAll('.avgLine')
-		.data(d3Globals.a)
+	avgDataLines
 		.each(function(d) {
 
 			var currentLine = d3.select(this);
-			var data = d3Globals.a;
-
+			
 			currentLine
 				.transition()
 				.duration(500)
@@ -374,25 +378,25 @@ function moveOldPoints(addingNewData) {
 					return yScale(d.avgPrice);
 				})
 				.attr('x2', function(d) {
-					var i = d3Globals.a.indexOf(d);
-					var nextElem = data[i+1];
+					var i = avgData.indexOf(d);
+					var nextElem = avgData[i+1];
 
 					if (nextElem) {
 						return xScale(nextElem.date);
 					}
 				})
 				.attr('y2', function(d) {
-					var i = d3Globals.a.indexOf(d);
-					var nextElem = data[i+1];
+					var i = avgData.indexOf(d);
+					var nextElem = avgData[i+1];
 
 					if (nextElem) {
 						return yScale(nextElem.avgPrice);
 					}
 				})
 				.style('stroke', function(d) {
-					var i = d3Globals.a.indexOf(d);
+					var i = avgData.indexOf(d);
 
-					var nextElem = data[i+1];
+					var nextElem = avgData[i+1];
 					var color = 'black';
 					if (nextElem) {
 
@@ -607,7 +611,7 @@ function updateAxes() {
 	
 	resizeAxes();
 
-	//calculates avg price, std dev, range within 2 stddev
+	//calculates avg price, std dev, range within 2 stddev FOR ALL AUCTIONS
 	function calcStatistics() {
 		var stats = d3Globals.stats = {};
 	
