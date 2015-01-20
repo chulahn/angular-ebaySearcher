@@ -30,10 +30,9 @@ $(document).ready(function() {
 	//var scope = angular.element($('[ng-controller=dataController]')).scope();
 	d3.select(window).on('resize', updateAxes);
 
-	getAvgPrices();
-	drawViz();
+	drawInitialViz();
 	setDatePlaceHolder();
-	addAvgPriceData();
+
 	//price
 	$('#filterDiv input[type="number"]').on('keyup', function() {
 		getAvgPrices();
@@ -112,7 +111,7 @@ $(document).ready(function() {
 /*
 	Adds datapoints to svg.  Briefly shows a big green circle then animates to a small black one.
 	Each circle has a mouseover event, and a link to the anchor in the table.
-	Called in updateViz(), drawViz().
+	Called in updateViz(), drawInitialViz().
 */
 function addDataPoints() {
 
@@ -173,15 +172,17 @@ function addDataPoints() {
 		.attr('r', '2');	
 }
 
-
+/*
+	For the filtered auctions, calculates the average price of an item per day,
+	and stores it as an array to d3Globals.avgPriceData
+	Necessary to call before addAvgPriceData(), and moveOldPoints().
+*/
 function getAvgPrices() {
 	var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
-	console.log('getavgprices ', d3Globals.allAvgPrices)
 	var allAvgPrices = d3Globals.allAvgPrices = {};
-	console.log('getavgprices ', d3Globals.allAvgPrices)
 
-	//for each auction, check if object has data for a date.
-	//push auctions price to where date is.
+	//For each auction, check if object has Key for a date.
+	//Push auctions price to where date is.
 	data.forEach(function(auction) {
 
 		var endDate = auction.endTime.getDate();
@@ -206,24 +207,27 @@ function getAvgPrices() {
 		}
 	}
 
+	//convert object to Array and set global
 	var outputArray = toArray(allAvgPrices);
-
 	outputArray.sort(function(a,b){
 		return (a.date - b.date);
 	});
-
 	d3Globals.avgPriceData = outputArray;
 }
 
-function addAvgPriceData() {
+/*
+	Uses d3Globals.avgPriceData to draw avgDataPoints, and avgLine.
+	Used in updateAxes()
+*/
+function addAvgPricePoints() {
 
 	var xScale = d3Globals.xScale;
 	var yScale = d3Globals.yScale;
 	
-	var data = d3Globals.avgPriceData;
+	var avgData = d3Globals.avgPriceData;
 	
 	d3Globals.svg.selectAll('.avgPoint')
-		.data(data)
+		.data(avgData)
 		// .call(d3Globals.avgTip)
 		.enter()
 		.append('circle')
@@ -240,28 +244,25 @@ function addAvgPriceData() {
 		;
 
 	d3Globals.svg.selectAll('.avgLine')
-		.data(data)
+		.data(avgData)
 		.enter()
 		.append('line')
 
 		.attr('x1', function(d, i) {
-			// console.log("index " , i , " " ,d.date);
 			return xScale(d.date);
 		})
 		.attr('y1', function(d, i) {
-			// console.log(yScale(d.avgPrice))
 			return yScale(d.avgPrice);
 		})
 		.attr('x2', function(d, i) {
-			var nextElem = data[i+1];
+			var nextElem = avgData[i+1];
 
 			if (nextElem) {
-				// console.log(nextElem.date);
 				return xScale(nextElem.date);
 			}
 		})
 		.attr('y2', function(d, i) {
-			var nextElem = data[i+1];
+			var nextElem = avgData[i+1];
 
 			if (nextElem) {
 				return yScale(nextElem.avgPrice);
@@ -270,7 +271,7 @@ function addAvgPriceData() {
 		.attr('class', 'avgLine')
 		.style('stroke', function(d,i) {
 			
-			var nextElem = data[i+1];
+			var nextElem = avgData[i+1];
 			var color = 'black';
 			if (nextElem) {
 
@@ -291,11 +292,11 @@ function addAvgPriceData() {
 			else {
 				// console.log('----')
 			}
-		})
-
-		;
-
+		});
 }
+
+
+
 
 /*
 	If new points are being added, show old values by marking them red
@@ -304,7 +305,6 @@ function addAvgPriceData() {
 */
 function moveOldPoints(addingNewData) {
 
-	console.log("moveOldPoints: addingNewData= " , addingNewData)
 	var scope = angular.element($('[ng-controller=dataController]')).scope();
 	var data = scope.filteredItems;
 	var avgData = d3Globals.avgPriceData;
@@ -495,7 +495,7 @@ function moveOldPoints(addingNewData) {
 
 /*
 	Sets the graph's dimens, and scale/axes.
-	Used in updateAxes(), and drawViz()
+	Used in updateAxes(), and drawInitialViz()
 */
 function setGraphDimens(create) {
 	var dimens = d3Globals.dimens = {"w": $('#vizDiv').width() * .95, "h": $('#vizDiv').height() * .95};
@@ -562,9 +562,10 @@ function setGraphDimens(create) {
 	Creates the inital visualization.
 	Called on page load.
 */
-function drawViz() {
+function drawInitialViz() {
 
 	setGraphDimens("create");
+
 	var svg = d3Globals.svg;
 
 	//adds axes
@@ -589,7 +590,13 @@ function drawViz() {
 			.attr('transform', 'translate(' + (d3Globals.dimens.w - d3Globals.padding.x) / 2 + ',' +  (0) + ')');
 	}
 
+
+
 	addDataPoints();
+	getAvgPrices();
+	addAvgPricePoints();
+
+
 }
 
 /*
@@ -606,6 +613,7 @@ function updateAxes() {
 
 	if (data.length !== 0) {	
 		calcStatistics();
+		getAvgPrices();
 		moveOldPoints();
 	}
 	
@@ -663,24 +671,31 @@ function updateViz(addingNewData) {
 
 	updateAxes();
 	var data = angular.element($('[ng-controller=dataController]')).scope().filteredItems;
+	var avgData = d3Globals.avgPriceData;
 	var svg = d3Globals.svg;
+
 	var dataPoints = svg.selectAll('.dataPoint').data(data);
 	var links = svg.selectAll('svg a').data(data);
+	var avgDataPoints = svg.selectAll('.avgPoint').data(avgData);
+	var avgLines = svg.selectAll('.avgLine').data(avgData);
 
-	// console.log("data size ", data.length);
 
 	dataPoints.exit()
 		.transition().attr('r', 4).attr('fill', 'red')
 		.transition().attr('r', 0).remove();
 	links.exit().remove();
 
-	getAvgPrices();
-	
+	avgDataPoints.exit()
+		.transition().attr('r', 20).attr('fill', 'red')
+		.transition().attr('r', 0).remove();
+	avgLines.exit().remove();
+
+
 	(addingNewData === undefined) ? moveOldPoints() : moveOldPoints("addingNewData");
 
 	//not only when adding data, but also when unfiltering
 	addDataPoints();
-	addAvgPriceData();
+	addAvgPricePoints();
 	setTimeout(addMissing, 1000);
 
 	function addMissing() {
