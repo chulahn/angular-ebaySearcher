@@ -364,7 +364,9 @@ function moveOldPoints(addingNewData) {
 					})
 					.attr('cy' , function(d) {
 						return yScale(d.avgPrice)
-					});
+					})
+					.attr('fill', 'blue')
+					.attr('r' , 10);
 			}
 	});
 
