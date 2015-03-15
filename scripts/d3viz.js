@@ -74,14 +74,15 @@ $(document).ready(function() {
 
 			$('#earliestDateFilter').val(earlyPlaceHold);
 			$('#earliestDateFilter').prop('min', earlyPlaceHold);
-			$('#earliestDateFilter').prop('max', latest.getPrevDayInputString());
+			$('#earliestDateFilter').prop('max', latest.getInputString());
 
 			$('#latestDateFilter').val(latePlaceHold);
-			$('#latestDateFilter').prop('min', earliest.getNextDayInputString());
+			$('#latestDateFilter').prop('min', earliest.getInputString());
 			$('#latestDateFilter').prop('max', latePlaceHold);
 		}
 	}
 
+	//checks if dates are valid.  if currentValues are 
 	function validDate() {
 		var earliest = d3Globals.earliestDate;
 		//var latest = d3Globals.latestDate;
@@ -89,22 +90,26 @@ $(document).ready(function() {
 		var currentEarly = $('#earliestDateFilter').val().toDate();
 		var currentLate = $('#latestDateFilter').val().toDate();
 
+		var max = $('#earliestDateFilter').prop('max').toDate();
+		var min = $('#latestDateFilter').prop('min').toDate();
+
+		console.log(currentEarly , max)
 		if (!(currentEarly <= currentLate)) {
 			$('#earliestDateFilter').attr('class','invalid');
-			// console.log(currentEarly , earliest, currentLate);
 		}
 		else {
 			$('#earliestDateFilter').removeClass('invalid');
-			$('#earliestDateFilter').attr('class', 'valid');
 		}
 
 		if (!(currentLate >= currentEarly)) {
 			$('#latestDateFilter').attr('class','invalid');
+
 		}
 		else {
 			$('#latestDateFilter').removeClass('invalid');
-			$('#latestDateFilter').attr('class', 'valid');			
 		}
+
+		// if (currentEarly > )
 	}
 });
 

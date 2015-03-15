@@ -69,6 +69,7 @@ function updateSelectedDataDiv() {
 		}
 	}
 
+	//returns the auction object with highest price
 	function getMax(searchKey) {
 
 	    if (typeof (selectedItems) === 'undefined' || typeof (searchKey) === 'undefined' || selectedItems.length === 0) {
@@ -111,6 +112,7 @@ function updateSelectedDataDiv() {
 	    return min;
     }
 
+    //returns link to table of an auction
     function getMinMaxHTML(minMax) {
 
     	if (minMax === 0) {
@@ -124,13 +126,11 @@ function updateSelectedDataDiv() {
     	}
     }
 
-
 	var max = getMax("finalPrice");
 	var min = getMin("finalPrice");
 
 	var maxHTML = getMinMaxHTML(max);
 	var minHTML = getMinMaxHTML(min);
-
 
 	$('#selectedMax').html(maxHTML);
 	$('#selectedMin').html(minHTML);

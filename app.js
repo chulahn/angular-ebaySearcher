@@ -93,20 +93,12 @@ app.post('/get/', function(req,res) {
 
 	var requestURL = buildRequestURL(req.body);
 
-	for (var i in req.body) {
-		console.log(colors.red(i));
-		//keyword, sort, requestedType
-	}
-
 	console.log(req.body);
 
 	request(requestURL, function(err, response, body) {
 		if (!err) {
-			//console.log(colors.green(body));
 			var result = body;
-			// console.log(result);
 			result = JSON.parse(result);
-
 
 			var responseName = "";
 
