@@ -168,7 +168,7 @@ td,th {
 			width: 75px;
 		}
 
-
+	
 	#selectedData {
 		right: 0px;
 		position: fixed;
@@ -187,7 +187,10 @@ td,th {
 			}
 		}
 	}
-
+	
+	.docked {
+		top: 0px;
+	}
 #vizDiv {
 	position: relative;
 	width: 80%;
@@ -208,10 +211,13 @@ td,th {
 	}
 
 	.hover{
-
+	
 		fill: rgba(255,0,0,.6);
 		stroke: black;
 		stroke-width: 1px;
+		&.avgPoint {
+			fill: rgba(0,255,0,.9);
+		}
 	}
 
 #searchResultsTable {
@@ -238,9 +244,17 @@ td,th {
 
 #priceFilterDiv {
 	& label {
-		display: inline-block;
+		display: block;
 		text-align: right;
 		width: 10%;
 
+	}
+}
+
+.d3-tip {
+	& > .date {
+		text-align: center;
+		left:0;
+		right:0;
 	}
 }

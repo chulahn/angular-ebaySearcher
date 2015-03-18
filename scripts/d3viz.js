@@ -15,15 +15,19 @@ d3Globals.tip = d3.tip().attr('class', 'd3-tip')
 
 						return output;
 					});
-d3Globals.avgTip = d3.tip().attr('class', 'd3-tip')
+
+d3Globals.avgTip = d3.tip().attr('class', 'd3-tip avg')
 						.html(function(d) {
 							var dateString = d.date.getDateString();
-							var priceString = d.priceString.toFixed(2);
+							var priceString = "Avg Price: " + d.avgPrice.toFixed(2);
+							var numAucString = "Auctions: "+ d.num;
 
-							var output = dateString + "<br/>" +
-										"Avg Price: " + priceString;
+							var output = "<span class='label label-success date'>" + dateString + "</span><br/>" +
+							priceString + "<br/>" + numAucString + "<br/>";
 							return output;
 						});
+
+// {num: 3, avgPrice: 146, date: Tue Mar 17 2015 00:00:00 GMT-0400 (Eastern Daylight Time)}
 
 $(document).ready(function() {
 
@@ -225,15 +229,16 @@ function getAvgPrices() {
 	Used in updateAxes()
 */
 function addAvgPricePoints() {
-
 	var xScale = d3Globals.xScale;
 	var yScale = d3Globals.yScale;
 	
 	var avgData = d3Globals.avgPriceData;
-	
+	var avgTip = d3Globals.avgTip;
+
+	d3Globals.svg.call(avgTip)
+		
 	d3Globals.svg.selectAll('.avgPoint')
 		.data(avgData)
-		// .call(d3Globals.avgTip)
 		.enter()
 		.append('circle')
 		.attr('cx', function(d) {
@@ -246,6 +251,25 @@ function addAvgPricePoints() {
 		.attr('r', 10)
 		.attr('fill', 'blue')
 		.attr('fill-opacity', .4)
+
+		.on('mouseover', function(d) {
+			// console.log(d);
+			d3.select(this).transition().duration(500)
+				.attr('r', 10)
+				.attr('class', 'hover avgPoint');
+				avgTip.show(d);
+			;})
+		.on('mouseout', function(d) {
+			d3.select(this).transition().duration(500)
+				.attr('class', 'avgPoint')
+				// avgTip.hide(d);
+			;})
+
+		// .transition()
+		// .duration(1000)
+		// .attr('fill', 'black')
+		// .attr('fill-opacity' , 1)
+		// .attr('r', '2');	
 		;
 
 	d3Globals.svg.selectAll('.avgLine')

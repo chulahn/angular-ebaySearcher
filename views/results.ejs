@@ -173,12 +173,11 @@
 
 
 		$(document).ready(function() {
-
+			//----start set up page-----
 			var searchedForHTML = "";
 			searchedForHTML += "Your searched keyword <b>" + searchParams.keyword +"</b><br/>";
 			searchedForHTML += "Results were sorted by <b>" + searchParams.sortBy + "</b><br/>";
 			$('#searchedFor').prepend(searchedForHTML);
-
 
 			if (pageNum === maxPage) {
 				showLoadedAllButton();
@@ -191,6 +190,22 @@
 			if (maxPage > 12) {
 				$('#loadAllButton').hide();
 			}
+
+			if (searchParams.requestType !== "findCompletedItems") {
+				$('#soldFilter').hide();
+			}
+			//----end set up page---
+
+
+			$(window).scroll(function() {
+				if ($(window).scrollTop() > 500) {
+		        	$('#selectedData').addClass('docked');
+				}
+
+			    else {
+			        $('#selectedData').removeClass('docked');
+			    }
+			});
 
 			//Makes AJAX call to get next 100 items.
 			$('#moreResultsButton').click(function() {
@@ -408,8 +423,8 @@
 		<div id="filterDiv">
 			<h2>Filter Results</h2>
 			<input ng-model="searchFilter" id="searchFilter" placeholder="Search auction titles"><br/>
-			<input ng-model="soldFilter" type="checkbox">Sold auctions only<br/>
-			<input ng-model="newFilter" type="checkbox">New auctions only</body><br/>
+			<span id="soldFilter"><input ng-model="soldFilter" type="checkbox">Sold auctions only<br/></span>
+			<input ng-model="newFilter" type="checkbox">New Items only</body><br/>
 			<div id="priceFilterDiv">
 				Price<br/>
 				<label>Min:</label><input type="number" ng-model="minPrice" id="minPriceFilter" placeholder="Minimum" value="0"><br/>
