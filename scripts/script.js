@@ -8,12 +8,14 @@ $(document).ready(function() {
 
 	$('#newSearch').click(function() {
 
-		$(this).toggleClass('clickedButton');
+		$(this).toggleClass('btn-default');
 
-		if ($(this).hasClass('clickedButton')) {
+		if ($(this).hasClass('btn-default')) {
+			$(this).removeClass('btn-success');
 			$('#newSearchDiv').show();
 		}
 		else {
+			$(this).addClass('btn-success');
 			$('#newSearchDiv').hide();
 		}
 	});

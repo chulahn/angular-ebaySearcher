@@ -27,7 +27,6 @@ td,th {
 .button() {
 	padding: 2px;
 	border-radius: 5px;
-	border:1px solid blue;	
 }
 
 .clickedButton {
@@ -53,54 +52,32 @@ td,th {
 }
 
 	#newSearch{
-	  .button;
-	  border: 1px solid red;
-
-	  &:hover {
-		background: red;
-		color: white;
-	  }
+		.button;
+		margin-top: 5px;
 	}
 
 	#newSearchDiv{
 		display: inline-block;
 		padding: 10px 10px;
 	 	border:1px solid black;
+	 	margin-top: 5px;
 	}
 
 #moreResultsButton {
-	display: inline-block;
 	margin-top:4px;
 	.button;
-	&:hover {
-		background-color:#0022aa;
-		color: white;
-	}
-	&:active {
-		background-color:darken(#0022aa,10%);
-	}
 }
 
 #next1000Button {
 	display: inline-block;
-	margin-top:4px;
+	margin-top:2px;
 	.button;
-	&:hover {
-		background-color:#0022aa;
-		color: white;
-	}
-	&:active {
-		background-color:darken(#0022aa,10%);
-	}
 }
 
 #loadAllButton {
 	display:inline-block;
+	margin-top:2px;
 	.button;
-	&:hover {
-		background-color: blue;
-		color: white;
-	}
 }
 
 #allLoadedButton {
@@ -212,11 +189,12 @@ td,th {
 
 	.hover{
 	
-		fill: rgba(255,0,0,.6);
+		fill: rgb(0,255,0);
+		fill-opacity: .7;
 		stroke: black;
 		stroke-width: 1px;
 		&.avgPoint {
-			fill: rgba(0,255,0,.9);
+			fill: rgb(255,0,0);
 		}
 	}
 
@@ -247,13 +225,17 @@ td,th {
 		display: block;
 		text-align: right;
 		width: 10%;
-
 	}
 }
 
 .d3-tip {
+	border-radius: 3px;
+	background-color: rgba(0,255,0,.5);
+	&.avg {
+		background-color: rgba(255,0,0,.5);
+	}
 	& > .date {
-		text-align: center;
+		display:block;
 		left:0;
 		right:0;
 	}

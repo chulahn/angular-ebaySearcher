@@ -5,11 +5,11 @@ d3Globals.small = false;
 
 d3Globals.tip = d3.tip().attr('class', 'd3-tip')
 					.html(function(d) {
-						var dateString = new Date(d.endTime).toLocaleString();
+						var dateString = "<span class='label label-success date'>" + new Date(d.endTime).getDateString() + "</span>";
 						var price = d.price;
 						var shipped = d.finalPrice;
 
-						var output = dateString + "</br>" + 
+						var output = dateString + 
 									"Price: " + price + "<br/>" + 
 									"After Shipping: " + shipped;
 
@@ -18,11 +18,11 @@ d3Globals.tip = d3.tip().attr('class', 'd3-tip')
 
 d3Globals.avgTip = d3.tip().attr('class', 'd3-tip avg')
 						.html(function(d) {
-							var dateString = d.date.getDateString();
+							var dateString = "<span class='label label-danger date'>" + d.date.getDateString() + "</span>";
 							var priceString = "Avg Price: " + d.avgPrice.toFixed(2);
 							var numAucString = "Auctions: "+ d.num;
 
-							var output = "<span class='label label-success date'>" + dateString + "</span><br/>" +
+							var output =  dateString +
 							priceString + "<br/>" + numAucString + "<br/>";
 							return output;
 						});
@@ -163,7 +163,6 @@ function addDataPoints() {
 		.attr('fill', 'green')
 
 		.on('mouseover', function(d) {
-			// console.log(d);
 			d3.select(this).transition().duration(500)
 				.attr('r', 10)
 				.attr('class', 'hover dataPoint');
@@ -174,6 +173,7 @@ function addDataPoints() {
 				.attr('class', 'dataPoint');
 			tip.hide(d);})
 
+		//after showing point minimize
 		.transition()
 		.duration(1000)
 		.attr('fill', 'black')
@@ -235,7 +235,7 @@ function addAvgPricePoints() {
 	var avgData = d3Globals.avgPriceData;
 	var avgTip = d3Globals.avgTip;
 
-	d3Globals.svg.call(avgTip)
+	d3Globals.svg.call(avgTip);
 		
 	d3Globals.svg.selectAll('.avgPoint')
 		.data(avgData)
@@ -248,25 +248,28 @@ function addAvgPricePoints() {
 			return yScale(d.avgPrice);
 		})
 		.attr('class', 'avgPoint')
-		.attr('r', 10)
-		.attr('fill', 'blue')
+		.attr('r', 6)
+
+		.attr('fill', 'red')
 		.attr('fill-opacity', .4)
 
 		.on('mouseover', function(d) {
 			// console.log(d);
 			d3.select(this).transition().duration(500)
 				.attr('r', 10)
+				// .attr('fill-opacity',.9)
 				.attr('class', 'hover avgPoint');
 				avgTip.show(d);
 			;})
 		.on('mouseout', function(d) {
 			d3.select(this).transition().duration(500)
+				.attr('r', 6)
 				.attr('class', 'avgPoint')
-				// avgTip.hide(d);
+				avgTip.hide(d);
 			;})
 
-		// .transition()
-		// .duration(1000)
+		.transition()
+		.duration(1000)
 		// .attr('fill', 'black')
 		// .attr('fill-opacity' , 1)
 		// .attr('r', '2');	
@@ -376,7 +379,7 @@ function moveOldPoints(addingNewData) {
 							})
 						.transition()
 						.duration(1000)
-							.attr('fill', 'blue')
+							.attr('fill', 'red')
 				}
 			}
 			else {
@@ -389,8 +392,8 @@ function moveOldPoints(addingNewData) {
 					.attr('cy' , function(d) {
 						return yScale(d.avgPrice)
 					})
-					.attr('fill', 'blue')
-					.attr('r' , 10);
+					.attr('fill', 'red')
+					.attr('r' , 6);
 			}
 	});
 
@@ -623,9 +626,9 @@ function drawInitialViz() {
 
 
 
-	addDataPoints();
 	getAvgPrices();
 	addAvgPricePoints();
+	addDataPoints();
 
 
 }
@@ -725,8 +728,8 @@ function updateViz(addingNewData) {
 	(addingNewData === undefined) ? moveOldPoints() : moveOldPoints("addingNewData");
 
 	//not only when adding data, but also when unfiltering
-	addDataPoints();
 	addAvgPricePoints();
+	addDataPoints();
 	setTimeout(addMissing, 1000);
 
 	function addMissing() {

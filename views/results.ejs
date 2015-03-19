@@ -12,17 +12,10 @@
 
 
 	<!-- Stylesheets -->
-	<!-- <link href="../styles/style.css" rel="stylesheet"></link> -->
-	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-
-	<!-- Optional theme -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
-	<link rel="stylesheet/less" type="text/css" href="../styles/style.less"></link>
+	<link href="../styles/style.css" rel="stylesheet"></link>
 	
-	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/less.js/2.1.1/less.min.js"></script>
-
-
 	<script src="../scripts/controller.js"></script>
 	<script src="../scripts/d3viz.js"></script>
 	<script>				
@@ -215,7 +208,6 @@
 			});
 
 			$('#next1000Button').click(function() {
-
 				if (pageNum <= maxPage -1) {
 					console.log(pageNum);
 					makeRequest(pageNum, pageNum + 10);
@@ -249,11 +241,10 @@
 		//Once done, add data(parseAndAddToScope), and update visualization(updateViz)
 		function makeRequest(i , j) {
 			var newRequestURL = requestURL + "&paginationInput.pageNumber=" + (i+1);
-			console.log('making request to ', newRequestURL)
+			// console.log('making request to ', newRequestURL)
 			var request = $.ajax({url : newRequestURL , dataType: "jsonp"});
-
 			request.done(function() {
-				console.log('finished request');
+				// console.log('finished request');
 				parseAndAddToScope(request.responseJSON);
 				pageNum++;
 				updateViz("newData");
@@ -261,8 +252,7 @@
 				if (pageNum === maxPage) {
 					showLoadedAllButton();
 				}
-
-				if (j != null && pageNum < maxPage) {
+				if (j != null && pageNum < j) {
 					makeRequest(pageNum, j);
 				}
 			});
@@ -368,10 +358,10 @@
 		Showing {{filteredItems.length}} out of <span id="numEntries"><%- (parseInt(totalEntries) < parseInt(entriesPerPage)) ? totalEntries : entriesPerPage %></span> results<br/>
 
 		
-		<span id="moreResultsButton">Load Next 100 Results</span><br/>
-		<span id="next1000Button">Load Next 1000 Results</span><br/>
-		<span id="loadAllButton">Load All Results</span><br/>
-		<span id="newSearch">Search another item?</span><br/>
+		<span id="moreResultsButton" class="btn btn-sm btn-primary">Load Next 100 Results</span><br/>
+		<span id="next1000Button" class="btn btn-sm btn-primary">Load Next 1000 Results</span><br/>
+		<span id="loadAllButton" class="btn btn-sm btn-primary">Load All Results</span><br/>
+		<span id="newSearch" class="btn btn-sm btn-success">Search another item?</span><br/>
 
 		<div id="newSearchDiv">
 			<form action="../get" method="post">
@@ -382,6 +372,7 @@
 						<option value="BestMatch">Best Match</option>
 						<option value="PricePlusShippingLowest">Lowest Shipped Price</option>
 						<option value="PricePlusShippingHighest">Highest Shipped Price</option>
+						<option value="StartTimeNewest">Newly Listed</option>
 						<option value="EndTimeSoonest">Ending soonest</option>
 					</select>
 				</p>
@@ -392,7 +383,7 @@
 						<option value="findCompletedItems">Completed Auctions</option>
 					</select><br/></p>
 
-				<button type="submit">Submit</button>
+				<button class="btn btn-default" type="submit">Submit</button>
 			</form>
 
 		</div>
@@ -402,9 +393,8 @@
 	<div id="vizDiv"></div>
 
 		{{$parse(oldestItem = getOldest(filteredItems))}}
-		{{$parse(endOldestDateStr = (oldestItem.endTime.str.indexOf(" ") || "N/A") )}}
-		Showing results from {{(oldestItem.endTime.str.slice(0, endOldestDateStr) || "N/A") }}<br/> 
-
+		{{$parse(endOldestDateStr = (oldestItem.endTime.indexOf("T") || "N/A") )}}
+		Showing results from {{(oldestItem.endTime.slice(0, endOldestDateStr) || "N/A") }}<br/> 
 	<div id="container">
 		<div id="filteredDataDiv">
 			<h3>Filtered</h3>
@@ -464,7 +454,7 @@
 								 "start" : (earliestDate || defaultEarly),
 								 "end" : (latestDate || defaultLate)
 								}) }}
-		{{filterObject}}
+		<!-- {{filterObject}} -->
 
 		{{$parse(
 			filteredItems = (items | 
@@ -487,7 +477,7 @@
 				<span class="shippedPrice">Total: {{item.finalPrice}}</span><br/>
 				<span class="nosale" ng-if="item.status === 'EndedWithoutSales'">ENDED WITHOUT SALE</span>
 			</td>
-			<td>{{item.endTime.str}}</td>
+			<td>{{item.endTime}}</td>
 		</tr>
 	</table>
 

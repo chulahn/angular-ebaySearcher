@@ -6,14 +6,9 @@
 	<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 
 	<link rel="stylesheet" type="text/css" href="styles/index.css"></link>
-
-	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-
-	<!-- Optional theme -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
 
-	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 	
 	<script>
@@ -40,24 +35,32 @@
 	<h1>Get Prices For</h1>
 	<form id="formSearch" action="/get/" method="post">
 
+
 		<p><label for="keyword">Item:</label> <input type="text" id="keyword" name="keyword" placeholder="Enter Keyword"></input><br/></p>
 
+		<p><label for="searchDesc">Also Search Descriptions</label><input id="searchDesc" name="searchDesc" type="checkbox"></input></p><br/>
+
+		<p>
 		<p><label for="sortBy">Sort By:</label>
 		<select id="sortBy" name="sortBy">
 			<option value="BestMatch">Best Match</option>
 			<option value="PricePlusShippingLowest">Lowest Shipped Price</option>
 			<option value="PricePlusShippingHighest">Highest Shipped Price</option>
 			<option value="EndTimeSoonest">Ending soonest</option>
+			<option value="StartTimeNewest">Newly Listed</option>
 		</select><br/></p>
+
 
 		<p><label for="requestType">Live/Completed:</label>
 		<select id="requestType" name="requestType">
+			<option value="findItemsAdvanced">Live Auctions</option>
 			<option value="findItemsByKeywords">Live Auctions</option>
 			<option value="findCompletedItems">Completed Auctions</option>
 		</select><br/></p>
 
+		
 
-		<button type="submit">Submit</button>
+		<button type="submit" class="btn btn-lg btn-default">Submit</button>
 	
 	</form>
 </div>

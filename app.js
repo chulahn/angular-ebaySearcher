@@ -42,29 +42,29 @@ Date.prototype.getTime = function() {
 
 
 app.get('/' , function (req,res) {
-
 	res.sendfile('index.html');
-	
 });
 
 
 function buildRequestURL(params) {
+	console.log(params)
 
 
     /*
 	    url += "&sortOrder=EndTimeSoonest";
 		
 		sortorder takes
-		BestMatch - default
+		BestMatch - default x
 
 		BidCountFewest
 		BidCountMost
 		
 		CurrentPriceHighest
 		DistanceNearest - must include buyerPostalCode &buyerPostalCode=
-		EndTimeSoonest
-		PricePlusShippingLowest
-		PricePlusShippingHighest
+		EndTimeSoonest x
+		PricePlusShippingLowest x
+		PricePlusShippingHighest x
+		StartTimeNewest // find completed items
 
     */
 
@@ -84,6 +84,9 @@ function buildRequestURL(params) {
     // url += "&paginationInput.pageNumber=10";  //1-100
     url += "&sortOrder=" + params.sortBy;
 
+    if (params.searchDesc === 'on') {
+    	url += "&descriptionSearch=true";
+    }
 
     return url;
 }
@@ -204,4 +207,4 @@ app.get('/no_image.jpg', function (req,res) {
 });
 
 
-app.listen(3000);
+app.listen(process.env.PORT || 3000);
