@@ -18,6 +18,7 @@ After working on the Diablo 3 project for so long, I got tired of it and wanted 
     <li>Price
     <li>Date
     <li>Selection
+  </ul>
 </ul>
 
 
