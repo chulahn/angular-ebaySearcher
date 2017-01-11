@@ -35,7 +35,7 @@ angular.module('app',[])
         $scope.minPrice = 0;
         $scope.maxPrice = 1000;
         $scope.defaultEarly = new Date("2013");
-        $scope.defaultLate = new Date("2017");
+        $scope.defaultLate = new Date("2019");
 
         $scope.getAvg = function(items, searchKey) {
 
