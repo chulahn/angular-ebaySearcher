@@ -47,9 +47,6 @@ app.get('/' , function (req,res) {
 
 
 function buildRequestURL(params) {
-	console.log(params)
-
-
     /*
 	    url += "&sortOrder=EndTimeSoonest";
 		
@@ -71,7 +68,7 @@ function buildRequestURL(params) {
 	var appID = "chulahnc0-347f-40b2-8df7-372d69c4c7e";
 
 	var url = "http://svcs.ebay.com/services/search/FindingService/v1";
-    url += "?OPERATION-NAME="+params.requestType;
+	url += "?OPERATION-NAME="+params.requestType;
     // url += "?OPERATION-NAME=findItemsByKeywords";
     url += "&SERVICE-VERSION=1.0.0";
     url += "&SECURITY-APPNAME="+appID;
@@ -96,8 +93,6 @@ app.post('/get/', function(req,res) {
 
 	var requestURL = buildRequestURL(req.body);
 
-	console.log(req.body);
-
 	request(requestURL, function(err, response, body) {
 		if (!err) {
 			var result = body;
@@ -105,8 +100,19 @@ app.post('/get/', function(req,res) {
 
 			var responseName = "";
 
+			//console.log(result);
+			/*  Result
+			{ findItemsAdvancedResponse:
+				[ { ack: [Object],
+					version: [Object],
+					timestamp: [Object],
+					searchResult: [Object],
+					paginationOutput: [Object],
+					itemSearchURL: [Object] } ] }
+			*/
+
+			//set responseName, so we can access inside the result Object
 			for (response in result) {
-				console.log(response);
 				responseName = response;
 			}
 
@@ -116,24 +122,68 @@ app.post('/get/', function(req,res) {
 
 			if (success === "Success" || success === "Warning") {
 
-				// console.log(result);
-
+				
 				var paginationOutput = result.paginationOutput[0];
+				 console.log(paginationOutput);
 				/*
+					{ pageNumber: [ '1' ],
+					entriesPerPage: [ '100' ],
+					totalPages: [ '3' ],
+					totalEntries: [ '208' ] }
+
 					.pageNumber[0] = numPages
 					.entriesPerPage[0]
 					.totalPages[0] = 7
 					.totalEntries[0] = 619
 				*/
-				// console.log(paginationOutput);
 
+				//found items are in here
 				var items = result.searchResult[0].item;
+				//console.log(items);
+
+				//var firstItem = items[0];
+				//console.log(firstItem);
+				/*
+					{ itemId: [ '162665724743' ],
+					title: [ 'Supreme 100 Dollar Bill 14K Gold Pendant FW17 In Hand With Supreme Toothbrush' ],
+					globalId: [ 'EBAY-US' ],
+					primaryCategory: [ { categoryId: [Object], categoryName: [Object] } ],
+					galleryURL: [ 'http://thumbs4.ebaystatic.com/m/mHRxyMoO86skVpHjHhlz7_A/140.jpg' ],
+					viewItemURL: [ 'http://www.ebay.com/itm/Supreme-100-Dollar-Bill-14K-Gold-Pendant-FW17-Hand-Supreme-Toothbrush-/162665724743' ],
+					paymentMethod: [ 'PayPal' ],
+					autoPay: [ 'true' ],
+					postalCode: [ '76001' ],
+					location: [ 'Arlington,TX,USA' ],
+					country: [ 'US' ],
+					shippingInfo:
+					[ { shippingServiceCost: [Object],
+						shippingType: [Object],
+						shipToLocations: [Object],
+						expeditedShipping: [Object],
+						oneDayShippingAvailable: [Object],
+						handlingTime: [Object] } ],
+					sellingStatus:
+					[ { currentPrice: [Object],
+						convertedCurrentPrice: [Object],
+						sellingState: [Object],
+						timeLeft: [Object] } ],
+					listingInfo:
+					[ { bestOfferEnabled: [Object],
+						buyItNowAvailable: [Object],
+						startTime: [Object],
+						endTime: [Object],
+						listingType: [Object],
+						gift: [Object],
+						watchCount: [Object] } ],
+					returnsAccepted: [ 'false' ],
+					condition: [ { conditionId: [Object], conditionDisplayName: [Object] } ],
+					isMultiVariationListing: [ 'false' ],
+					topRatedListing: [ 'false' ] }
+				*/
 
 				if (items === undefined) {
 					return res.send("0 results");
 				}
-
-				//console.log(items);
 
 				var newItems = items.map(function(item) {
 

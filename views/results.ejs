@@ -151,6 +151,7 @@
 			var entriesPerPage = numPages.entriesPerPage[0] 
 		%>
 
+		//Expose variables sent from Node to EJS, so accessible by any JS
 		//items: values before mapped, newItems: after
 		var items = <%- JSON.stringify(ejs_items) %>
 		var newItems = <%- JSON.stringify(ejs_newItems) %>
@@ -239,6 +240,7 @@
 
 		//Makes AJAX call to api based on current pageNumber
 		//Once done, add data(parseAndAddToScope), and update visualization(updateViz)
+		//second parameter is the pageNum to stop on
 		function makeRequest(i , j) {
 			var newRequestURL = requestURL + "&paginationInput.pageNumber=" + (i+1);
 			// console.log('making request to ', newRequestURL)
@@ -252,6 +254,7 @@
 				if (pageNum === maxPage) {
 					showLoadedAllButton();
 				}
+				//if second parameter,
 				if (j != null && pageNum < j) {
 					makeRequest(pageNum, j);
 				}
@@ -278,16 +281,16 @@
 
 				var success = JSONresponse.ack[0];
 				if (success === "Success" || success === "Warning") {
-
-					//var paginationOutput = JSONresponse.paginationOutput[0];
 				
 					var items = JSONresponse.searchResult[0].item;
-
+					console.log("ParseData: response returned " + items.length + " items");
+					//Dunno what this is.  I guess trying to find out when 99 items are returned.
 					if (items.length === 99) {
 						console.log(JSONresponse);
 						console.log('------');
 					}
 
+					//same mapping as in app.js
 					var newItems = items.map(function(item) {
 
 						var itemDetails = {
