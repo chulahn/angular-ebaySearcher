@@ -96,14 +96,22 @@ app.post("/search/", function(req, res) {
   request(requestURL, function(err, response, body) {
     if (!err) {
       var result = body;
-      result = JSON.parse(result);
+			result = JSON.parse(result);
+			/*
+				{ findCompletedItemsResponse:
+   				[ { ack: [Array],
+      			 version: [Array],
+       			 timestamp: [Array],
+      			 searchResult: [Array],
+      			 paginationOutput: [Array] } ] }
+			*/
 
       var responseName = "";
 
       for (response in result) {
-        console.log(response);
+        // console.log(response);
         responseName = response;
-      }
+			}
 
       result = result[responseName][0];
 
@@ -118,8 +126,12 @@ app.post("/search/", function(req, res) {
 					.entriesPerPage[0]
 					.totalPages[0] = 7
 					.totalEntries[0] = 619
+
+					{ pageNumber: [ '1' ],
+  					entriesPerPage: [ '100' ],
+ 						totalPages: [ '1' ],
+  					totalEntries: [ '70' ] }
 				*/
-        // console.log(paginationOutput);
 
         var items = result.searchResult[0].item;
 
@@ -127,7 +139,45 @@ app.post("/search/", function(req, res) {
           return res.send("0 results");
         }
 
-        //console.log(items);
+				/*
+					{ itemId: [ '323470788237' ],
+						title:
+						[ 'Adidas Yeezy Boost 350 V2 Triple White CP9366  Size: 9.5 CONFIRMED PREORDER' ],
+						globalId: [ 'EBAY-US' ],
+						primaryCategory: [ { categoryId: [Array], categoryName: [Array] } ],
+						galleryURL:
+						[ 'http://thumbs2.ebaystatic.com/m/mwn7hR-j-nu_pKtd-j_8pnw/140.jpg' ],
+						viewItemURL:
+						[ 'http://www.ebay.com/itm/Adidas-Yeezy-Boost-350-V2-Triple-White-CP9366-Size-9-5-CONFIRMED-PREORDER-/323470788237' ],
+						productId: [ { '@type': 'ReferenceID', __value__: '937394446' } ],
+						paymentMethod: [ 'PayPal' ],
+						autoPay: [ 'true' ],
+						postalCode: [ '91755' ],
+						location: [ 'Monterey Park,CA,USA' ],
+						country: [ 'US' ],
+						shippingInfo:
+						[ { shippingServiceCost: [Array],
+								shippingType: [Array],
+								shipToLocations: [Array],
+								expeditedShipping: [Array],
+								oneDayShippingAvailable: [Array],
+								handlingTime: [Array] } ],
+						sellingStatus:
+						[ { currentPrice: [Array],
+								convertedCurrentPrice: [Array],
+								sellingState: [Array] } ],
+						listingInfo:
+						[ { bestOfferEnabled: [Array],
+								buyItNowAvailable: [Array],
+								startTime: [Array],
+								endTime: [Array],
+								listingType: [Array],
+								gift: [Array] } ],
+						returnsAccepted: [ 'false' ],
+						condition: [ { conditionId: [Array], conditionDisplayName: [Array] } ],
+						isMultiVariationListing: [ 'false' ],
+						topRatedListing: [ 'false' ] }
+				*/
 
         var newItems = items.map(function(item) {
           var itemDetails = {
@@ -179,7 +229,6 @@ app.post("/search/", function(req, res) {
           return itemDetails;
         });
 
-        //console.log(responseName)
         res.render("results.ejs", {
           ejs_items: items,
           ejs_newItems: newItems,
