@@ -46,7 +46,8 @@ app.get("/", function(req, res) {
 function buildRequestURL(params) {
   console.log(params);
 
-  /*
+	/*
+		http://developer.ebay.com/Devzone/finding/CallRef/findItemsAdvanced.html
 	    url += "&sortOrder=EndTimeSoonest";
 		
 		sortorder takes
