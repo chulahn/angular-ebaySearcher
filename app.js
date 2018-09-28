@@ -88,7 +88,7 @@ function buildRequestURL(params) {
   return url;
 }
 
-app.post("/get/", function(req, res) {
+app.post("/search/", function(req, res) {
   var requestURL = buildRequestURL(req.body);
 
   console.log(req.body);
