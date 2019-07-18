@@ -54,10 +54,18 @@ $(document).ready(function() {
   //var scope = angular.element($('[ng-controller=dataController]')).scope();
   d3.select(window).on("resize", updateAxes);
 
-  drawInitialViz();
+  // calls setGraphDimens("create");
+  // add x and y axis
+  // calculate average data points and store in d3 globals
+  // draw data points, and avg data points.
+  drawInitialViz();  
+  
+  // set date filters
   setDatePlaceHolder();
 
-  //price
+  // Events
+  // Whenever price, date, query changes, new item in filter
+  // 1. Recalculate Avg, 2. Update Viz, 3. Clean old points, 4. Update DateFilters
   $('#filterDiv input[type="number"]').on("keyup", function() {
     getAvgPrices();
     updateViz();
@@ -79,7 +87,6 @@ $(document).ready(function() {
     setDatePlaceHolder();
   });
 
-  //buttons
   $('#filterDiv input[type="checkbox"]').on("change", function() {
     getAvgPrices();
     setTimeout(updateViz, 100);
@@ -664,10 +671,8 @@ function drawInitialViz() {
       .attr(
         "transform",
         "translate(" +
-          (d3Globals.dimens.w - d3Globals.padding.x) / 2 +
-          "," +
-          0 +
-          ")"
+          (d3Globals.dimens.w - d3Globals.padding.x) / 2 + "," + 
+          0 + ")"
       );
   }
 
