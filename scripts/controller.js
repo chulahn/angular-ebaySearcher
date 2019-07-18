@@ -32,7 +32,7 @@
       $scope.minPrice = 0;
       $scope.maxPrice = 1000;
       $scope.defaultEarly = new Date("2013");
-      $scope.defaultLate = new Date("2019");
+      $scope.defaultLate = new Date("2021");
 
       $scope.getAvg = function(items, searchKey) {
         if (typeof items === "undefined" || typeof searchKey === "undefined") {

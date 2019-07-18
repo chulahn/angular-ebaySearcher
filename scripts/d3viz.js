@@ -1,44 +1,54 @@
 var d3Globals = {};
-d3Globals.dimens = {
-  w: $("#vizDiv").width() * 0.95,
-  h: $("#vizDiv").height() * 0.95
-};
-d3Globals.padding = { x: 40, y: 20 };
-d3Globals.small = false;
 
-d3Globals.tip = d3
-  .tip()
-  .attr("class", "d3-tip")
-  .html(function(d) {
-    var dateString =
-      "<span class='label label-success date'>" +
-      new Date(d.endTime).getDateString() +
-      "</span>";
-    var price = d.price;
-    var shipped = d.finalPrice;
+function initializeD3Globals() {
+  
+  d3Globals.dimens = {
+    w: $("#vizDiv").width() * 0.95,
+    h: $("#vizDiv").height() * 0.95
+  };
+  d3Globals.padding = { x: 40, y: 20 };
+  d3Globals.small = false;
 
-    var output =
-      dateString + "Price: " + price + "<br/>" + "After Shipping: " + shipped;
+  // Defines tooltips for a item datapoint.
+  // Gives classes for style and shows price (after shipping)
+  d3Globals.tip = d3
+    .tip()
+    .attr("class", "d3-tip")
+    .html(function(d) {
+      var dateString =
+        "<span class='label label-success date'>" +
+        new Date(d.endTime).getDateString() +
+        "</span>";
+      var price = d.price;
+      var shipped = d.finalPrice;
 
-    return output;
-  });
+      var output =
+        dateString + "Price: " + price + "<br/>" + "After Shipping: " + shipped;
 
-d3Globals.avgTip = d3
-  .tip()
-  .attr("class", "d3-tip avg")
-  .html(function(d) {
-    var dateString =
-      "<span class='label label-danger date'>" +
-      d.date.getDateString() +
-      "</span>";
-    var priceString = "Avg Price: " + d.avgPrice.toFixed(2);
-    var numAucString = "Auctions: " + d.num;
+      return output;
+    });
 
-    var output = dateString + priceString + "<br/>" + numAucString + "<br/>";
-    return output;
-  });
+  d3Globals.avgTip = d3
+    .tip()
+    .attr("class", "d3-tip avg")
+    .html(function(d) {
+      // {num: 3, avgPrice: 146, date: Tue Mar 17 2015 00:00:00 GMT-0400 (Eastern Daylight Time)}
 
-// {num: 3, avgPrice: 146, date: Tue Mar 17 2015 00:00:00 GMT-0400 (Eastern Daylight Time)}
+      var dateString =
+        "<span class='label label-danger date'>" +
+        d.date.getDateString() +
+        "</span>";
+      var priceString = "Avg Price: " + d.avgPrice.toFixed(2);
+      var numAucString = "Auctions: " + d.num;
+
+      var output = dateString + priceString + "<br/>" + numAucString + "<br/>";
+      return output;
+    });
+}
+
+initializeD3Globals();
+
+
 
 $(document).ready(function() {
   //var scope = angular.element($('[ng-controller=dataController]')).scope();
