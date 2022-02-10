@@ -11,13 +11,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 var appID = "chulahnc0-347f-40b2-8df7-372d69c4c7e";
 
-Date.prototype.getDateString = function() {
+Date.prototype.getDateString = function () {
   return (
     this.getMonth() + 1 + "/" + this.getDate() + "/" + (this.getYear() - 100)
   );
 };
 
-Date.prototype.getTime = function() {
+Date.prototype.getTime = function () {
   return this.getHours() + ":" + this.getMinutes() + ":" + this.getSeconds();
 };
 
@@ -39,14 +39,14 @@ Date.prototype.getTime = function() {
 	3dd9e415-0328-4847-96b7-a40494af2e4b
 */
 
-app.get("/", function(req, res) {
+app.get("/", function (req, res) {
   res.sendfile("index.html");
 });
 
 function buildRequestURL(params) {
   console.log(params);
 
-	/*
+  /*
 		http://developer.ebay.com/Devzone/finding/CallRef/findItemsAdvanced.html
 	    url += "&sortOrder=EndTimeSoonest";
 		
@@ -88,16 +88,16 @@ function buildRequestURL(params) {
   return url;
 }
 
-app.post("/search/", function(req, res) {
+app.post("/search/", function (req, res) {
   var requestURL = buildRequestURL(req.body);
 
   console.log(req.body);
 
-  request(requestURL, function(err, response, body) {
+  request(requestURL, function (err, response, body) {
     if (!err) {
       var result = body;
-			result = JSON.parse(result);
-			/*
+      result = JSON.parse(result);
+      /*
 				{ findCompletedItemsResponse:
    				[ { ack: [Array],
       			 version: [Array],
@@ -111,10 +111,13 @@ app.post("/search/", function(req, res) {
       for (response in result) {
         // console.log(response);
         responseName = response;
-			}
+      }
 
       result = result[responseName][0];
 
+      console.log("result", result, "result ack.", result.ack);
+
+      console.log(result.error[0].message);
       var success = result.ack[0];
 
       if (success === "Success" || success === "Warning") {
@@ -139,7 +142,7 @@ app.post("/search/", function(req, res) {
           return res.send("0 results");
         }
 
-				/*
+        /*
 					{ itemId: [ '323470788237' ],
 						title:
 						[ 'Adidas Yeezy Boost 350 V2 Triple White CP9366  Size: 9.5 CONFIRMED PREORDER' ],
@@ -179,7 +182,7 @@ app.post("/search/", function(req, res) {
 						topRatedListing: [ 'false' ] }
 				*/
 
-        var newItems = items.map(function(item) {
+        var newItems = items.map(function (item) {
           var itemDetails = {
             id: item.itemId[0],
             img: (item.galleryURL && item.galleryURL[0]) || "../no_image.jpg",
@@ -212,7 +215,7 @@ app.post("/search/", function(req, res) {
                 item.shippingInfo[0] &&
                   item.shippingInfo[0].shippingServiceCost &&
                   item.shippingInfo[0].shippingServiceCost[0].__value__
-              ) || "Free"
+              ) || "Free",
           };
 
           if (item.shippingInfo[0].shippingType[0] === "Calculated") {
@@ -234,36 +237,36 @@ app.post("/search/", function(req, res) {
           ejs_newItems: newItems,
           ejs_searchParams: req.body,
           ejs_reqURL: requestURL,
-          ejs_pagination: paginationOutput
+          ejs_pagination: paginationOutput,
         });
       }
     }
   });
 });
 
-app.get("/scripts/script.js", function(req, res) {
+app.get("/scripts/script.js", function (req, res) {
   res.sendfile("scripts/script.js");
 });
-app.get("/scripts/controller.js", function(req, res) {
+app.get("/scripts/controller.js", function (req, res) {
   res.sendfile("scripts/controller.js");
 });
-app.get("/scripts/d3viz.js", function(req, res) {
+app.get("/scripts/d3viz.js", function (req, res) {
   res.sendfile("scripts/d3viz.js");
 });
-app.get("/styles/style.css", function(req, res) {
+app.get("/styles/style.css", function (req, res) {
   res.sendfile("styles/style.css");
 });
-app.get("/styles/style.less", function(req, res) {
+app.get("/styles/style.less", function (req, res) {
   res.sendfile("styles/style.less");
 });
-app.get("/styles/index.css", function(req, res) {
+app.get("/styles/index.css", function (req, res) {
   res.sendfile("styles/index.css");
 });
-app.get("/styles/index.less", function(req, res) {
+app.get("/styles/index.less", function (req, res) {
   res.sendfile("styles/index.less");
 });
 
-app.get("/no_image.jpg", function(req, res) {
+app.get("/no_image.jpg", function (req, res) {
   res.sendfile("no_image.jpg");
 });
 
