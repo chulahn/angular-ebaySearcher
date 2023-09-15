@@ -19,9 +19,9 @@ function initializeD3Globals() {
         "<span class='label label-success date'>" +
         new Date(d.endTime).getDateString() +
         "</span>";
-      var price = d.price;
+      var price = d.price.value;
       var shipped = d.finalPrice;
-
+      shipped = price;
       var output =
         dateString + "Price: " + price + "<br/>" + "After Shipping: " + shipped;
 
@@ -157,6 +157,7 @@ $(document).ready(function() {
 function addDataPoints() {
   var data = angular.element($("[ng-controller=dataController]")).scope()
     .filteredItems;
+    data = newItems;
   var xScale = d3Globals.xScale;
   var yScale = d3Globals.yScale;
   var tip = d3Globals.tip;
@@ -179,11 +180,12 @@ function addDataPoints() {
         return center;
       } else {
         var currentDate = d.endTime.toDate();
+        console.log(currentDate)
         return xScale(currentDate);
       }
     })
     .attr("cy", function(d) {
-      return yScale(d.finalPrice);
+      return yScale(d.price.value);
     })
     .attr("r", function(d) {
       return 7;
@@ -588,22 +590,25 @@ function setGraphDimens(create) {
   //used for setting up the axes.  stores data in d3Global object
   function getAxesDomain() {
     var data = scope.filteredItems;
+    d3Globals.earliestDate = new Date(2023);
+    // d3Globals.earliestDate = d3.min(data, function(d) {
+    //   var currentDate = d.endTime.toDate() || d3Globals.earliestDate || new Date(2023);
+    //   return currentDate;
+    // // });
+    // d3Globals.latestDate = d3.max(data, function(d) {
+    //   var currentDate = d.endTime.toDate() || d3Globals.latestDate || new Date(2024);
+    //   return currentDate;
+    // });
 
-    d3Globals.earliestDate = d3.min(data, function(d) {
-      var currentDate = d.endTime.toDate() || d3Globals.earliestDate;
-      return currentDate;
-    });
-    d3Globals.latestDate = d3.max(data, function(d) {
-      var currentDate = d.endTime.toDate() || d3Globals.latestDate;
-      return currentDate;
-    });
-
-    d3Globals.minPrice = d3.min(data, function(d) {
-      return d.finalPrice;
-    });
-    d3Globals.maxPrice = d3.max(data, function(d) {
-      return d.finalPrice;
-    });
+    d3Globals.latestDate = new Date(2024);
+    d3Globals.minPrice = 0;
+    d3Globals.maxPrice = 100000;
+    // d3Globals.minPrice = d3.min(data, function(d) {
+    //   return d.finalPrice;
+    // });
+    // d3Globals.maxPrice = d3.max(data, function(d) {
+    //   return d.finalPrice;
+    // });
   }
 
   //create scales and axes based on getAxesDomain() and stores in d3Global object/ or use previous

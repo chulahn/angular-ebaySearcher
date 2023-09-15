@@ -147,8 +147,8 @@
 
 		<% 
 			var numPages =  JSON.parse(JSON.stringify(ejs_pagination)) 
-			var totalEntries = numPages.totalEntries[0]; 
-			var entriesPerPage = numPages.entriesPerPage[0] 
+			var totalEntries = numPages; 
+			var entriesPerPage = numPages 
 		%>
 
 		//items: values before mapped, newItems: after
@@ -291,33 +291,29 @@
 					var newItems = items.map(function(item) {
 
 						var itemDetails = {
-							id: item.itemId[0],
-							img : item.galleryURL[0],
-							url : item.viewItemURL[0],
-							title : item.title[0],
-							condition : (item.condition && item.condition[0] && item.condition[0].conditionDisplayName[0]) || "No Condition Listed",
-							conditionID : (item.condition && item.condition[0] && item.condition[0].conditionId[0]) || "No Condition Listed",
+							id: item.itemId,
+							img: (item.galleryURL && item.galleryURL[0]) || "../no_image.jpg",
+							url: item.itemWebUrl,
+							title: item.title,
+							conditionID:
+								(item.condition) ||
+								"No Condition Listed",
+							condition:
+								(item.condition) ||
+								"No Condition listed",
 
-							country : (item.country && item.country[0]),
-							location: item.location[0],
+							location: item.location,
 
-							startTime : item.listingInfo[0].startTime[0],
-							endTime : item.listingInfo[0].endTime[0],
+							startTime: item.itemCreationDate,
+							// endTime: item.listingInfo[0].endTime[0],
 
-							status : item.sellingStatus[0].sellingState[0],
+							// status: item.sellingStatus[0].sellingState[0],
 
-							price : parseFloat(item.sellingStatus[0].convertedCurrentPrice[0].__value__),
-							shipping : parseFloat(item.shippingInfo[0] && item.shippingInfo[0].shippingServiceCost &&  item.shippingInfo[0].shippingServiceCost[0].__value__) || "Free"
+							price: item.price,
+							shipping: item.shippingOptions
+								
 						};
-
-						if (item.shippingInfo[0].shippingType[0] === "Calculated") {
-							itemDetails.shipping = "Calculated";
-						}
-
-						itemDetails.shortCondID = itemDetails.conditionID[0];
-
-						itemDetails.finalPrice = parseFloat((itemDetails.price + (parseFloat(itemDetails.shipping) || 0)).toFixed(2));
-
+						console.log(item, itemDetails)
 						return itemDetails;
 					});
 					return newItems;
@@ -354,8 +350,8 @@
 
 	<div id="searchedFor">
 
-		Total Results: <%= totalEntries %><br/>
-		Showing {{filteredItems.length}} out of <span id="numEntries"><%- (parseInt(totalEntries) < parseInt(entriesPerPage)) ? totalEntries : entriesPerPage %></span> results<br/>
+		Total Results: {{items.length}}<br/>
+		Showing {{items.length}} out of <span id="numEntries">{{items.length}}</span> results<br/>
 
 		
 		<span id="moreResultsButton" class="btn btn-sm btn-primary">Load Next 100 Results</span><br/>
@@ -466,18 +462,21 @@
 			)
 		)}}
 
-		<tr ng-repeat = "item in filteredItems">
+		{{ filteredItems}}
+		<!-- {{$parse (filteredItems = newItems)}} -->
+		<tr ng-repeat = "item in items">
 
 			<td><img ng-src = {{item.img}} ></td>
 			<td><input type="checkbox" id="{{items.indexOf(item)}}"><a href = {{item.url}} >{{item.title}}</a></td>
 			<td>{{item.id}}</td>
 			<td>
-				Price: {{item.price}}<br/>
-				Shipping: {{item.shipping}}<br/>
-				<span class="shippedPrice">Total: {{item.finalPrice}}</span><br/>
-				<span class="nosale" ng-if="item.status === 'EndedWithoutSales'">ENDED WITHOUT SALE</span>
+				Price: {{item.price.value}}<br/>
+				Shipping: {{item.shipping[0].shippingCost.value}}<br/>
+				<!-- <span class="shippedPrice">Total: {{item.finalPrice}}</span><br/> -->
+				<!-- <span class="nosale" ng-if="item.status === 'EndedWithoutSales'">ENDED WITHOUT SALE</span> -->
 			</td>
-			<td>{{item.endTime}}</td>
+			<td></td>
+			<!-- <td>{{item.endTime}}</td> -->
 		</tr>
 	</table>
 

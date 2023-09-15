@@ -10,6 +10,9 @@ var app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 
 var appID = "chulahnc0-347f-40b2-8df7-372d69c4c7e";
+appID = "ChulAhn-average-SBX-4727b8eb0-b8e029c1";
+var accessT = "v^1.1#i^1#I^3#r^0#f^0#p^1#t^H4sIAAAAAAAAAOVYW2wUVRju9gakFAISJIqwjiZFyM6emdnuZeyubm+0XHZrdy3QpMDM7Jnu2NmZcc4Z2o2NKRVL1FQtSmK0Kj5wiSRWvACCPIgRQYgPRrHy4BUD6gMEQ+CBqGd2S2krgUI3sYn7sJNzzv//5/+/89/OAV3F0xb31PVcKnVMyd/WBbryHQ6mBEwrLloyoyD/rqI8MILAsa3r/q7C7oKzFUhIqQbfCJGhawg6O1KqhvjMZJCyTI3XBaQgXhNSEPFY4mPhlSt4lga8YepYl3SVctZXBymGYz0+BpRLfiB7gTdBZrWrMuN6kJJ8nM/H+v1+r1cCnMiQdYQsWK8hLGg4SLGA5Vwg4GI8cZblOR/PMrTH52+mnE3QRIquERIaUKGMunyG1xyh641VFRCCJiZCqFB9uDYWDddX10TiFe4RskJDOMSwgC00elSlJ6CzSVAteONtUIaaj1mSBBGi3KHsDqOF8uGrytyG+hmoIesXCJYi4/NxUGaFnEBZq5spAd9YD3tGSbjkDCkPNazg9M0QJWiIj0EJD40iRER9tdP+PGIJqiIr0AxSNZXhNeGGBipUlbTUcFJzCRugKbRCV6xytcvjY32iH4rARf4BG5CYoW2ysoZAHrNPla4lFBsy5IzouBISneFYZNgRyBCiqBY1wzK29RmmK48DMIwg12wfafYMLZzU7FOFKQKDMzO8Of7D3BibimhhOCxh7EIGoCAlGIaSoMYuZjxxyHk6UJBKYmzwbnd7ezvdztG62epmAWDcq1euiElJmCL+YdPasW7TKzdncCkZUyRIOJHC47RBdOkgnkoU0FqpkAcEgI8bwn20WqGxs/+aGGGze3Q85Cw+xABXDmQWyhBAxi/mIj5CQy7qtvWAopB2pQSzDWJDFSTokoifWSloKgmeK5dZzi9DV8IbkF2egCy7xPKE18XIkGgDRVEK+P8/YTJeR49ByYQ4R56eIy+vra1J40quPRldtVSpI/nNC9Dy6LLax5N6G2NEGlYuZ5WljW265gsHxxsL1zW+SlUIMnGyf64AsGM9NyDU6QjDxITMi0m6ARt0VZHSk+uAOTPRIJg4XWmlyTgGVZV8JmRq2DDqc5Wvc2TkLaWK27M6l1XqP6lQ17UK2W47uayy+RERIBgKbdcgWtJTbjvWdYE0IPb0uozWzusSjiFyi1aabrUgwkSTBOkAx82kkFROk3KWGD9LtlgSI8bPQq4XCUvCt7VRpirTBE2lNYnRLe3ZMRFQREttGz9LAgrqhFxUIZeMSeWgxNKsyUoiezugM3bTaINEmxDplkkuRnTUbpfjehvUSPuBTV1Vodk0sRRkJ95UysKCqMLJloFzkIsUIdsbFXY7zk8auxhvgDR7DPBM7OikTPezbrJVkNzWzVu4A7lHv8eE8jI/pttxCHQ7Psp3OIAPuJgl4IHigkcLC6ZTiGQeGglaQtQ7aEWQaZL0NAFbJqTbYNoQFDO/2KGc+lq6POIlaFsLmDf8FjStgCkZ8TAE5l9bKWJm3lnKciDAeFiW87FMM7jv2mohM7dwTnMULRh4KHL4YntZ6qkf9tzT3nf3LlA6TORwFOURt83r/Kmv7MzgV9v3JPfNa3itZiDKzy0KS1+mfl+8a5A///T2z52ImeWNXDYPbpQXXolcOv3K/CcCXY6tm/i93NG1Ty7E630x+G7Ppk9Wzeic+vKlA8vKLsye9ee9FZH1nceOnPyjdqCl08u92lr6QtOZfcVNp3a/wVd8+OOcvr1v/tZ7Nv/K0cbK/QsOfvbON3hV/XfzHj6x+VAaPP/p27Of/fnbnv7vX2ou/avXsfPk6YvHF8ndfSVfDHwwNcxSD7YcOffi/F93HI4XbFwwUHegt1CPnJi5uXFW0ZT+vi1l7+0w+qcfuzAYP//6M8/t3P/3FIPfsmbR4LniyPGt/Me/vD/QEr5jbXV/71sl2oZju7PH+A8WrlSJoxMAAA==";
+accessT = "v^1.1#i^1#I^3#r^0#f^0#p^1#t^H4sIAAAAAAAAAOVYa2wURRzv9QUFq4mUR7ChlwUTkeze7N6ru/QuuT6p0F7hauWlsI/Z3nJ7u+fOLO2BJqXYiiFB4zso2mAkkhgDCR80hsQPConhYQxGFJFEUeCDipEENASd3SvlWgkUeolNvA+3mZn/8zf/x8yAvvKKhweXDF6u9EwpHuoDfcUeDzsdVJSXLbq3pHhuWRHII/AM9S3oK+0vOV+HxLSeEVZAlDENBL29ad1AgjsZoWzLEEwRaUgwxDREApaFRKxtmcAxQMhYJjZlU6e8rY0RSpEkVYRsAPhrAQxIHJk1rsvsNCNUiIeQUyAb5Hk1CAISWUfIhq0GwqKBIxQHOD8NeJoNdgIgBHkhwDIAsKspbxe0kGYahIQBVNQ1V3B5rTxbb22qiBC0MBFCRVtjzYl4rLWxqb2zzpcnKzqMQwKL2EajRw2mAr1dom7DW6tBLrWQsGUZIkT5ojkNo4UKsevG3IX5LtQhOSxzfCgUCoRUlgsFCwJls2mlRXxrO5wZTaFVl1SABtZw9naIEjSkDVDGw6N2IqK10et8ltuirqkatCJUU31sVayjg4o2JG09ljRocSO0xG5IJ+pX0oEwF5ZqoQRo8g84XmaH1eRkDYM8Rk+DaSiaAxnytpu4HhKb4VhkAnnIEKK4EbdiKnbsyafjXAQBw/Ph1c6W5vbQxknD2VWYJjB43eHt8R/hxtjSJBvDEQljF1yAIpSYyWgKNXbRjcTh4OlFESqJcUbw+Xp6epgeP2Na3T6OqPOtbFuWkJMwLVIurZPrDr12ewZac12RIeFEmoCzGWJLL4lUYoDRTUUDgAdh/zDuo82Kjp3910Sez77R+VCo/OBEniV1JsyqiqL4ebkQ+REdDlGfYweUxCydFq0UxBldlCEtkziz09DSFMEfVDl/rQppJcSrdIBXVVoKKiGaVSEEEEqSzNf+f9JkvIGegLIFcYEivUBR3tzclMX1/p5k/LEWbQmpbyGAlsYfaX4yaabYTHtH21JOa1mRMo1wLDLeXLip8w26RpDpJPoLBYCT64UBYYmJMFQm5F5CNjOww9Q1OTu5NthvKR2ihbP1dpaME1DXyWdCrsYymdZC1esCOXlHpeLuvC5kl/pPOtRNvUJO2E4urxx+RASIGY1xehAjm2mfk+umSA4gzvQ612rvTQnHEPkkO8t02xBhYolCToDjZtJIKWdIO1PGz5JrlsSJ8bOQ64Viy/iuFLldmSFoat1JjO5IZ+9EQJFsPTV+FgWK+oRCVCOXjEkVoMTTnMuakrsdMK7fDNooMxZEpm2RixETd47LnWYKGuT4gS1T16HVNbES5BTedNrGoqTDyVaBC1CLNDF3Nirt91ycNH6xIT4Q9vPBWjAh32T39LNusnWQwvbNO7gD+Ua/x0SL3B/b7zkI+j0fFXs8IAxodhFYWF7yaGnJPRQilYdBoqFIZi+jiSpDip4hYtuCTApmM6JmFZd7tG9PyFfyXoKGHgdzRt6CKkrY6XkPQ6D6xkoZe9/sSs4PeDYIQJAPsKvB/Burpeys0qp9O6tb4rPsfdeOb2IOvrf30pVQYABUjhB5PGVFJGyL+juf3TXjgZqVhy7MfaK5TvXVPpjatunVqVv6Fnb9MWR3XPthakA/Ur37Q+aFh67wlTVbvnlqzakzU9oG2B1HW9rmdG6omh/ZdvHApv7ni9bMnFFzIrp9bbrj6Uix+cbZmh3Tjp47sl7ZH/tkb/zcOy827apmG97+8oPWWOWe+w/hI98fXry/UihbsZmiuk4N/hixn/n86607e49W1e9sWp8c3PP3tL820Kcb311bg+pmL/hs+5+Jxa8c56R5y3/6ePOvC36+Go+drWr0HmvwPRc8dxVIL6/aMfBm9ovXmk4eiO4uer/nl6FPL9Qd/v31t1rmBX77buvA+cuhfRWnvjp9cebQotKXzpzv7zp57NL6/blt/AdSQa8ZoxMAAA==";
 
 Date.prototype.getDateString = function () {
   return (
@@ -66,6 +69,7 @@ function buildRequestURL(params) {
     */
 
   var appID = "chulahnc0-347f-40b2-8df7-372d69c4c7e";
+  appID = "ChulAhn-average-SBX-4727b8eb0-b8e029c1";
 
   var url = "http://svcs.ebay.com/services/search/FindingService/v1";
   url += "?OPERATION-NAME=" + params.requestType;
@@ -88,15 +92,38 @@ function buildRequestURL(params) {
   return url;
 }
 
+function b2(params) {
+  var test = "https://api.sandbox.ebay.com/buy/browse/v1/item_summary/search?q="
+  test += params.keyword
+
+  return test;
+}
+
 app.post("/search/", function (req, res) {
   var requestURL = buildRequestURL(req.body);
+  requestURL = b2(req.body);
 
-  console.log(req.body);
+  console.log(requestURL)
 
-  request(requestURL, function (err, response, body) {
+  var headers = {
+    'Authorization': `Bearer ${accessT}`,
+    'X-EBAY-C-MARKETPLACE-ID': 'EBAY_US',
+    'X-EBAY-C-ENDUSERCTX': 'affiliateCampaignId=<ePNCampaignId>,affiliateReferenceId=<referenceId>',
+  }
+  
+  var options = {
+    url: requestURL,
+    headers: headers,
+  }
+
+  console.log('req.body',req.body);
+
+
+  request(options, function (err, response, body) {
     if (!err) {
       var result = body;
       result = JSON.parse(result);
+      console.log(result);
       /*
 				{ findCompletedItemsResponse:
    				[ { ack: [Array],
@@ -113,35 +140,44 @@ app.post("/search/", function (req, res) {
         responseName = response;
       }
 
-      result = result[responseName][0];
+      console.log("result", result);
 
-      console.log("result", result, "result ack.", result.ack);
+        var items = result.itemSummaries;
 
-      console.log(result.error[0].message);
-      var success = result.ack[0];
-
-      if (success === "Success" || success === "Warning") {
-        // console.log(result);
-
-        var paginationOutput = result.paginationOutput[0];
-        /*
-					.pageNumber[0] = numPages
-					.entriesPerPage[0]
-					.totalPages[0] = 7
-					.totalEntries[0] = 619
-
-					{ pageNumber: [ '1' ],
-  					entriesPerPage: [ '100' ],
- 						totalPages: [ '1' ],
-  					totalEntries: [ '70' ] }
-				*/
-
-        var items = result.searchResult[0].item;
+        console.log(items);
 
         if (items === undefined) {
           return res.send("0 results");
         }
 
+        /*
+
+         {
+          itemId: 'v1|110554334980|0',
+          title: "New Balance Women's FuelCore Nergize Sport V1 Sneaker, Garnet/Pink Glo, 8",
+          leafCategoryIds: [Array],
+          categories: [Array],
+          price: [Object],
+          itemHref: 'https://api.sandbox.ebay.com/buy/browse/v1/item/v1%7C110554334980%7C0',
+          seller: [Object],
+          condition: 'New with box',
+          conditionId: '1000',
+          shippingOptions: [Array],
+          buyingOptions: [Array],
+          itemAffiliateWebUrl: 'http://www.sandbox.ebay.com/itm/New-Balance-Womens-FuelCore-Nergize-Sport-V1-Sneaker-Garnet-Pink-Glo-8-/110554334980?hash=item19bd8d4704%3Ai%3A110554334980&mkevt=1&mkcid=1&mkrid=711-53200-19255-0&campid=%253CePNCampaignId%253E&customid=%253CreferenceId%253E&toolid=10049',
+          itemWebUrl: 'http://www.sandbox.ebay.com/itm/New-Balance-Womens-FuelCore-Nergize-Sport-V1-Sneaker-Garnet-Pink-Glo-8-/110554334980?hash=item19bd8d4704:i:110554334980',
+          itemLocation: [Object],
+          adultOnly: false,
+          legacyItemId: '110554334980',
+          availableCoupons: false,
+          itemCreationDate: '2023-08-31T17:04:12.000Z',
+          topRatedBuyingExperience: false,
+          priorityListing: false,
+          listingMarketplaceId: 'EBAY_US'
+        },
+
+
+        */
         /*
 					{ itemId: [ '323470788237' ],
 						title:
@@ -184,50 +220,39 @@ app.post("/search/", function (req, res) {
 
         var newItems = items.map(function (item) {
           var itemDetails = {
-            id: item.itemId[0],
+            id: item.itemId,
             img: (item.galleryURL && item.galleryURL[0]) || "../no_image.jpg",
-            url: item.viewItemURL[0],
-            title: item.title[0],
+            url: item.itemWebUrl,
+            title: item.title,
             conditionID:
-              (item.condition &&
-                item.condition[0] &&
-                item.condition[0].conditionId[0]) ||
+              (item.condition) ||
               "No Condition Listed",
             condition:
-              (item.condition &&
-                item.condition[0] &&
-                item.condition[0].conditionDisplayName[0]) ||
+              (item.condition) ||
               "No Condition listed",
 
-            country: item.country && item.country[0],
-            location: item.location[0],
+            location: item.location,
 
-            startTime: item.listingInfo[0].startTime[0],
-            endTime: item.listingInfo[0].endTime[0],
+            startTime: new Date(item.itemCreationDate),
+            // endTime: item.listingInfo[0].endTime[0],
 
-            status: item.sellingStatus[0].sellingState[0],
+            // status: item.sellingStatus[0].sellingState[0],
 
-            price: parseFloat(
-              item.sellingStatus[0].convertedCurrentPrice[0].__value__
-            ),
-            shipping:
-              parseFloat(
-                item.shippingInfo[0] &&
-                  item.shippingInfo[0].shippingServiceCost &&
-                  item.shippingInfo[0].shippingServiceCost[0].__value__
-              ) || "Free",
+            price: item.price,
+            shipping: item.shippingOptions
+              
           };
 
-          if (item.shippingInfo[0].shippingType[0] === "Calculated") {
-            itemDetails.shipping = "Calculated";
-          }
-          itemDetails.shortCondID = itemDetails.conditionID[0];
+          // if (item.shippingInfo[0].shippingType[0] === "Calculated") {
+          //   itemDetails.shipping = "Calculated";
+          // }
+          // itemDetails.shortCondID = itemDetails.conditionID[0];
 
-          itemDetails.finalPrice = parseFloat(
-            (
-              itemDetails.price + (parseFloat(itemDetails.shipping) || 0)
-            ).toFixed(2)
-          );
+          // itemDetails.finalPrice = parseFloat(
+          //   (
+          //     itemDetails.price + (parseFloat(itemDetails.shipping) || 0)
+          //   ).toFixed(2)
+          // );
 
           return itemDetails;
         });
@@ -237,9 +262,9 @@ app.post("/search/", function (req, res) {
           ejs_newItems: newItems,
           ejs_searchParams: req.body,
           ejs_reqURL: requestURL,
-          ejs_pagination: paginationOutput,
+          ejs_pagination: 1,
         });
-      }
+      
     }
   });
 });
